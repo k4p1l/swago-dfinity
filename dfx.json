@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "swago_backend": {
+      "main": "src/swago_backend/main.mo",
+      "type": "motoko"
+    },
+    "swago_frontend": {
+      "dependencies": [
+        "swago_backend"
+      ],
+      "source": [
+        "src/swago_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "swago_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
