@@ -1,0 +1,59 @@
+.trusted-by h2 {
+  font-family: "Instrument Serif";
+  font-style: italic;
+  font-weight: 400;
+  color: white;
+  opacity: 70%;
+}
+
+.images {
+  margin-top: 32px;
+  padding-bottom: 58px;
+  position: relative;
+}
+
+.images::before {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: 80px;
+  background: linear-gradient(to right, #000, #0000);
+  left: 30%;
+  top: 0;
+  z-index: 20;
+}
+
+.images::after {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: 80px;
+  background: linear-gradient(to left, #000, #0000);
+  right: 30%;
+  top: 0;
+}
+
+.images img {
+  width: 150px;
+  filter: grayscale(100%);
+  transition: all 0.7s ease;
+  opacity: 70%;
+}
+
+.images img:hover {
+  filter: grayscale(0%);
+}
+
+@media (max-width: 768px) {
+  .images img {
+    width: 80px;
+  }
+
+  .images::before {
+    left: 15%;
+  }
+
+  .images::after {
+    right: 15%;
+  }
+}

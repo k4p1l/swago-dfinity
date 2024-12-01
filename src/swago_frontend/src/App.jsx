@@ -1,30 +1,55 @@
-import { useState } from 'react';
-import { swago_backend } from 'declarations/swago_backend';
+import React, { useEffect } from "react";
+import { Banner } from "./Components/Banner";
+import { Navbar } from "./Components/Navbar";
+import { Hero } from "./Components/Hero";
+import { TrustedBy } from "./Components/TrustedBy";
+import { Features } from "./Components/Features";
+import { ProductShowcase } from "./Components/ProductShowcase";
+import { FAQs } from "./Components/FAQs";
+import { Footer } from "./Components/Footer";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Lenis from "lenis";
+import "./index.css";
+import "./input.css";
+
+function LandingPage() {
+  return (
+    <div>
+      <Banner />
+      <Navbar />
+      <Hero />
+      <TrustedBy />
+      <Features />
+      <ProductShowcase />
+      <FAQs />
+      <Footer />
+    </div>
+  );
+}
 
 function App() {
-  const [greeting, setGreeting] = useState('');
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    const name = event.target.elements.name.value;
-    swago_backend.greet(name).then((greeting) => {
-      setGreeting(greeting);
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 3.2,
+      smooth: true,
     });
-    return false;
-  }
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+  }, []);
 
   return (
-    <main>
-      <img src="/logo2.svg" alt="DFINITY logo" />
-      <br />
-      <br />
-      <form action="#" onSubmit={handleSubmit}>
-        <label htmlFor="name">Enter your name: &nbsp;</label>
-        <input id="name" alt="Name" type="text" />
-        <button type="submit">Click Me!</button>
-      </form>
-      <section id="greeting">{greeting}</section>
-    </main>
+    <>
+      <Router>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+        </Routes>
+      </Router>
+    </>
   );
 }
 
