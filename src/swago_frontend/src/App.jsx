@@ -7,6 +7,7 @@ import { Features } from "./Components/Features";
 import { ProductShowcase } from "./Components/ProductShowcase";
 import { FAQs } from "./Components/FAQs";
 import { Footer } from "./Components/Footer";
+import { Dashboard } from "./Components/MainApp/Dashboard";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Lenis from "lenis";
 import "./index.css";
@@ -47,6 +48,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </Router>
     </>

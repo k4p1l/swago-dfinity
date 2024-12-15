@@ -1,5 +1,6 @@
 import logo from "../assets/images/logo.png";
 import { Link as ScrollLink } from "react-scroll";
+import { Link as RouterLink } from "react-router-dom";
 export const Navbar = () => {
   return (
     <div className="bg-black">
@@ -47,9 +48,11 @@ export const Navbar = () => {
               FAQs
             </ScrollLink>
 
-            <button className="px-4 py-2 bg-white rounded-lg">
-              Get Started
-            </button>
+            <RouterLink to="/dashboard">
+              <button className="px-4 py-2 bg-white rounded-lg">
+                Get Started
+              </button>
+            </RouterLink>
           </nav>
         </div>
       </div>

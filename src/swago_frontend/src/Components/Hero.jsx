@@ -1,3 +1,4 @@
+import { Link as RouterLink } from "react-router-dom";
 export const Hero = () => {
   return (
     <div className="text-white bg-black  py-[72px] sm:py-24 relative overflow-clip hero">
@@ -23,10 +24,13 @@ export const Hero = () => {
           Celebrate the joy of accomplishment with an app designed to track your
           progress, motivate your efforts, and celebrate your successes.
         </p>
+
         <div className="flex justify-center mt-8">
-          <button className="px-4 py-2 font-medium text-black bg-white rounded-lg">
-            Get Started
-          </button>
+          <RouterLink to="/dashboard">
+            <button className="px-4 py-2 font-medium text-black bg-white rounded-lg">
+              Get Started
+            </button>
+          </RouterLink>
         </div>
       </div>
     </div>
