@@ -1,0 +1,121 @@
+.login-btn {
+  background-color: #245bdf;
+  color: white;
+  padding: 10px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: "Roboto", sans-serif;
+}
+
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  z-index: 999;
+}
+
+.hamburger span {
+  width: 24px;
+  height: 3px;
+  background-color: white;
+  transition: 0.4s;
+}
+
+.hamburger.open span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 6px);
+}
+
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -6px);
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filters span {
+  font-family: Inter;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.filters img {
+  width: 20px;
+}
+
+.filters ion-icon {
+  font-size: 20px;
+  color: white;
+}
+
+.refresh ion-icon {
+  font-size: 30px;
+}
+
+.op-card-icons ion-icon {
+  color: #9aa0b2;
+}
+
+.gradient-border {
+  position: relative;
+  padding: 12px 24px;
+  background: linear-gradient(
+    to right,
+    #40128b,
+    #9336b4,
+    #dd58d6
+  ); /* Background gradient */
+  color: #fff;
+  text-align: center;
+  border-radius: 16px; /* Rounded corners for the inner content */
+  z-index: 1; /* Ensures content stays on top */
+  overflow: hidden; /* Keeps everything within rounded corners */
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background: linear-gradient(
+    to left,
+    #ffe79b,
+    #dd58d6,
+    #9336b4,
+    #40128b
+  ); /* Border gradient */
+  border-radius: 16px; /* Border thickness + inner border-radius */
+  z-index: -1; /* Place it behind the main content */
+}
+
+.gradient-border::after {
+  content: "";
+  position: absolute;
+  top: 4px; /* To align with the inner content */
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  background: linear-gradient(
+    to right,
+    #40128b,
+    #9336b4,
+    #dd58d6
+  ); /* Same as the inner background */
+  border-radius: 12px; /* Match the main border radius */
+  z-index: -1; /* Ensures it goes behind the content */
+}

@@ -1,0 +1,29 @@
+.slider-container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+  background: linear-gradient(to right, #ffe79b, #dd58d6, #9336b4, #40128b);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: white;
+  text-align: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.text-section {
+  text-align: left;
+}
