@@ -5,6 +5,7 @@ import { MainNavbar } from "./MainNavbar";
 import { CustomSlider } from "./CustomSlider";
 import { OpinionCard } from "./OpinionCard";
 import { RecentActivity } from "./RecentActivity";
+import { Footer } from "../Footer";
 export const Dashboard = () => {
   const cardData = [
     {
@@ -171,6 +172,7 @@ export const Dashboard = () => {
           <RecentActivity />
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
