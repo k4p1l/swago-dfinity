@@ -2,17 +2,19 @@ import "../css/Dashboard.css";
 import logo from "../../assets/images/logo.png";
 import activity from "../../assets/images/activity.png";
 import leaderboard from "../../assets/images/leaderboard.png";
-
+import { Link as RouterLink } from "react-router-dom";
 
 export const MainNavbar = () => {
   return (
-    <div className="container bg-[#1d2b39] border-b-2 border-[#c5e525]">
+    <div className="w-full px-4 bg-[#1d2b39] border-b-2 border-[#c5e525]">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-8">
           <div className="w-[6rem]">
-            <img src={logo} alt="" />
+            <RouterLink to="/">
+              <img src={logo} alt="" />
+            </RouterLink>
           </div>
-          <div className="w-[32rem] search-bar">
+          <div className="sm:w-[32rem] w-[4rem] search-bar">
             <input
               type="text"
               placeholder="Search token or address"
@@ -30,7 +32,9 @@ export const MainNavbar = () => {
         </div>
         <div className="flex items-center gap-8">
           <div>
-            <button className="login-btn">Login</button>
+            <RouterLink to="/login">
+              <button className="login-btn">Login</button>
+            </RouterLink>
           </div>
           <div>
             <div className="hamburger">

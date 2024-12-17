@@ -16,8 +16,8 @@
   content: "";
   position: absolute;
   height: 100%;
-  width: 80px;
-  background: linear-gradient(to right, #000, #0000);
+  width: 100px;
+  background: linear-gradient(to right, #101a23, #0000);
   left: 30%;
   top: 0;
   z-index: 20;
@@ -27,8 +27,8 @@
   content: "";
   position: absolute;
   height: 100%;
-  width: 80px;
-  background: linear-gradient(to left, #000, #0000);
+  width: 100px;
+  background: linear-gradient(to left, #101a23, #0000);
   right: 30%;
   top: 0;
 }

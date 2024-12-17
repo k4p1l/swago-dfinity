@@ -119,3 +119,7 @@
   border-radius: 12px; /* Match the main border radius */
   z-index: -1; /* Ensures it goes behind the content */
 }
+
+@media (max-width: 768px) {
+  
+}

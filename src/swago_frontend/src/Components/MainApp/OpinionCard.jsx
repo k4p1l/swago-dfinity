@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 // Styled components for styling
 const CardContainer = styled.div`
+  position: relative;
   background-color: #1e2a3a;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
@@ -20,6 +21,9 @@ const Header = styled.div`
 `;
 
 const Timer = styled.div`
+  position: absolute; 
+  top: 2px;
+  right: 2px;
   background-color: red;
   padding: 5px 10px;
   border-radius: 8px;

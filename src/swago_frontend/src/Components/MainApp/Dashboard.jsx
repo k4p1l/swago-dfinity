@@ -5,7 +5,9 @@ import { MainNavbar } from "./MainNavbar";
 import { CustomSlider } from "./CustomSlider";
 import { OpinionCard } from "./OpinionCard";
 import { RecentActivity } from "./RecentActivity";
+import { TopVolumeThisWeek } from "./TopVolumeThisWeek";
 import { Footer } from "../Footer";
+import { TrustedBy } from "../TrustedBy";
 export const Dashboard = () => {
   const cardData = [
     {
@@ -85,21 +87,11 @@ export const Dashboard = () => {
   return (
     <div className="dashboard-container">
       <MainNavbar />
-      <div className="bg-[#101a23]">
-        <div className="flex items-center justify-center gap-20 px-8 py-6">
-          <div className="bg-[#3195ff] px-8 py-2 rounded-lg">
-            TK2n...CBAQ Sold1,273.8{" "}
-            <span className="text-[#e5ff00]">TRX of UNWUKONG</span>
-          </div>
-          <div className="bg-[#ff56b9] px-8 py-2 rounded-lg">
-            TKZu...HKcR{" "}
-            <span className="text-[#e5ff00]">Sold 1,121.9 TRX of UNDOG</span>
-          </div>
-        </div>
+      <div className="bg-[#101a23] pt-6">
         <CustomSlider />
         <div className="px-8 py-6 filters">
-          <div className="flex items-center justify-between gap-4">
-            <div className="w-[24rem] search-bar">
+          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+            <div className="sm:w-[24rem] w-[4rem] search-bar">
               <input
                 type="text"
                 placeholder="Search token or address"
@@ -168,9 +160,27 @@ export const Dashboard = () => {
             </div>
           </div>
         </div>
-        <div>
-          <RecentActivity />
+        <div className="flex justify-center gap-8">
+          <div
+            id="recent-activity"
+            className="text-white bg-[#101a23] py-[72px] sm:py-24 px-4"
+          >
+            <h2 className="text-xl font-medium tracking-tighter sm:text-2xl">
+              Recent Activity
+            </h2>
+            <RecentActivity />
+            <RecentActivity />
+            <RecentActivity />
+            <RecentActivity />
+          </div>
+          <div className="text-white bg-[#101a23] py-[72px] sm:py-24 px-4">
+            <h2 className="text-xl font-medium tracking-tighter sm:text-2xl">
+              Top Volume This Week
+            </h2>
+            <TopVolumeThisWeek />
+          </div>
         </div>
+        <TrustedBy />
       </div>
       <Footer />
     </div>

@@ -1,3 +1,4 @@
+import * as swago_backend from "declarations/swago_backend";
 import React, { useEffect } from "react";
 import { Banner } from "./Components/Banner";
 import { Navbar } from "./Components/Navbar";
@@ -8,7 +9,11 @@ import { ProductShowcase } from "./Components/ProductShowcase";
 import { FAQs } from "./Components/FAQs";
 import { Footer } from "./Components/Footer";
 import { Dashboard } from "./Components/MainApp/Dashboard";
+import { Login } from "./Components/MainApp/Login";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { defaultProviders } from "@connect2ic/core/providers";
+import { createClient } from "@connect2ic/core";
+import { Connect2ICProvider } from "@connect2ic/react";
 import Lenis from "lenis";
 import "./index.css";
 import "./input.css";
@@ -47,12 +52,23 @@ function App() {
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </Router>
     </>
   );
 }
 
-export default App;
+const client = createClient({
+  canisters: {
+    swago_backend,
+  },
+  providers: defaultProviders,
+});
+
+export default () => (
+  <Connect2ICProvider client={client}>
+    <App />
+  </Connect2ICProvider>
+);
