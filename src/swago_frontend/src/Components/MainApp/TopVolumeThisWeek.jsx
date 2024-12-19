@@ -5,10 +5,13 @@ export const TopVolumeThisWeek = () => {
     <div className="flex max-w-xl gap-4 mt-8">
       <table className="w-full border-collapse">
         <thead>
-          <td></td>
-          <td>Name(Symbol)</td>
-          <td>Market Cap</td>
+          <tr>
+            <td></td>
+            <td>Name(Symbol)</td>
+            <td>Market Cap</td>
+          </tr>
         </thead>
+
         <tbody>
           <tr>
             <td>

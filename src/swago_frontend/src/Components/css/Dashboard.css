@@ -1,3 +1,7 @@
+@font-face {
+  font-family: neue montreal;
+  src: url(../../assets/fonts/NeueMontreal-Medium.otf);
+}
 .login-btn {
   background-color: #245bdf;
   color: white;
@@ -121,5 +125,21 @@
 }
 
 @media (max-width: 768px) {
-  
+  .nav {
+    gap: 10px;
+  }
+  .nav img {
+    width: 2.5rem;
+  }
+  .login-btn {
+    font-size: 16px;
+    padding: 6px 16px;
+  }
+  .filters {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+    width: fit-content;
+    margin: 10px auto;
+  }
 }

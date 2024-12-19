@@ -89,9 +89,9 @@ export const Dashboard = () => {
       <MainNavbar />
       <div className="bg-[#101a23] pt-6">
         <CustomSlider />
-        <div className="px-8 py-6 filters">
-          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <div className="sm:w-[24rem] w-[4rem] search-bar">
+        <div className="sm:py-6 sm:px-8 filters">
+          <div className="flex flex-row items-center justify-between gap-4">
+            <div className="sm:w-[24rem] w-[180px] search-bar">
               <input
                 type="text"
                 placeholder="Search token or address"
@@ -108,15 +108,49 @@ export const Dashboard = () => {
           </div>
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4 bg-[#354350] px-4 py-2 rounded-xl">
-              <ion-icon name="filter-sharp"></ion-icon>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="#f5f5f5"
+                class="bi bi-filter"
+                viewBox="0 0 16 16"
+              >
+                <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5" />
+              </svg>
               <span className="text-white">Filters</span>
             </div>
             <div className="flex items-center gap-4 bg-[#354350] px-4 py-2 rounded-xl">
               <span className="text-white">24h</span>
-              <ion-icon name="chevron-down-sharp"></ion-icon>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="#f5f5f5"
+                class="bi bi-chevron-down"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"
+                />
+              </svg>
             </div>
-            <div className="flex items-center gap-4 bg-[#354350] px-4 py-2 rounded-xl refresh">
-              <ion-icon name="refresh-sharp"></ion-icon>
+            <div className="flex items-center gap-4 bg-[#354350] px-2 py-2 rounded-xl refresh">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="30"
+                height="30"
+                fill="#f5f5f5"
+                class="bi bi-arrow-clockwise"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"
+                />
+                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
+              </svg>
             </div>
           </div>
         </div>

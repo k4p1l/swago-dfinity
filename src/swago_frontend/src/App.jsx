@@ -10,6 +10,7 @@ import { FAQs } from "./Components/FAQs";
 import { Footer } from "./Components/Footer";
 import { Dashboard } from "./Components/MainApp/Dashboard";
 import { Login } from "./Components/MainApp/Login";
+import { Form } from "./Components/MainApp/Form";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { defaultProviders } from "@connect2ic/core/providers";
 import { createClient } from "@connect2ic/core";
@@ -54,6 +55,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/form" element={<Form />} />
         </Routes>
       </Router>
     </>

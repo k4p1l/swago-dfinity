@@ -27,3 +27,23 @@
 .text-section {
   text-align: left;
 }
+
+.start-button {
+  cursor: pointer;
+  font-family: Inter;
+  font-weight: bold;
+  margin-top: 20px;
+  font-size: 1.75em;
+  padding: 4px 24px;
+  color: #ffffff;
+  background: #ff2988;
+  border-radius: 12px;
+  /* border: 2px solid #bf97ff; */
+}
+
+@media (max-width: 768px) {
+  .start-button {
+    margin-top: 10px;
+    font-size: 1.5em;
+  }
+}

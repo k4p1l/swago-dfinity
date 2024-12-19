@@ -50,10 +50,10 @@
   }
 
   .images::before {
-    left: 15%;
+    left: 0%;
   }
 
   .images::after {
-    right: 15%;
+    right: 0%;
   }
 }
