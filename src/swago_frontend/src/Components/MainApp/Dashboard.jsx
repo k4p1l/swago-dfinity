@@ -85,7 +85,7 @@ export const Dashboard = () => {
     // Add more cards here
   ];
   return (
-    <div className="dashboard-container">
+    <div className="overflow-hidden dashboard-container">
       <MainNavbar />
       <div className="bg-[#101a23] pt-6">
         <CustomSlider />
@@ -113,7 +113,7 @@ export const Dashboard = () => {
                 width="24"
                 height="24"
                 fill="#f5f5f5"
-                class="bi bi-filter"
+                className="bi bi-filter"
                 viewBox="0 0 16 16"
               >
                 <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5" />
@@ -127,7 +127,7 @@ export const Dashboard = () => {
                 width="24"
                 height="24"
                 fill="#f5f5f5"
-                class="bi bi-chevron-down"
+                className="bi bi-chevron-down sm:w-[30px] w-[20px]"
                 viewBox="0 0 16 16"
               >
                 <path
@@ -142,7 +142,7 @@ export const Dashboard = () => {
                 width="30"
                 height="30"
                 fill="#f5f5f5"
-                class="bi bi-arrow-clockwise"
+                className="bi bi-arrow-clockwise sm:w-[30px] w-[24px]"
                 viewBox="0 0 16 16"
               >
                 <path
@@ -194,7 +194,7 @@ export const Dashboard = () => {
             </div>
           </div>
         </div>
-        <div className="flex justify-center gap-8">
+        <div className="flex flex-col justify-center gap-8 sm:flex-row">
           <div
             id="recent-activity"
             className="text-white bg-[#101a23] py-[72px] sm:py-24 px-4"

@@ -24,6 +24,16 @@ export const Form = () => {
               className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
             />
           </div>
+          <div className="flex flex-col gap-2 w-[350px] ">
+            <label htmlFor="email" className="text-lg">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
+            />
+          </div>
           <div className=" w-[350px] flex flex-col gap-2">
             <div className="flex justify-between">
               <label htmlFor="question" className="text-lg">
@@ -69,6 +79,15 @@ export const Form = () => {
             </label>
           </div>
           <div className="flex flex-col w-[350px] gap-2">
+            <label htmlFor="website">Website</label>
+            <input
+              placeholder="Mandatory"
+              type="text"
+              id="website"
+              className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
+            />
+          </div>
+          <div className="flex flex-col w-[350px] gap-2">
             <label htmlFor="twitter">Twitter Link</label>
             <input
               placeholder="Optional"
@@ -86,15 +105,25 @@ export const Form = () => {
               className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
             />
           </div>
+
           <div className="flex flex-col w-[350px] gap-2">
-            <label htmlFor="website">Website</label>
-            <input
-              placeholder="Optional"
-              type="text"
-              id="website"
-              className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
-            />
+            <label htmlFor="timing" className="text-lg">
+              Countdown Style
+            </label>
+            <label className="flex items-center justify-between">
+              Minimilist
+              <input name="timing" type="radio" value="minimilist" />
+            </label>
+            <label className="flex items-center justify-between">
+              Flip Clock
+              <input name="timing" type="radio" value="flipClock" />
+            </label>
+            <label className="flex items-center justify-between">
+              Circular Timer
+              <input name="timing" type="radio" value="circular" />
+            </label>
           </div>
+
           <button
             className="bg-[#00aeef] w-[350px] text-xl font-bold py-2 px-4 rounded-md"
             type="submit"

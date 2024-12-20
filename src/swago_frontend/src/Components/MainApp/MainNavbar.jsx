@@ -6,19 +6,19 @@ import { Link as RouterLink } from "react-router-dom";
 
 export const MainNavbar = () => {
   return (
-    <div className="w-full px-4 bg-[#1d2b39] border-b-2 border-[#c5e525]">
-      <div className="flex items-center justify-between gap-4">
+    <div className="w-full sm:px-4 bg-[#1d2b39] border-b-2 border-[#c5e525]">
+      <div className="flex items-center justify-center gap-4">
         <div className="flex items-center gap-2 sm:gap-8 nav">
-          <div className="sm:w-[6rem] w-[3rem]">
+          <div className="sm:w-[6rem] w-[2rem]">
             <RouterLink to="/">
-              <img src={logo} alt="" />
+              <img className="w-full" src={logo} alt="" />
             </RouterLink>
           </div>
           <div className="sm:w-[32rem] w-[140px] search-bar">
             <input
               type="text"
               placeholder="Search token or address"
-              className="w-full input py-2 px-4 outline-none rounded-lg text-[#E4E2E2] bg-[#293643] border-2 border-[#f5f5f5]"
+              className="w-full input py-1 px-1 sm:py-2 sm:px-4 outline-none rounded-lg text-[#E4E2E2] bg-[#293643] border-2 border-[#f5f5f5]"
             />
           </div>
           <div className="flex flex-col items-center sm:gap-2">

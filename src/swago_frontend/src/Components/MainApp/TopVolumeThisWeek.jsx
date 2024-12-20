@@ -2,7 +2,7 @@ import pfp from "../../assets/images/1330515.jpg";
 
 export const TopVolumeThisWeek = () => {
   return (
-    <div className="flex max-w-xl gap-4 mt-8">
+    <div className="flex max-w-xl mt-8 sm:gap-4">
       <table className="w-full border-collapse">
         <thead>
           <tr>

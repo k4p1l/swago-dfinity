@@ -705,16 +705,20 @@ video {
   width: 180px;
 }
 
+.w-\[20px\] {
+  width: 20px;
+}
+
 .w-\[20vh\] {
   width: 20vh;
 }
 
-.w-\[24px\] {
-  width: 24px;
-}
-
 .w-\[272px\] {
   width: 272px;
+}
+
+.w-\[2rem\] {
+  width: 2rem;
 }
 
 .w-\[350px\] {
@@ -739,6 +743,18 @@ video {
 
 .w-full {
   width: 100%;
+}
+
+.w-\[10px\] {
+  width: 10px;
+}
+
+.w-\[\] {
+  width: ;
+}
+
+.w-\[24px\] {
+  width: 24px;
 }
 
 .max-w-2xl {
@@ -981,6 +997,11 @@ video {
 .object-contain {
   -o-object-fit: contain;
      object-fit: contain;
+}
+
+.px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
 }
 
 .px-2 {
@@ -1267,8 +1288,24 @@ video {
     width: 32rem;
   }
 
+  .sm\:w-\[5rem\] {
+    width: 5rem;
+  }
+
   .sm\:w-\[6rem\] {
     width: 6rem;
+  }
+
+  .sm\:w-\[\] {
+    width: ;
+  }
+
+  .sm\:w-\[30\] {
+    width: 30;
+  }
+
+  .sm\:w-\[30px\] {
+    width: 30px;
   }
 
   .sm\:flex-1 {
@@ -1287,13 +1324,32 @@ video {
     gap: 0.5rem;
   }
 
+  .sm\:gap-4 {
+    gap: 1rem;
+  }
+
   .sm\:gap-8 {
     gap: 2rem;
+  }
+
+  .sm\:px-2 {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .sm\:px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   .sm\:px-8 {
     padding-left: 2rem;
     padding-right: 2rem;
+  }
+
+  .sm\:py-2 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
   }
 
   .sm\:py-24 {
