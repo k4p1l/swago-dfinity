@@ -29,7 +29,7 @@ export const CustomSlider = () => {
             </div>
             <div className="text-section">
               <h2 className="text-[#FFEA00] sm:text-4xl text-xl py-4">
-                [ Start a New Bit ]
+                [ Start a New Bet ]
               </h2>
               <p className="text-xl ">
                 Where Memes Meet Money.{" "}

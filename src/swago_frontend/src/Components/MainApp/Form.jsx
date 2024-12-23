@@ -1,9 +1,73 @@
 import { MainNavbar } from "./MainNavbar";
 import { useState } from "react";
+
+import { swago_backend } from "../../../../declarations/swago_backend";
+
 export const Form = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [question, setQuestion] = useState("");
+  const [timing, setTiming] = useState("5");
+  const [image, setImage] = useState(null);
+  const [website, setWebsite] = useState("");
+  const [twitter, setTwitter] = useState("");
+  const [telegram, setTelegram] = useState("");
+  const [countdownStyle, setCountdownStyle] = useState("minimilist");
   const [count, setCount] = useState(200);
+
   const handleQuestionChange = (e) => {
-    setCount(200 - e.target.value.length);
+    const input = e.target.value;
+    setQuestion(input);
+    setCount(200 - input.length);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (
+      !name ||
+      !email ||
+      !question ||
+      !question ||
+      !countdownStyle ||
+      !website ||
+      !image
+    ) {
+      alert("Please fill out all required fields.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const imageBlob = new Uint8Array(reader.result);
+
+      const bettingData = {
+        mail: email,
+        name: name,
+        question: question,
+        set_timing: BigInt(timing),
+        image: imageBlob,
+        twitter_link: twitter,
+        telegram_link: telegram,
+        website_link: website,
+        countdown_style: BigInt(
+          countdownStyle === "minimilist"
+            ? 1
+            : countdownStyle === "flipClock"
+            ? 2
+            : 3
+        ),
+      };
+
+      try {
+        const result = await swago_backend.add_Betting(bettingData);
+        alert(result);
+      } catch (error) {
+        console.error("Error creating bet:", error);
+        alert("Failed to create bet.");
+      }
+    };
+    reader.readAsArrayBuffer(image);
   };
 
   return (
@@ -13,7 +77,10 @@ export const Form = () => {
         <h2 className="mt-4 text-2xl font-bold tracking-tighter text-center sm:text-4xl">
           Create a New Bet
         </h2>
-        <div className="flex flex-col items-center justify-center gap-4 mt-8 max-w-[1000px] mx-auto">
+        <form
+          className="flex flex-col items-center justify-center gap-4 mt-8 max-w-[1000px] mx-auto"
+          onSubmit={handleSubmit}
+        >
           <div className="flex flex-col gap-2 w-[350px] ">
             <label htmlFor="name" className="text-lg">
               Name
@@ -22,6 +89,8 @@ export const Form = () => {
               type="text"
               id="name"
               className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div className="flex flex-col gap-2 w-[350px] ">
@@ -32,6 +101,8 @@ export const Form = () => {
               type="email"
               id="email"
               className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className=" w-[350px] flex flex-col gap-2">
@@ -47,6 +118,7 @@ export const Form = () => {
               type="text"
               id="question"
               className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
+              value={question}
               onChange={handleQuestionChange}
             />
           </div>
@@ -56,15 +128,33 @@ export const Form = () => {
             </label>
             <label className="flex items-center justify-between">
               5 minutes
-              <input name="timing" type="radio" value="5" />
+              <input
+                name="timing"
+                type="radio"
+                value="5"
+                checked={timing === "5"}
+                onChange={(e) => setTiming(e.target.value)}
+              />
             </label>
             <label className="flex items-center justify-between">
               10 minutes
-              <input name="timing" type="radio" value="10" />
+              <input
+                name="timing"
+                type="radio"
+                value="10"
+                checked={timing === "10"}
+                onChange={(e) => setTiming(e.target.value)}
+              />
             </label>
             <label className="flex items-center justify-between">
               15 minutes
-              <input name="timing" type="radio" value="15" />
+              <input
+                name="timing"
+                type="radio"
+                value="15"
+                checked={timing === "15"}
+                onChange={(e) => setTiming(e.target.value)}
+              />
             </label>
           </div>
 
@@ -75,6 +165,7 @@ export const Form = () => {
                 className="bg-[#3e5f7c] py-2 px-2 rounded-md"
                 type="file"
                 id="image"
+                onChange={(e) => setImage(e.target.files[0])}
               />
             </label>
           </div>
@@ -85,6 +176,8 @@ export const Form = () => {
               type="text"
               id="website"
               className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
             />
           </div>
           <div className="flex flex-col w-[350px] gap-2">
@@ -94,6 +187,8 @@ export const Form = () => {
               type="text"
               id="twitter"
               className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
+              value={twitter}
+              onChange={(e) => setTwitter(e.target.value)}
             />
           </div>
           <div className="flex flex-col w-[350px] gap-2">
@@ -103,24 +198,44 @@ export const Form = () => {
               type="text"
               id="telegram"
               className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
+              value={telegram}
+              onChange={(e) => setTelegram(e.target.value)}
             />
           </div>
 
           <div className="flex flex-col w-[350px] gap-2">
-            <label htmlFor="timing" className="text-lg">
+            <label htmlFor="countdownStyle" className="text-lg">
               Countdown Style
             </label>
             <label className="flex items-center justify-between">
               Minimilist
-              <input name="timing" type="radio" value="minimilist" />
+              <input
+                name="countdownStyle"
+                type="radio"
+                value="minimilist"
+                checked={countdownStyle === "minimilist"}
+                onChange={(e) => setCountdownStyle(e.target.value)}
+              />
             </label>
             <label className="flex items-center justify-between">
               Flip Clock
-              <input name="timing" type="radio" value="flipClock" />
+              <input
+                name="countdownStyle"
+                type="radio"
+                value="flipClock"
+                checked={countdownStyle === "flipClock"}
+                onChange={(e) => setCountdownStyle(e.target.value)}
+              />
             </label>
             <label className="flex items-center justify-between">
               Circular Timer
-              <input name="timing" type="radio" value="circular" />
+              <input
+                name="countdownStyle"
+                type="radio"
+                value="circular"
+                checked={countdownStyle === "circular"}
+                onChange={(e) => setCountdownStyle(e.target.value)}
+              />
             </label>
           </div>
 
@@ -130,7 +245,7 @@ export const Form = () => {
           >
             Create Bet
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );

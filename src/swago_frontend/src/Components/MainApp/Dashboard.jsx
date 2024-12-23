@@ -37,51 +37,7 @@ export const Dashboard = () => {
       createdBy: "K.John",
       volume: "6.1K",
     },
-    {
-      image: image,
-      title: "How likely is Dogecoin to reach $1 by [specific date]?",
-      timerDuration: 5, // Timer in minutes
-      progressYes: "65%",
-      progressNo: "35%",
-      createdBy: "K.John",
-      volume: "6.1K",
-    },
-    {
-      image: image,
-      title: "How likely is Dogecoin to reach $1 by [specific date]?",
-      timerDuration: 5, // Timer in minutes
-      progressYes: "65%",
-      progressNo: "35%",
-      createdBy: "K.John",
-      volume: "6.1K",
-    },
-    {
-      image: image,
-      title: "How likely is Dogecoin to reach $1 by [specific date]?",
-      timerDuration: 5, // Timer in minutes
-      progressYes: "65%",
-      progressNo: "35%",
-      createdBy: "K.John",
-      volume: "6.1K",
-    },
-    {
-      image: image,
-      title: "How likely is Dogecoin to reach $1 by [specific date]?",
-      timerDuration: 5, // Timer in minutes
-      progressYes: "65%",
-      progressNo: "35%",
-      createdBy: "K.John",
-      volume: "6.1K",
-    },
-    {
-      image: image,
-      title: "How likely is Dogecoin to reach $1 by [specific date]?",
-      timerDuration: 5, // Timer in minutes
-      progressYes: "65%",
-      progressNo: "35%",
-      createdBy: "K.John",
-      volume: "6.1K",
-    },
+
     // Add more cards here
   ];
   return (
