@@ -76,50 +76,47 @@
 .gradient-border {
   position: relative;
   padding: 12px 24px;
-  background: linear-gradient(
+  /* background: linear-gradient(
     to right,
     #40128b,
     #9336b4,
     #dd58d6
-  ); /* Background gradient */
+  );  */
   color: #fff;
   text-align: center;
   border-radius: 16px; /* Rounded corners for the inner content */
   z-index: 1; /* Ensures content stays on top */
   overflow: hidden; /* Keeps everything within rounded corners */
+  border: 4px solid #fff;
 }
 
-.gradient-border::before {
+/* .gradient-border::before {
   content: "";
   position: absolute;
   top: -4px;
   left: -4px;
   right: -4px;
-  bottom: -4px;
-  background: linear-gradient(
+  bottom: -4px; */
+/* background: linear-gradient(
     to left,
     #ffe79b,
     #dd58d6,
     #9336b4,
     #40128b
-  ); /* Border gradient */
-  border-radius: 16px; /* Border thickness + inner border-radius */
-  z-index: -1; /* Place it behind the main content */
-}
+  );  */
+/* border: 2px solid #fff;
+  border-radius: 16px; 
+  z-index: -1; 
+} */
 
 .gradient-border::after {
   content: "";
   position: absolute;
-  top: 4px; /* To align with the inner content */
-  left: 4px;
-  right: 4px;
-  bottom: 4px;
-  background: linear-gradient(
-    to right,
-    #40128b,
-    #9336b4,
-    #dd58d6
-  ); /* Same as the inner background */
+  top: 0px; 
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  background: linear-gradient(to right, #54b1f3, #7b33e0);
   border-radius: 12px; /* Match the main border radius */
   z-index: -1; /* Ensures it goes behind the content */
 }

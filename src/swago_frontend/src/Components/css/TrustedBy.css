@@ -18,7 +18,7 @@
   height: 100%;
   width: 100px;
   background: linear-gradient(to right, #101a23, #0000);
-  left: 30%;
+  left: 10%;
   top: 0;
   z-index: 20;
 }
@@ -29,12 +29,12 @@
   height: 100%;
   width: 100px;
   background: linear-gradient(to left, #101a23, #0000);
-  right: 30%;
+  right: 10%;
   top: 0;
 }
 
 .images img {
-  width: 150px;
+  width: 250px;
   filter: grayscale(100%);
   transition: all 0.7s ease;
   opacity: 70%;

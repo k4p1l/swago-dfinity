@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import doubleArrowUp from "../../assets/images/double arrow.png";
+import doubleArrowDown from "../../assets/images/double arrow down.png";
 
 // Styled components for styling
 const CardContainer = styled.div`
   position: relative;
   background-color: #1e2a3a;
+  border: 2px solid #2f9fff;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
   color: white;
   padding: 20px;
-  width: 300px;
+  width: 350px;
   margin: 10px;
   font-family: Arial, sans-serif;
 `;
@@ -21,7 +24,7 @@ const Header = styled.div`
 `;
 
 const Timer = styled.div`
-  position: absolute; 
+  position: absolute;
   top: 2px;
   right: 2px;
   background-color: red;
@@ -53,7 +56,7 @@ const Button = styled.button`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
+  padding: 8px 22px;
   margin: 5px;
   border: none;
   border-radius: 8px;
@@ -113,14 +116,22 @@ export const OpinionCard = ({
       <Title>{title}</Title>
 
       {/* Buy Options */}
-      <div className="flex">
+      <div className="flex justify-between">
         <Button variant="yes">
           Buy Yes
-          <ion-icon name="chevron-down-sharp"></ion-icon>
+          <img
+            className="w-[28px] ml-2"
+            src={doubleArrowUp}
+            alt="double arrow"
+          />
         </Button>
         <Button variant="no">
           Buy No
-          <ion-icon name="chevron-up-sharp"></ion-icon>
+          <img
+            className="w-[28px] ml-2"
+            src={doubleArrowDown}
+            alt="double arrow"
+          />
         </Button>
       </div>
 

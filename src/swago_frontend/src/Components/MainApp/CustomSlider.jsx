@@ -25,10 +25,10 @@ export const CustomSlider = () => {
         <div className="slide">
           <div className="content">
             <div className="image-section">
-              <img className="w-[20vh]" src={logo} alt="Logo" />
+              <img className="w-[40vh]" src={logo} alt="Logo" />
             </div>
             <div className="text-section">
-              <h2 className="text-[#FFEA00] sm:text-4xl text-xl py-4">
+              <h2 className="text-[#FFEA00] sm:text-6xl text-xl py-4">
                 [ Start a New Bet ]
               </h2>
               <p className="text-xl ">

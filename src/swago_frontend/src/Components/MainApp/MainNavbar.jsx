@@ -7,7 +7,7 @@ import { Link as RouterLink } from "react-router-dom";
 export const MainNavbar = () => {
   return (
     <div className="w-full sm:px-4 bg-[#1d2b39] border-b-2 border-[#c5e525]">
-      <div className="flex items-center justify-center gap-4">
+      <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2 sm:gap-8 nav">
           <div className="sm:w-[6rem] w-[2rem]">
             <RouterLink to="/">

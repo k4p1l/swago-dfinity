@@ -1,8 +1,9 @@
 .slider-container {
-  max-width: 1000px;
+  max-width: 1400px;
   margin: auto;
+  border: 4px solid white;
   padding: 20px;
-  background: linear-gradient(to right, #ffe79b, #dd58d6, #9336b4, #40128b);
+  background: linear-gradient(to right, #239aef, #883bc3, #ed1e79);
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
@@ -22,6 +23,7 @@
   align-items: center;
   justify-content: space-around;
   width: 100%;
+  
 }
 
 .text-section {
@@ -33,8 +35,8 @@
   font-family: Inter;
   font-weight: bold;
   margin-top: 20px;
-  font-size: 1.75em;
-  padding: 4px 24px;
+  font-size: 1.5em;
+  padding: 6px 40px;
   color: #ffffff;
   background: #ff2988;
   border-radius: 12px;
