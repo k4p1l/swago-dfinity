@@ -35,13 +35,6 @@
 
 .images img {
   width: 250px;
-  filter: grayscale(100%);
-  transition: all 0.7s ease;
-  opacity: 70%;
-}
-
-.images img:hover {
-  filter: grayscale(0%);
 }
 
 @media (max-width: 768px) {

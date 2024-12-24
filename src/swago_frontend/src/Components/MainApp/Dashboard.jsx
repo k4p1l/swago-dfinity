@@ -1,6 +1,7 @@
 import "../css/Dashboard.css";
 import top from "../../assets/images/top.png";
 import image from "../../assets/images/1330515.jpg";
+import wallet from "../../assets/images/wallet.png";
 import searchIcon from "../../assets/images/search.png";
 import { MainNavbar } from "./MainNavbar";
 import { CustomSlider } from "./CustomSlider";
@@ -89,9 +90,9 @@ export const Dashboard = () => {
   return (
     <div className="overflow-hidden dashboard-container">
       <MainNavbar />
-      <div className="bg-[#101a23] pt-6">
+      <div className="bg-[#101a23] pt-10">
         <CustomSlider />
-        <div className="sm:py-6 sm:px-8 filters">
+        <div className="mt-4 sm:py-6 sm:px-8 filters">
           <div className="flex flex-row items-center justify-between gap-4">
             <div className="sm:w-[24rem] w-[180px] search-bar flex relative">
               <img
@@ -127,10 +128,10 @@ export const Dashboard = () => {
               </svg>
               <span className="text-white">Filters</span>
             </div>
-            <div className="flex items-center gap-4 bg-[#354350] px-4 py-2 rounded-xl">
+            <div className="flex items-center gap-4 bg-[#354350] px-8 py-2 rounded-xl">
               <span className="text-white">Status</span>
             </div>
-            <div className="flex items-center gap-4 bg-[#354350] px-4 py-2 rounded-xl">
+            <div className="flex items-center gap-2 bg-[#354350] px-2 py-2 rounded-xl">
               <span className="text-white">15 Min</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -204,30 +205,44 @@ export const Dashboard = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col justify-between gap-8 sm:flex-row">
+        <div className="flex flex-col justify-start gap-12 px-12 my-20 sm:flex-row">
           <div
             id="recent-activity"
-            className="text-white bg-[#101a23] py-[72px] sm:py-24 px-4"
+            className="text-white bg-[#2a3642] sm:py-6 px-6 flex-1 rounded-2xl mt-20"
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between ">
               <h2 className="text-xl font-medium tracking-tighter sm:text-2xl">
                 Recent Activity
               </h2>
-              <button>See All</button>
+              <button className="border-2 border-[#ffffff] rounded-2xl py-1 px-4">
+                See All
+              </button>
             </div>
             <RecentActivity />
             <RecentActivity />
             <RecentActivity />
             <RecentActivity />
           </div>
-          <div className="text-white bg-[#101a23] py-[72px] sm:py-24 px-4">
-            <h2 className="text-xl font-medium tracking-tighter sm:text-2xl">
-              Top Volume This Week
-            </h2>
+          <div className="text-white bg-[#2a3642] sm:py-6 px-4 flex-1 rounded-2xl mt-20">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-medium tracking-tighter sm:text-2xl">
+                Top Volume This Week
+              </h2>
+              <button className="border-2 border-[#ffffff] rounded-2xl py-1 px-4">
+                See All
+              </button>
+            </div>
             <TopVolumeThisWeek />
           </div>
         </div>
         <TrustedBy />
+        <div className="relative">
+          <div className="flex items-center justify-center gap-4 mt-20 bg-[#EBEBEB] py-4 absolute top-[-200px] right-[calc(50%-370px)] px-16 rounded-xl">
+            <img className="w-[100px]" src={wallet} alt="" />
+            <p className="text-xl">Please Connect your Wallet First</p>
+            <button className="connect-btn">Connect</button>
+          </div>
+        </div>
       </div>
       <Footer />
     </div>

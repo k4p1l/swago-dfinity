@@ -75,10 +75,10 @@ export const Form = () => {
       <MainNavbar />
       <div className="`py-4 pb-12 ">
         <h2 className="mt-4 text-2xl font-bold tracking-tighter text-center sm:text-4xl">
-          Create a New Bet
+          Create a New Market
         </h2>
         <form
-          className="flex flex-col items-center justify-center gap-4 mt-8 max-w-[1000px] mx-auto"
+          className="flex flex-col items-center justify-center gap-4 mt-8 max-w-[400px] mx-auto border-2 border-[#fff] rounded-xl py-4"
           onSubmit={handleSubmit}
         >
           <div className="flex flex-col gap-2 w-[350px] ">
@@ -122,40 +122,71 @@ export const Form = () => {
               onChange={handleQuestionChange}
             />
           </div>
+
+          <div className="flex flex-col w-[350px] gap-2">
+            <label htmlFor="website" className="text-lg">
+              Website
+            </label>
+            <div className="border-2 border-[#fff] rounded-md p-2">
+              <label className="flex items-center justify-between">
+                pump.fun
+                <input
+                  name="website"
+                  type="radio"
+                  value="pump.fun"
+                  checked={website === "pump.fun"}
+                  onChange={(e) => setWebsite(e.target.value)}
+                />
+              </label>
+              <label className="flex items-center justify-between">
+                sunpump.meme
+                <input
+                  name="website"
+                  type="radio"
+                  value="sunpump.meme "
+                  checked={website === "sunpump.meme "}
+                  onChange={(e) => setWebsite(e.target.value)}
+                />
+              </label>
+            </div>
+          </div>
+
           <div className="flex flex-col w-[350px] gap-2">
             <label htmlFor="timing" className="text-lg">
               Set the Timing
             </label>
-            <label className="flex items-center justify-between">
-              5 minutes
-              <input
-                name="timing"
-                type="radio"
-                value="5"
-                checked={timing === "5"}
-                onChange={(e) => setTiming(e.target.value)}
-              />
-            </label>
-            <label className="flex items-center justify-between">
-              10 minutes
-              <input
-                name="timing"
-                type="radio"
-                value="10"
-                checked={timing === "10"}
-                onChange={(e) => setTiming(e.target.value)}
-              />
-            </label>
-            <label className="flex items-center justify-between">
-              15 minutes
-              <input
-                name="timing"
-                type="radio"
-                value="15"
-                checked={timing === "15"}
-                onChange={(e) => setTiming(e.target.value)}
-              />
-            </label>
+            <div className="border-2 border-[#fff] rounded-md p-2">
+              <label className="flex items-center justify-between">
+                5 minutes
+                <input
+                  name="timing"
+                  type="radio"
+                  value="5"
+                  checked={timing === "5"}
+                  onChange={(e) => setTiming(e.target.value)}
+                />
+              </label>
+              <label className="flex items-center justify-between">
+                10 minutes
+                <input
+                  name="timing"
+                  type="radio"
+                  value="10"
+                  checked={timing === "10"}
+                  onChange={(e) => setTiming(e.target.value)}
+                />
+              </label>
+              <label className="flex items-center justify-between">
+                15 minutes
+                <input
+                  name="timing"
+                  type="radio"
+                  value="15"
+                  checked={timing === "15"}
+                  onChange={(e) => setTiming(e.target.value)}
+                />
+              </label>
+            </div>
           </div>
 
           <div className="flex flex-col w-[350px] gap-2">
@@ -169,17 +200,7 @@ export const Form = () => {
               />
             </label>
           </div>
-          <div className="flex flex-col w-[350px] gap-2">
-            <label htmlFor="website">Website</label>
-            <input
-              placeholder="Mandatory"
-              type="text"
-              id="website"
-              className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
-              value={website}
-              onChange={(e) => setWebsite(e.target.value)}
-            />
-          </div>
+
           <div className="flex flex-col w-[350px] gap-2">
             <label htmlFor="twitter">Twitter Link</label>
             <input
@@ -191,6 +212,7 @@ export const Form = () => {
               onChange={(e) => setTwitter(e.target.value)}
             />
           </div>
+
           <div className="flex flex-col w-[350px] gap-2">
             <label htmlFor="telegram">Telegram Link</label>
             <input
@@ -201,42 +223,6 @@ export const Form = () => {
               value={telegram}
               onChange={(e) => setTelegram(e.target.value)}
             />
-          </div>
-
-          <div className="flex flex-col w-[350px] gap-2">
-            <label htmlFor="countdownStyle" className="text-lg">
-              Countdown Style
-            </label>
-            <label className="flex items-center justify-between">
-              Minimilist
-              <input
-                name="countdownStyle"
-                type="radio"
-                value="minimilist"
-                checked={countdownStyle === "minimilist"}
-                onChange={(e) => setCountdownStyle(e.target.value)}
-              />
-            </label>
-            <label className="flex items-center justify-between">
-              Flip Clock
-              <input
-                name="countdownStyle"
-                type="radio"
-                value="flipClock"
-                checked={countdownStyle === "flipClock"}
-                onChange={(e) => setCountdownStyle(e.target.value)}
-              />
-            </label>
-            <label className="flex items-center justify-between">
-              Circular Timer
-              <input
-                name="countdownStyle"
-                type="radio"
-                value="circular"
-                checked={countdownStyle === "circular"}
-                onChange={(e) => setCountdownStyle(e.target.value)}
-              />
-            </label>
           </div>
 
           <button

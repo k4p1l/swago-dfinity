@@ -5,7 +5,7 @@ import "./css/TrustedBy.css";
 
 export const TrustedBy = () => {
   return (
-    <div className="text-white bg-[#101a23] py-[20px] ">
+    <div className="text-white bg-[#101a23] py-20 pb-40">
       <div className="container trusted-by">
         <h2 className="text-xl text-center">Trusted By</h2>
         <div className="flex flex-wrap items-center justify-center gap-16 images">

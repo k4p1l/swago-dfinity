@@ -10,7 +10,7 @@ export const Footer = () => {
           <div className="row1">
             <div className="logo-wrapper">
               <img src={logo} alt="logo" />
-              <p className="text-[#f0e6ff]">
+              <p className="text-[#f0e6ff] text-center mt-4">
                 The First Memecoin Opinion Trading Platform{" "}
               </p>
             </div>
@@ -90,7 +90,7 @@ export const Footer = () => {
               </div>
             </div>
           </div>
-          <div className="row2">
+          <div className="mt-20 row2">
             <p>&copy; 2024 The Swago. All rights reserved.</p>
           </div>
         </div>

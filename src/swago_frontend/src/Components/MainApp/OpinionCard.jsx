@@ -145,11 +145,11 @@ export const OpinionCard = ({
         <MetaText>Created By {createdBy}</MetaText>
         <MetaText>VOL: ${volume}</MetaText>
       </Footer>
-      <div className="flex items-center justify-between op-card-icons">
+      <div className="flex items-center justify-between op-card-icons bg-[#375066] rounded-xl p-2 mt-2">
         <div>
           <span className="text-[#9aa0b2] text-[14px]">1 min ago</span>
         </div>
-        <div>
+        <div className="flex gap-2">
           <ion-icon name="chatbubble-ellipses-sharp"></ion-icon>
           <ion-icon name="timer-sharp"></ion-icon>
         </div>
