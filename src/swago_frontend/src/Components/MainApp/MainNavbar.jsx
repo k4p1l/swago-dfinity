@@ -6,8 +6,8 @@ import { Link as RouterLink } from "react-router-dom";
 
 export const MainNavbar = () => {
   return (
-    <div className="w-full flex flex-col sm:px-4 bg-[#1d2b39] border-b-2 border-[#c5e525]">
-      <div className="flex items-center justify-between gap-4">
+    <div className="w-full flex flex-col sm:px-4 bg-[#101a23] border-b-2 border-[#c5e525]">
+      <div className="flex items-center justify-between gap-4 pt-2">
         <div className="flex items-center gap-2 sm:gap-8 nav">
           <div className="sm:w-[6rem] w-[2rem]">
             <RouterLink to="/">
@@ -72,7 +72,7 @@ export const MainNavbar = () => {
       </div>
       <div>
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-5 py-2 text-white rounded-xl">
+          <div className="flex items-center gap-8 py-2 text-white rounded-xl">
             <a href="#" className="flex items-center gap-2 text-red-500">
               <span className="text-[8px]">🔴</span>Live
             </a>

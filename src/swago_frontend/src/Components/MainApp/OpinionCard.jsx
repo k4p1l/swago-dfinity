@@ -13,7 +13,6 @@ const CardContainer = styled.div`
   color: white;
   padding: 20px;
   width: 350px;
-  margin: 10px;
   font-family: Arial, sans-serif;
 `;
 
