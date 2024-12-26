@@ -8,7 +8,7 @@ export const RecentActivity = () => {
         src={pfp}
         alt=""
       />
-      <div>
+      <div className="border-[#fff] border-b-2">
         <p>
           TKZu...HKcR <span className="text-cyan-300">Bought</span> 1,059.61 TRX
           of SUNDOG

@@ -5,9 +5,9 @@ import "./css/TrustedBy.css";
 
 export const TrustedBy = () => {
   return (
-    <div className="text-white bg-[#101a23] py-20 pb-40">
+    <div className="text-white bg-[#101a23] py-12 pb-40">
       <div className="container trusted-by">
-        <h2 className="text-xl text-center">Trusted By</h2>
+        <h2 className="mb-10 text-3xl text-center">Trusted By</h2>
         <div className="flex flex-wrap items-center justify-center gap-16 images">
           <img src={dfinity} alt="dfinity logo" />
           <img src={icp} alt="icp logo" />

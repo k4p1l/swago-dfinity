@@ -180,12 +180,12 @@ export const Dashboard = () => {
           ))}
         </div>
         <div className="flex items-center justify-center py-6">
-          <button className="bg-[#00AEEF] text-[#E8F1F5] text-4xl px-6 py-2 rounded-md font-bold tracking-tighter text-center ">
+          <button className="bg-[#00AEEF] text-[#E8F1F5] text-3xl px-8 py-2 rounded-md font-semibold tracking-tighter text-center ">
             Show More
           </button>
         </div>
-        <div className="stay-tuned gradient-border max-w-[1400px] mx-auto py-12 mt-24">
-          <h2 className="text-2xl font-medium tracking-tighter text-center">
+        <div className="stay-tuned gradient-border max-w-[1400px] mx-auto py-10 pt-6 mt-24">
+          <h2 className="text-3xl font-semibold tracking-tighter text-center">
             Stay Tuned
           </h2>
           <p className="mt-2 text-xl text-center text-white/70">
@@ -208,7 +208,7 @@ export const Dashboard = () => {
         <div className="flex flex-col justify-start gap-12 px-12 my-20 sm:flex-row">
           <div
             id="recent-activity"
-            className="text-white bg-[#2a3642] sm:py-6 px-6 flex-1 rounded-2xl mt-20"
+            className="text-white border-2 border-[#2f9fff] bg-[#2a3642] sm:pb-10 sm:pt-6 px-6 flex-1 rounded-2xl mt-20 "
           >
             <div className="flex items-center justify-between ">
               <h2 className="text-xl font-medium tracking-tighter sm:text-2xl">
@@ -222,8 +222,10 @@ export const Dashboard = () => {
             <RecentActivity />
             <RecentActivity />
             <RecentActivity />
+            <RecentActivity />
+            <RecentActivity />
           </div>
-          <div className="text-white bg-[#2a3642] sm:py-6 px-4 flex-1 rounded-2xl mt-20">
+          <div className="text-white bg-[#2a3642] border-2 border-[#2f9fff] sm:py-6 px-4 flex-1 rounded-2xl mt-20">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-medium tracking-tighter sm:text-2xl">
                 Top Volume This Week
@@ -237,9 +239,12 @@ export const Dashboard = () => {
         </div>
         <TrustedBy />
         <div className="relative">
-          <div className="flex items-center justify-center gap-4 mt-20 bg-[#EBEBEB] py-4 absolute top-[-200px] right-[calc(50%-370px)] px-16 rounded-xl">
+          <div className="flex items-center justify-center gap-4 mt-20 bg-[#EBEBEB] py-4 absolute top-[-200px] right-[calc(50%-390px)] px-16 rounded-xl">
             <img className="w-[100px]" src={wallet} alt="" />
-            <p className="text-xl">Please Connect your Wallet First</p>
+            <p className="text-2xl font-bold">
+              Please <span className="text-[#0638ff]">Connect</span> your Wallet
+              First
+            </p>
             <button className="connect-btn">Connect</button>
           </div>
         </div>
