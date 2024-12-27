@@ -90,20 +90,34 @@ export const Dashboard = () => {
   return (
     <div className="overflow-hidden dashboard-container">
       <MainNavbar />
-      <div className="bg-[#101a23] pt-10">
+      <div className="flex items-center justify-center gap-4 bg-[#101a23] py-8">
+        <div className="bg-[#4097F3] py-2 px-8 rounded-md">
+          <p>
+            TK2n...CBAQ{" "}
+            <span className="text-[#FFEA00]">Sold 1,273.8 TRX of UNWUKONG</span>
+          </p>
+        </div>
+        <div className="bg-[#FB84CA] py-2 px-8 rounded-md">
+          <p>
+            TKZu...HKcR{" "}
+            <span className="text-[#FFEA00]">Sold 1,121.9 TRX of UNDOG</span>
+          </p>
+        </div>
+      </div>
+      <div className="bg-[#101a23]">
         <CustomSlider />
         <div className="mt-4 sm:py-6 sm:px-8 filters">
           <div className="flex flex-row items-center justify-between gap-4">
             <div className="sm:w-[24rem] w-[180px] search-bar flex relative">
               <img
-                className="absolute right-0 mr-2 mt-[12px] scale-150"
+                className="absolute left-2 mt-[12px] scale-150"
                 src={searchIcon}
                 alt=""
               />
               <input
                 type="text"
                 placeholder="Search token or address"
-                className="w-full input py-2 px-4 outline-none rounded-lg text-[#E4E2E2] bg-[#293643] border-2 border-[#f5f5f5]"
+                className="w-full input py-2 px-8  outline-none rounded-lg text-[#E4E2E2] bg-[#293643] border-2 border-[#f5f5f5]"
               />
             </div>
             <div className="flex items-center gap-4 bg-[#354350] px-4 py-2 rounded-xl">

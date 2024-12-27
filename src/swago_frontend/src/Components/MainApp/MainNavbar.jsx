@@ -3,6 +3,7 @@ import logo from "../../assets/images/logo.png";
 import activity from "../../assets/images/activity.png";
 import leaderboard from "../../assets/images/leaderboard.png";
 import { Link as RouterLink } from "react-router-dom";
+import searchIcon from "../../assets/images/search.png";
 
 export const MainNavbar = () => {
   return (
@@ -14,11 +15,16 @@ export const MainNavbar = () => {
               <img className="w-[70%]" src={logo} alt="" />
             </RouterLink>
           </div>
-          <div className="sm:w-[32rem] w-[140px] search-bar">
+          <div className="sm:w-[32rem] w-[140px] search-bar flex relative">
+            <img
+              className="absolute left-1 mt-[8px] w-[28px]"
+              src={searchIcon}
+              alt=""
+            />
             <input
               type="text"
               placeholder="Search token or address"
-              className="w-full input py-1 px-1 sm:py-2 sm:px-4 outline-none rounded-lg text-[#E4E2E2] bg-[#293643] border-2 border-[#f5f5f5]"
+              className="w-full input py-1 px-1 sm:py-2 sm:px-8 outline-none rounded-lg text-[#E4E2E2] bg-[#293643] border-2 border-[#f5f5f5]"
             />
           </div>
           <div className="flex flex-col items-center sm:gap-2">
