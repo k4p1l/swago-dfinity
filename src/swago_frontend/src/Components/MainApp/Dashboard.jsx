@@ -8,8 +8,8 @@ import { CustomSlider } from "./CustomSlider";
 import { OpinionCard } from "./OpinionCard";
 import { RecentActivity } from "./RecentActivity";
 import { TopVolumeThisWeek } from "./TopVolumeThisWeek";
-import { Footer } from "../Footer";
-import { TrustedBy } from "../TrustedBy";
+import { Footer } from "./Footer";
+import { TrustedBy } from "./TrustedBy";
 export const Dashboard = () => {
   const cardData = [
     {

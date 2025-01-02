@@ -1,7 +1,7 @@
-import dfinity from "../assets/images/dfinity logo 1.png";
-import icp from "../assets/images/download 1.png";
-import icp_in from "../assets/images/icp in 1.png";
-import "./css/TrustedBy.css";
+import dfinity from "../../assets/images/dfinity logo 1.png";
+import icp from "../../assets/images/download 1.png";
+import icp_in from "../../assets/images/icp in 1.png";
+import "../css/TrustedBy.css";
 
 export const TrustedBy = () => {
   return (

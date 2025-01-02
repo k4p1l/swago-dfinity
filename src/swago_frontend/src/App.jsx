@@ -1,38 +1,17 @@
 import * as swago_backend from "declarations/swago_backend";
 import React, { useEffect } from "react";
-import { Banner } from "./Components/Banner";
-import { Navbar } from "./Components/Navbar";
-import { Hero } from "./Components/Hero";
-import { TrustedBy } from "./Components/TrustedBy";
-import { Features } from "./Components/Features";
-import { ProductShowcase } from "./Components/ProductShowcase";
-import { FAQs } from "./Components/FAQs";
-import { Footer } from "./Components/Footer";
 import { Dashboard } from "./Components/MainApp/Dashboard";
 import { Login } from "./Components/MainApp/Login";
 import { Form } from "./Components/MainApp/Form";
+import { Profile } from "./Components/MainApp/Profile";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { defaultProviders } from "@connect2ic/core/providers";
 import { createClient } from "@connect2ic/core";
 import { Connect2ICProvider } from "@connect2ic/react";
+import { AuthProvider } from "./use-auth-client";
 import Lenis from "lenis";
 import "./index.css";
 import "./input.css";
-
-function LandingPage() {
-  return (
-    <div>
-      <Banner />
-      <Navbar />
-      <Hero />
-      <TrustedBy />
-      <Features />
-      <ProductShowcase />
-      <FAQs />
-      <Footer />
-    </div>
-  );
-}
 
 function App() {
   useEffect(() => {
@@ -56,6 +35,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/login" element={<Login />} />
           <Route path="/form" element={<Form />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </Router>
     </>
@@ -70,7 +50,9 @@ const client = createClient({
 });
 
 export default () => (
-  <Connect2ICProvider client={client}>
-    <App />
-  </Connect2ICProvider>
+  <AuthProvider>
+    <Connect2ICProvider client={client}>
+      <App />
+    </Connect2ICProvider>
+  </AuthProvider>
 );

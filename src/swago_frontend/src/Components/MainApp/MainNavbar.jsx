@@ -1,11 +1,28 @@
+import React, { useEffect, useState } from "react";
 import "../css/Dashboard.css";
+import "../css/Navbar.css";
 import logo from "../../assets/images/logo.png";
 import activity from "../../assets/images/activity.png";
 import leaderboard from "../../assets/images/leaderboard.png";
 import { Link as RouterLink } from "react-router-dom";
 import searchIcon from "../../assets/images/search.png";
+import { useConnect } from "@connect2ic/react";
+import { useAuth } from "../../use-auth-client";
 
 export const MainNavbar = () => {
+  const { isConnected, disconnect } = useConnect();
+  const { isAuthenticated, identity, login, logout } = useAuth();
+
+  //for dropdown menu
+  const [isOpen, setIsOpen] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState(null);
+  useEffect(() => {
+    if (isConnected) {
+      const randomAvatar = `https://robohash.org/${Math.random()}.png?size=50x50`;
+      setAvatarUrl(randomAvatar);
+    }
+  }, [isConnected]);
+
   return (
     <div className="w-full flex flex-col sm:px-4 bg-[#101a23] border-b-4 border-[#2f9fff]">
       <div className="flex items-center justify-between gap-4 pt-2">
@@ -33,11 +50,10 @@ export const MainNavbar = () => {
               width="20"
               height="20"
               fill="#f5f5f5"
-              class="bi bi-graph-up"
               viewBox="0 0 16 16"
             >
               <path
-                fill-rule="evenodd"
+                fillRule="evenodd"
                 d="M0 0h1v15h15v1H0zm14.817 3.113a.5.5 0 0 1 .07.704l-4.5 5.5a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61 4.15-5.073a.5.5 0 0 1 .704-.07"
               />
             </svg>
@@ -51,7 +67,6 @@ export const MainNavbar = () => {
               width="20"
               height="20"
               fill="#f5f5f5"
-              class="bi bi-bar-chart-line-fill"
               viewBox="0 0 16 16"
             >
               <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1z" />
@@ -62,18 +77,54 @@ export const MainNavbar = () => {
           </div>
         </div>
         <div className="flex items-center gap-2 sm:gap-8">
-          <div>
-            <RouterLink to="/login">
-              <button className="login-btn">Login</button>
-            </RouterLink>
-          </div>
-          <div>
+          {isAuthenticated ? (
+            <div className="flex items-center gap-2">
+              <RouterLink to="/">
+                <button className="login-btn" onClick={logout}>
+                  Logout
+                </button>
+              </RouterLink>
+              <div className="flex ">
+                <img
+                  src={avatarUrl}
+                  alt="avatar"
+                  style={{ width: 40, borderRadius: "12px" }}
+                />
+                <svg
+                  onClick={() => setIsOpen(!isOpen)}
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 -960 960 960"
+                  width="38px"
+                  fill="#FFFFFF"
+                  className="cursor-pointer dropdown"
+                >
+                  <path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" />
+                </svg>
+                <div className={`dropdown-content ${isOpen ? "show" : ""}`}>
+                  <RouterLink to="/profile">Profile</RouterLink>
+                  <a href="">Settings</a>
+                  <a href="">Waitlist</a>
+                  <a href="">Learn</a>
+                  <a href="">Documentation</a>
+                  <a href="">Terms of Use</a>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <RouterLink to="/login">
+                <button className="login-btn">Login</button>
+              </RouterLink>
+            </div>
+          )}
+
+          {/* <div>
             <div className="hamburger">
               <span></span>
               <span></span>
               <span></span>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
       <div>

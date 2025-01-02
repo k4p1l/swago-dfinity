@@ -60,4 +60,8 @@ actor {
       return Array.filter<Create_Betting>(user_Betting ,  func x=x.mail == mail);
     };
 
+    public shared (msg) func whoami() : async Principal {
+        msg.caller
+    };
+
 };
