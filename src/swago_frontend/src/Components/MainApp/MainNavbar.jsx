@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../css/Dashboard.css";
 import "../css/Navbar.css";
 import logo from "../../assets/images/logo.png";
+import { ConnectButton, ConnectDialog } from "@connect2ic/react";
 import activity from "../../assets/images/activity.png";
 import leaderboard from "../../assets/images/leaderboard.png";
 import { Link as RouterLink } from "react-router-dom";
@@ -84,6 +85,8 @@ export const MainNavbar = () => {
                   Logout
                 </button>
               </RouterLink>
+              <ConnectButton />
+              <ConnectDialog />
               <div className="flex ">
                 <img
                   src={avatarUrl}

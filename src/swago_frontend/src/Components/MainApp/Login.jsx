@@ -17,18 +17,17 @@ export const Login = () => {
           <label className="login-option">Web3 Wallet</label>
 
           {isAuthenticated ? (
-            <RouterLink to="/">
-              <button onClick={logout}>Logout</button>
-            </RouterLink>
+            <div>
+              <RouterLink to="/">
+                <button onClick={logout}>Logout</button>
+              </RouterLink>
+            </div>
           ) : (
             <RouterLink to="/">
               <button onClick={login}>Login</button>
             </RouterLink>
           )}
-
-          {/* <ConnectButton /> */}
         </div>
-        {/* <ConnectDialog /> */}
       </div>
     </div>
   );

@@ -5,7 +5,10 @@ import { Login } from "./Components/MainApp/Login";
 import { Form } from "./Components/MainApp/Form";
 import { Profile } from "./Components/MainApp/Profile";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { defaultProviders } from "@connect2ic/core/providers";
+import { AstroX } from "@connect2ic/core/providers/astrox";
+import { PlugWallet } from "@connect2ic/core/providers/plug-wallet";
+import { StoicWallet } from "@connect2ic/core/providers/stoic-wallet";
+
 import { createClient } from "@connect2ic/core";
 import { Connect2ICProvider } from "@connect2ic/react";
 import { AuthProvider } from "./use-auth-client";
@@ -46,7 +49,7 @@ const client = createClient({
   canisters: {
     swago_backend,
   },
-  providers: defaultProviders,
+  providers: [new AstroX(), new PlugWallet(), new StoicWallet()],
 });
 
 export default () => (
