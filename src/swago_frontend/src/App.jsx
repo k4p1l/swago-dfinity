@@ -45,11 +45,31 @@ function App() {
   );
 }
 
+const LOCAL_HOST = "http://localhost:4943";
+const IC_HOST = "https://mainnet.dfinity.network";
+const isLocal = process.env.DFX_NETWORK === "local";
+
 const client = createClient({
   canisters: {
     swago_backend,
   },
-  providers: [new AstroX(), new PlugWallet(), new StoicWallet()],
+  providers: [
+    new PlugWallet({
+      host: isLocal ? LOCAL_HOST : IC_HOST,
+      whitelist: [process.env.CANISTER_ID_SWAGO_BACKEND], // Add your canister ID
+    }),
+    new AstroX({
+      host: isLocal ? LOCAL_HOST : IC_HOST,
+      dev: isLocal,
+    }),
+    new StoicWallet({
+      host: isLocal ? LOCAL_HOST : IC_HOST,
+      dev: isLocal,
+    }),
+  ],
+  globalProviderConfig: {
+    host: isLocal ? LOCAL_HOST : IC_HOST,
+  },
 });
 
 export default () => (
