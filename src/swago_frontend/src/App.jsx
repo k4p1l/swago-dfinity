@@ -4,6 +4,7 @@ import { Dashboard } from "./Components/MainApp/Dashboard";
 import { Login } from "./Components/MainApp/Login";
 import { Form } from "./Components/MainApp/Form";
 import { Profile } from "./Components/MainApp/Profile";
+import { TransactionHistory } from "./Components/MainApp/TransactionHistory";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AstroX } from "@connect2ic/core/providers/astrox";
 import { PlugWallet } from "@connect2ic/core/providers/plug-wallet";
@@ -39,6 +40,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/form" element={<Form />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/transaction-history" element={<TransactionHistory />} />
         </Routes>
       </Router>
     </>

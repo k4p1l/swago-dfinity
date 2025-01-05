@@ -23,18 +23,22 @@ export const Form = () => {
   const [count, setCount] = useState(200);
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
+    const { name, value, type, files } = e.target;
 
-    if (name === "image" && files) {
-      setFormData((prev) => ({ ...prev, image: files[0] }));
+    if (type === "file" && files) {
+      setFormData((prev) => ({ ...prev, [name]: files[0] }));
     } else if (name === "question") {
       setCount(200 - value.length);
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    } else if (type === "radio") {
       setFormData((prev) => ({ ...prev, [name]: value }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
-  };
 
+    // Debug log
+    console.log(`Field ${name} changed to:`, value);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -131,6 +135,7 @@ export const Form = () => {
               <input
                 type="text"
                 id="name"
+                name="name"
                 className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
                 value={formData.name}
                 onChange={handleChange}
@@ -143,6 +148,7 @@ export const Form = () => {
               <input
                 type="email"
                 id="email"
+                name="email"
                 className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
                 value={formData.email}
                 onChange={handleChange}
@@ -159,6 +165,7 @@ export const Form = () => {
               <input
                 maxLength={200}
                 type="text"
+                name="question"
                 id="question"
                 className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
                 value={formData.question}
@@ -238,6 +245,7 @@ export const Form = () => {
                 <input
                   className="bg-[#3e5f7c] py-2 px-2 rounded-md"
                   type="file"
+                  name="image"
                   id="image"
                   onChange={handleChange}
                 />
@@ -250,6 +258,7 @@ export const Form = () => {
                 placeholder="Optional"
                 type="text"
                 id="twitter"
+                name="twitter"
                 className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
                 value={formData.twitter}
                 onChange={handleChange}
@@ -262,6 +271,7 @@ export const Form = () => {
                 placeholder="Optional"
                 type="text"
                 id="telegram"
+                name="telegram"
                 className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
                 value={formData.telegram}
                 onChange={handleChange}
