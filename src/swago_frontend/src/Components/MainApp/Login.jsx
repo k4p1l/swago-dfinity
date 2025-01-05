@@ -9,12 +9,11 @@ export const Login = () => {
   return (
     <div>
       <MainNavbar />
-      <div className="container">
-        <h2 className="text-2xl font-bold tracking-tighter text-center sm:text-4xl">
-          Login
-        </h2>
-        <div className="flex flex-col items-center justify-center gap-4 mt-8 login-options">
-          <label className="login-option">Web3 Wallet</label>
+      <div className="container bg-[#101a23] min-h-screen text-white">
+        <div className="flex flex-col items-center justify-center gap-4 login-options">
+          <h1 className="login-option font-[Inter] sm:text-4xl text-2xl tracking-tighter font-semibold mt-8">
+            Sign In with your Internet Identity
+          </h1>
 
           {isAuthenticated ? (
             <div>
@@ -24,7 +23,12 @@ export const Login = () => {
             </div>
           ) : (
             <RouterLink to="/">
-              <button onClick={login}>Login</button>
+              <button
+                className="px-8 py-2 mt-8 font-semibold bg-[#2f9fff] text-[#101a23] rounded-3xl hover:bg-[#2788dc] hover:text-[#101a23] transition-all duration-200"
+                onClick={login}
+              >
+                Login
+              </button>
             </RouterLink>
           )}
         </div>

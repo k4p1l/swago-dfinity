@@ -5,7 +5,7 @@ import { ConnectButton, ConnectDialog } from "@connect2ic/react";
 import { swago_backend } from "../../../../declarations/swago_backend";
 
 export const Form = () => {
-  const { isConnected, principal } = useConnect();
+  const { isConnected } = useConnect();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [question, setQuestion] = useState("");
