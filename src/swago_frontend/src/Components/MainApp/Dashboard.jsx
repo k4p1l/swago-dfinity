@@ -1,3 +1,5 @@
+import React, { useState, useEffect } from "react";
+import { getAllBettings } from "../../utils/actor";
 import "../css/Dashboard.css";
 import top from "../../assets/images/top.png";
 import image from "../../assets/images/1330515.jpg";
@@ -87,6 +89,28 @@ export const Dashboard = () => {
 
     // Add more cards here
   ];
+
+  const [bettings, setBettings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchBettings = async () => {
+      try {
+        const result = await getAllBettings();
+        console.log("Fetched bettings:", result);
+        setBettings(result);
+      } catch (err) {
+        console.error("Error fetching bettings:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBettings();
+  }, []);
+
   return (
     <div className="overflow-hidden dashboard-container">
       <MainNavbar />
@@ -179,20 +203,33 @@ export const Dashboard = () => {
             </div>
           </div>
         </div>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gap: "20px",
-            padding: "20px",
-            backgroundColor: "#0f172a",
-            minHeight: "45vh",
-          }}
-        >
-          {cardData.map((data, index) => (
-            <OpinionCard key={index} {...data} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="text-center py-20">
+            <p className="text-white">Loading bettings...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-20">
+            <p className="text-red-500">Error: {error}</p>
+          </div>
+        ) : (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+              gap: "20px",
+              padding: "20px",
+              backgroundColor: "#0f172a",
+              minHeight: "45vh",
+            }}
+          >
+            {bettings.map((betting, index) => (
+              <OpinionCard
+                key={`${betting.betting_id.toString()}-${index}`}
+                {...betting}
+              />
+            ))}
+          </div>
+        )}
         <div className="flex items-center justify-center py-6">
           <button className="bg-[#00AEEF] text-[#E8F1F5] text-3xl px-8 py-2 rounded-md font-semibold tracking-tighter text-center ">
             Show More
