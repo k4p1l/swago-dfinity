@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getAllBettings } from "../../utils/actor";
+import { ConnectButton, ConnectDialog } from "@connect2ic/react";
 import "../css/Dashboard.css";
 import top from "../../assets/images/top.png";
 import image from "../../assets/images/1330515.jpg";
@@ -296,7 +297,10 @@ export const Dashboard = () => {
               Please <span className="text-[#0638ff]">Connect</span> your Wallet
               First
             </p>
-            <button className="connect-btn">Connect</button>
+            <button className="connect-btn">
+              <ConnectButton />
+            </button>
+            <ConnectDialog />
           </div>
         </div>
       </div>
