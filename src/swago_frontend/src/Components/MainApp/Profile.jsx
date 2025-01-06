@@ -2,10 +2,10 @@ import { MainNavbar } from "./MainNavbar";
 import pfp from "../../assets/images/1330515.jpg";
 import { useConnect } from "@connect2ic/react";
 import { useAuth } from "../../use-auth-client";
-import transactionIcon from "../../assets/icons/transaction.png";
-import leaderboardIcon from "../../assets/icons/leaderboard.png";
-import eventsIcons from "../../assets/icons/events.png";
-import eventsCreatedIcon from "../../assets/icons/Rectangle.png";
+import transactionIcon from "../../assets/icons/transaction.svg";
+import leaderboardIcon from "../../assets/icons/leaderboard.svg";
+import eventsIcons from "../../assets/icons/participated.svg";
+import eventsCreatedIcon from "../../assets/icons/created.svg";
 import { Link as RouterLink } from "react-router-dom";
 export const Profile = () => {
   // const { isConnected, disconnect, principal } = useConnect();
@@ -35,26 +35,34 @@ export const Profile = () => {
           <RouterLink to="/transaction-history">
             <div className="w-[200px] h-[200px]  rounded-lg flex justify-center items-center flex-col gap-4 text-white">
               <div className="w-[90px] h-[90px] bg-[#ffffff] rounded-full flex justify-center items-center">
-                <img className="" src={transactionIcon} alt="" />
+                <img
+                  className="w-[38px] h-[38px]"
+                  src={transactionIcon}
+                  alt=""
+                />
               </div>
               <p>Transaction History</p>
             </div>
           </RouterLink>
           <div className="w-[200px] h-[200px]  rounded-lg flex justify-center items-center flex-col gap-4 text-white">
             <div className="w-[90px] h-[90px] bg-[#ffffff] rounded-full flex justify-center items-center">
-              <img src={eventsIcons} alt="" />
+              <img src={eventsIcons} className="w-[38px] h-[38px]" alt="" />
             </div>
             <p>Events Participated</p>
           </div>
           <div className="w-[200px] h-[200px]  rounded-lg flex justify-center items-center flex-col gap-4 text-white">
             <div className="w-[90px] h-[90px] bg-[#ffffff] rounded-full flex justify-center items-center">
-              <img src={eventsCreatedIcon} alt="" />
+              <img
+                src={eventsCreatedIcon}
+                className="w-[38px] h-[38px]"
+                alt=""
+              />
             </div>
             <p>Events Created</p>
           </div>
           <div className="w-[200px] h-[200px]  rounded-lg flex justify-center items-center flex-col gap-4 text-white">
             <div className="w-[90px] h-[90px] bg-[#ffffff] rounded-full flex justify-center items-center">
-              <img src={leaderboardIcon} alt="" />
+              <img src={leaderboardIcon} className="w-[38px] h-[38px]" alt="" />
             </div>
             <p>Leaderboard</p>
           </div>
