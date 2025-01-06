@@ -12,7 +12,7 @@
   width: 100%;
   opacity: 0.9;
   border-radius: 12px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   font-family: "Roboto", sans-serif;
 }
@@ -53,7 +53,7 @@
 .filters span {
   font-family: Inter;
   font-weight: 600;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .filters img {
@@ -121,13 +121,13 @@
   z-index: -1; /* Ensures it goes behind the content */
 }
 
-.connect-btn {
+/* .connect-btn {
   background: linear-gradient(to left, #3fa4eb, #6f1ee0);
   padding: 6px 16px;
   font-size: 24px;
   color: white;
   border-radius: 12px;
-}
+} */
 
 @media (max-width: 768px) {
   .nav {

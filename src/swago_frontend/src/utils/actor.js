@@ -6,7 +6,7 @@ const isLocalEnv = process.env.DFX_NETWORK === "local";
 // Create an actor to interact with the backend
 export const createActor = async () => {
   // For local development
-  const host = "http://localhost:39191";
+  const host = "http://localhost:36967";
 
   // Initialize an agent
   const agent = new HttpAgent({
@@ -27,7 +27,6 @@ export const createActor = async () => {
   return actor;
 };
 
-// Helper function to get all bettings
 export const getAllBettings = async () => {
   try {
     const actor = await createActor();
@@ -39,7 +38,6 @@ export const getAllBettings = async () => {
   }
 };
 
-// Add more helper functions for other backend interactions
 export const createBetting = async (bettingData) => {
   try {
     const actor = await createActor();
@@ -50,5 +48,3 @@ export const createBetting = async (bettingData) => {
     throw error;
   }
 };
-
-// You can add more functions here for other backend interactions

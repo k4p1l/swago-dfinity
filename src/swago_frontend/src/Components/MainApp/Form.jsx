@@ -1,4 +1,5 @@
 import { MainNavbar } from "./MainNavbar";
+import { Principal } from "@dfinity/principal";
 import { useState } from "react";
 import { useConnect } from "@connect2ic/react";
 import { ConnectButton, ConnectDialog } from "@connect2ic/react";

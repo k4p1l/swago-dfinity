@@ -153,10 +153,10 @@
   font-weight: 700;
   font-family: inter;
   border: none;
-  padding: 10px 20px;
+  padding: 6px 16px;
   display: flex;
   align-items: center;
-  border-radius: 40px;
+  border-radius: 12px;
   cursor: pointer;
 }
 

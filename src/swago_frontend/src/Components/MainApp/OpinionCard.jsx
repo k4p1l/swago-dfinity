@@ -12,7 +12,7 @@ const CardContainer = styled.div`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
   color: white;
   padding: 20px;
-  width: 350px;
+  width: 330px;
   font-family: Arial, sans-serif;
 `;
 
@@ -55,7 +55,7 @@ const Button = styled.button`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 22px;
+  padding: 8px 18px;
   margin: 5px;
   border: none;
   border-radius: 8px;
