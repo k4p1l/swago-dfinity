@@ -160,7 +160,7 @@ export const MainNavbar = () => {
               </svg>
             </a>
             <a
-              href="https://discord.com/invite/pnrD89pC"
+              href="https://t.me/theswago"
               target="_blank"
               rel="noreferrer"
               className="border-2 border-[#f5f5f5] rounded-lg px-[10px]"
@@ -177,7 +177,7 @@ export const MainNavbar = () => {
               </svg>
             </a>
             <a
-              href="https://t.me/theswago"
+              href="https://discord.com/invite/3R2z9Bat"
               target="_blank"
               rel="noreferrer"
               className="border-2 border-[#f5f5f5] rounded-lg px-[10px]"
