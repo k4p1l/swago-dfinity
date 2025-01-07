@@ -23,7 +23,7 @@ export const Profile = () => {
               className="w-[250px] h-[250px] object-cover rounded-full"
             />
             <div className="flex flex-col gap-6">
-              <h1 className="text-4xl font-semibold mt-2">Yogita</h1>
+              <h1 className="text-4xl font-semibold mt-2">User</h1>
               <p className="text-[#c1c1c1] bg-[#354A63] px-4 py-2 rounded-3xl">
                 {principal
                   ? principal.toText().slice(0, 11) + "..."

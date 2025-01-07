@@ -226,7 +226,7 @@ export const Dashboard = () => {
             >
               {bettings.map((betting, index) => (
                 <OpinionCard
-                  key={`${betting.betting_id.toString()}-${index}`}
+                  key={`${betting?.betting_id?.toString() ?? index}-${index}`}
                   {...betting}
                 />
               ))}

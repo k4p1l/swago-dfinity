@@ -44,7 +44,6 @@ actor {
     user_principal:Principal;
     name :Text;
     question:Text;
-    bet_Type:Nat64;
     set_Time:Time.Time;
     image:Blob;
     twitter_link:Text;
@@ -57,7 +56,6 @@ actor {
     user_principal:Principal;
     name :Text;
     question:Text;
-    bet_Type:Nat64;
     start_time:Time.Time;
     set_Time:Time.Time;
     image:Blob;
@@ -73,11 +71,11 @@ actor {
   var user_Betting:[Create_Betting_data] = [];
 
   public func add_Betting(betting :Create_Betting ):async Text {
+    let current_betting_id = betting_id_no;
     let new_betting = {
       user_principal=betting.user_principal;
       name = betting.name;
       question=betting.question;
-      bet_Type=betting.bet_Type;
       start_time:Time.Time = Time.now()/1_000_000_000;
       set_Time=(betting.set_Time)/ 1_000_000_000;
       image=betting.image;
@@ -85,7 +83,7 @@ actor {
       telegram_link = betting.telegram_link;
       website_link = betting.website_link;
       countdown_style = betting.countdown_style;
-      betting_id:Nat64 = await get_Betting_no();
+      betting_id = current_betting_id;
       status:Nat64 = 0;
     };
     user_Betting := Array.append<Create_Betting_data>(user_Betting , [new_betting]);

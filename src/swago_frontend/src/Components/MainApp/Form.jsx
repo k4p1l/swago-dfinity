@@ -68,7 +68,7 @@ export const Form = () => {
         mail: formData.email,
         name: formData.name,
         question: formData.question,
-        set_timing: BigInt(formData.timing),
+        set_Time: BigInt(formData.timing),
         image: imageBlob,
         twitter_link: formData.twitter,
         telegram_link: formData.telegram,

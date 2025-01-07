@@ -3,6 +3,63 @@ import styled from "styled-components";
 import doubleArrowUp from "../../assets/images/double arrow.png";
 import doubleArrowDown from "../../assets/images/double arrow down.png";
 
+// Add this utility function at the top of your file
+const arrayBufferToImageUrl = (arrayBuffer) => {
+  // Convert the array buffer to base64 in chunks
+  const chunk_size = 8192;
+  const bytes = new Uint8Array(arrayBuffer);
+  let binary = "";
+
+  for (let i = 0; i < bytes.length; i += chunk_size) {
+    const chunk = bytes.slice(i, i + chunk_size);
+    binary += String.fromCharCode.apply(null, chunk);
+  }
+
+  // Convert to base64
+  const base64 = btoa(binary);
+  return `data:image/jpeg;base64,${base64}`;
+};
+
+const ImageDisplay = ({ imageData }) => {
+  const [imageUrl, setImageUrl] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (imageData) {
+      try {
+        setLoading(true);
+        // Check if imageData is a Uint8Array
+        if (imageData instanceof Uint8Array) {
+          const url = arrayBufferToImageUrl(imageData);
+          setImageUrl(url);
+        } else {
+          // If it's already a blob or other format
+          setImageUrl(URL.createObjectURL(new Blob([imageData])));
+        }
+        setLoading(false);
+      } catch (err) {
+        console.error("Image conversion error:", err);
+        setError("Failed to load image");
+        setLoading(false);
+      }
+    }
+  }, [imageData]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
+  return imageUrl ? (
+    <img
+      src={imageUrl}
+      alt="Betting image"
+      className="w-full h-auto rounded-lg"
+      style={{ maxHeight: "200px", objectFit: "cover" }}
+      onError={() => setError("Failed to load image")}
+    />
+  ) : null;
+};
+
 // Styled components for styling
 const CardContainer = styled.div`
   position: relative;
@@ -81,15 +138,13 @@ const MetaText = styled.small`
 `;
 
 export const OpinionCard = ({
+  name,
+  question,
+  set_Time,
   image,
-  title,
-  timerDuration,
-  progressYes,
-  progressNo,
-  createdBy,
-  volume,
+  betting_id,
 }) => {
-  const [timer, setTimer] = useState(timerDuration);
+  const [timer, setTimer] = useState(set_Time);
 
   // Timer countdown logic
   useEffect(() => {
@@ -103,16 +158,13 @@ export const OpinionCard = ({
     <CardContainer>
       {/* Header */}
       <Header>
-        <img
-          src={image}
-          alt="avatar"
-          style={{ width: 120, borderRadius: "12px" }}
-        />
+        <ImageDisplay imageData={image} />
         <Timer>Timer {String(timer).padStart(2, "0")}:00</Timer>
       </Header>
 
       {/* Title */}
-      <Title>{title}</Title>
+      <Title>{name}</Title>
+      <p>{question}</p>
 
       {/* Buy Options */}
       <div className="flex justify-between">
@@ -135,14 +187,14 @@ export const OpinionCard = ({
       </div>
 
       {/* Progress Bars */}
-      <ProgressBar>
+      {/* <ProgressBar>
         <ProgressFill color="green" progress={progressYes}></ProgressFill>
-      </ProgressBar>
+      </ProgressBar> */}
 
       {/* Footer */}
       <Footer>
-        <MetaText>Created By {createdBy}</MetaText>
-        <MetaText>VOL: ${volume}</MetaText>
+        <MetaText>Created By {}</MetaText>
+        <MetaText>VOL: ${betting_id}</MetaText>
       </Footer>
       <div className="flex items-center justify-between op-card-icons bg-[#375066] rounded-xl p-2 mt-2">
         <div>
