@@ -143,7 +143,7 @@ export const MainNavbar = () => {
           <div className="flex items-center gap-4 px-4 py-1 text-white rounded-xl">
             Support
             <a
-              href="#"
+              href="https://x.com/TheSwago_"
               target="_blank"
               rel="noreferrer"
               className="border-2 border-[#f5f5f5] rounded-lg px-[10px]"
@@ -160,7 +160,7 @@ export const MainNavbar = () => {
               </svg>
             </a>
             <a
-              href="#"
+              href="https://discord.com/invite/pnrD89pC"
               target="_blank"
               rel="noreferrer"
               className="border-2 border-[#f5f5f5] rounded-lg px-[10px]"
@@ -177,7 +177,7 @@ export const MainNavbar = () => {
               </svg>
             </a>
             <a
-              href="#"
+              href="https://t.me/theswago"
               target="_blank"
               rel="noreferrer"
               className="border-2 border-[#f5f5f5] rounded-lg px-[10px]"
