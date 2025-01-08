@@ -116,13 +116,13 @@ export const Dashboard = () => {
     <div className="overflow-hidden dashboard-container">
       <MainNavbar />
       <div className="flex items-center justify-center gap-4 bg-[#101a23] py-4">
-        <div className="bg-[#4097F3] py-2 px-8 rounded-md">
+        <div className="bg-[#4097F3] py-2 px-8 rounded-md text-xs">
           <p>
             TK2n...CBAQ{" "}
             <span className="text-[#FFEA00]">Sold 1,273.8 TRX of UNWUKONG</span>
           </p>
         </div>
-        <div className="bg-[#FB84CA] py-2 px-8 rounded-md">
+        <div className="bg-[#FB84CA] py-2 px-8 text-xs rounded-md">
           <p>
             TKZu...HKcR{" "}
             <span className="text-[#FFEA00]">Sold 1,121.9 TRX of UNDOG</span>
@@ -260,7 +260,7 @@ export const Dashboard = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col justify-start gap-12 px-12 my-20 sm:flex-row">
+        <div className="flex flex-col justify-start gap-12 px-16 my-20 sm:flex-row">
           <div
             id="recent-activity"
             className="text-white border-2 border-[#2f9fff] bg-[#2a3642] sm:pb-10 sm:pt-6 px-6 flex-1 rounded-2xl mt-20 "
