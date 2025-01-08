@@ -62,13 +62,16 @@ export const Form = () => {
         reader.readAsArrayBuffer(formData.image);
       });
 
+      const timeInNanos =
+        BigInt(formData.timing) * BigInt(60) * BigInt(1_000_000_000);
+
       // Prepare betting data
       const bettingData = {
         user_principal: Principal.fromText(principal),
         mail: formData.email,
         name: formData.name,
         question: formData.question,
-        set_Time: BigInt(formData.timing),
+        set_Time: timeInNanos,
         image: imageBlob,
         twitter_link: formData.twitter,
         telegram_link: formData.telegram,
@@ -243,6 +246,9 @@ export const Form = () => {
             <div className="flex flex-col w-[350px] gap-2">
               <label htmlFor="image">
                 Image
+                <p className="text-xs text-red-600 mb-2">
+                  *Image should be less than 2MB.
+                </p>
                 <input
                   className="bg-[#3e5f7c] py-2 px-2 rounded-md"
                   type="file"

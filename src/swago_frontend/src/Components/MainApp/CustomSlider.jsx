@@ -5,6 +5,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../css/Slider.css";
 import logo from "../../assets/images/logo.png";
+import mascot from "../../assets/images/Gogo and Nono.png";
 
 export const CustomSlider = () => {
   const settings = {
@@ -24,9 +25,6 @@ export const CustomSlider = () => {
         {/* Slide 1 */}
         <div className="slide">
           <div className="content">
-            <div className="image-section">
-              <img className="w-[32vh]" src={logo} alt="Logo" />
-            </div>
             <div className="text-section">
               <h2 className="text-[#FFEA00] sm:text-4xl text-xl py-2 font-bold ">
                 [ Start a New Market ]
@@ -40,6 +38,9 @@ export const CustomSlider = () => {
               <RouterLink to="/form">
                 <button className="start-button">Start</button>
               </RouterLink>
+            </div>
+            <div className="image-section">
+              <img className="w-[32vh]" src={mascot} alt="Logo" />
             </div>
           </div>
         </div>

@@ -53,8 +53,7 @@ const ImageDisplay = ({ imageData }) => {
     <img
       src={imageUrl}
       alt="Betting image"
-      className="w-full h-auto rounded-lg"
-      style={{ maxHeight: "200px", objectFit: "cover" }}
+      className="w-[50px] h-[50px] rounded-lg object-cover"
       onError={() => setError("Failed to load image")}
     />
   ) : null;
@@ -75,8 +74,10 @@ const CardContainer = styled.div`
 
 const Header = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
+  gap: 20px;
+  margin-bottom: 4px;
 `;
 
 const Timer = styled.div`
@@ -141,49 +142,95 @@ export const OpinionCard = ({
   name,
   question,
   set_Time,
+  start_time,
+  end_time,
   image,
   betting_id,
 }) => {
-  const [timer, setTimer] = useState(set_Time);
+  const [timeRemaining, setTimeRemaining] = useState(0);
+  const [isBettingActive, setIsBettingActive] = useState(true);
 
-  // Timer countdown logic
+  // Format time to MM:SS
+  const formatTime = (timeInSeconds) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+      2,
+      "0"
+    )}`;
+  };
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      setTimer((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+    const calculateTimeRemaining = () => {
+      const now = Math.floor(Date.now() / 1000); // Current time in seconds
+      // Convert BigInt to Number before subtraction
+      const endTimeNumber = Number(end_time);
+      const remaining = endTimeNumber - now;
+
+      if (remaining <= 0) {
+        setTimeRemaining(0);
+        setIsBettingActive(false);
+        return false;
+      }
+
+      setTimeRemaining(remaining);
+      return true;
+    };
+
+    // Initial calculation
+    const isActive = calculateTimeRemaining();
+
+    // Update every second if betting is still active
+    if (isActive) {
+      const interval = setInterval(() => {
+        const isStillActive = calculateTimeRemaining();
+        if (!isStillActive) {
+          clearInterval(interval);
+        }
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [end_time]);
 
   return (
     <CardContainer>
       {/* Header */}
       <Header>
         <ImageDisplay imageData={image} />
-        <Timer>Timer {String(timer).padStart(2, "0")}:00</Timer>
+        <Timer timeLeft={timeRemaining}>
+          Timer {formatTime(timeRemaining)}
+        </Timer>
+        <Title>{name}</Title>
       </Header>
-
-      {/* Title */}
-      <Title>{name}</Title>
       <p>{question}</p>
 
       {/* Buy Options */}
       <div className="flex justify-between">
-        <Button variant="yes">
-          Buy Yes
-          <img
-            className="w-[28px] ml-2"
-            src={doubleArrowUp}
-            alt="double arrow"
-          />
-        </Button>
-        <Button variant="no">
-          Buy No
-          <img
-            className="w-[28px] ml-2"
-            src={doubleArrowDown}
-            alt="double arrow"
-          />
-        </Button>
+        {isBettingActive ? (
+          <>
+            <Button variant="yes" onClick={() => handleBet("yes")}>
+              Buy Yes
+              <img
+                className="w-[28px] ml-2"
+                src={doubleArrowUp}
+                alt="double arrow"
+              />
+            </Button>
+            <Button variant="no" onClick={() => handleBet("no")}>
+              Buy No
+              <img
+                className="w-[28px] ml-2"
+                src={doubleArrowDown}
+                alt="double arrow"
+              />
+            </Button>
+          </>
+        ) : (
+          <div className="text-red-500 w-full text-center">
+            Betting period has ended
+          </div>
+        )}
       </div>
 
       {/* Progress Bars */}

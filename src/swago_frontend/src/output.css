@@ -666,20 +666,16 @@ video {
   margin-top: 2rem;
 }
 
-.mt-\[12px\] {
-  margin-top: 12px;
+.mt-\[10px\] {
+  margin-top: 10px;
 }
 
 .mt-\[8px\] {
   margin-top: 8px;
 }
 
-.mt-\[11px\] {
-  margin-top: 11px;
-}
-
-.mt-\[10px\] {
-  margin-top: 10px;
+.mb-2 {
+  margin-bottom: 0.5rem;
 }
 
 .flex {
@@ -710,20 +706,16 @@ video {
   height: 32px;
 }
 
+.h-\[50px\] {
+  height: 50px;
+}
+
 .h-\[90px\] {
   height: 90px;
 }
 
 .h-screen {
   height: 100vh;
-}
-
-.h-\[\] {
-  height: ;
-}
-
-.h-\[38px\] {
-  height: 38px;
 }
 
 .min-h-screen {
@@ -758,10 +750,6 @@ video {
   width: 20px;
 }
 
-.w-\[24px\] {
-  width: 24px;
-}
-
 .w-\[250px\] {
   width: 250px;
 }
@@ -794,6 +782,10 @@ video {
   width: 40%;
 }
 
+.w-\[50px\] {
+  width: 50px;
+}
+
 .w-\[5rem\] {
   width: 5rem;
 }
@@ -808,14 +800,6 @@ video {
 
 .w-full {
   width: 100%;
-}
-
-.w-\[\] {
-  width: ;
-}
-
-.w-\[38px\] {
-  width: 38px;
 }
 
 .max-w-\[1400px\] {
@@ -836,12 +820,6 @@ video {
 
 .border-collapse {
   border-collapse: collapse;
-}
-
-.scale-150 {
-  --tw-scale-x: 1.5;
-  --tw-scale-y: 1.5;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .scale-125 {
@@ -1220,10 +1198,6 @@ video {
   line-height: 2.5rem;
 }
 
-.text-\[12px\] {
-  font-size: 12px;
-}
-
 .text-\[14px\] {
   font-size: 14px;
 }
@@ -1247,8 +1221,9 @@ video {
   line-height: 1.75rem;
 }
 
-.text-\[1px\] {
-  font-size: 1px;
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
 }
 
 .font-bold {
@@ -1350,8 +1325,9 @@ video {
   color: rgb(255 255 255 / 0.7);
 }
 
-.text-\[\] {
-  color: ;
+.text-red-600 {
+  --tw-text-opacity: 1;
+  color: rgb(220 38 38 / var(--tw-text-opacity, 1));
 }
 
 .placeholder-\[\#545454\]::-moz-placeholder {
@@ -1398,12 +1374,12 @@ video {
     display: block;
   }
 
-  .sm\:w-\[24rem\] {
-    width: 24rem;
+  .sm\:w-\[20px\] {
+    width: 20px;
   }
 
-  .sm\:w-\[30px\] {
-    width: 30px;
+  .sm\:w-\[24rem\] {
+    width: 24rem;
   }
 
   .sm\:w-\[32rem\] {
@@ -1416,14 +1392,6 @@ video {
 
   .sm\:w-\[6rem\] {
     width: 6rem;
-  }
-
-  .sm\:w-\[24px\] {
-    width: 24px;
-  }
-
-  .sm\:w-\[20px\] {
-    width: 20px;
   }
 
   .sm\:flex-row {

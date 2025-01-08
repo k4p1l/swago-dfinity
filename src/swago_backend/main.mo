@@ -57,6 +57,7 @@ actor {
     name :Text;
     question:Text;
     start_time:Time.Time;
+    end_time:Time.Time;
     set_Time:Time.Time;
     image:Blob;
     twitter_link:Text;
@@ -72,12 +73,16 @@ actor {
 
   public func add_Betting(betting :Create_Betting ):async Text {
     let current_betting_id = betting_id_no;
+    let current_time = Time.now()/1_000_000_000;
+    let duration = betting.set_Time/1_000_000_000;
+
     let new_betting = {
       user_principal=betting.user_principal;
       name = betting.name;
       question=betting.question;
-      start_time:Time.Time = Time.now()/1_000_000_000;
-      set_Time=(betting.set_Time)/ 1_000_000_000;
+      start_time = current_time;
+      end_time = current_time + duration;
+      set_Time=betting.set_Time;
       image=betting.image;
       twitter_link = betting.twitter_link;
       telegram_link = betting.telegram_link;
@@ -95,7 +100,7 @@ actor {
     return betting_id_no;
   };
 
-  public shared query func get_All_Bettings() : async [Create_Betting] {
+  public shared query func get_All_Bettings() : async [Create_Betting_data] {
     return user_Betting ;
   };
 
