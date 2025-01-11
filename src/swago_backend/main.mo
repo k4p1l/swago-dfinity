@@ -1,21 +1,21 @@
-import Nat "mo:base/Nat";
+import _Nat "mo:base/Nat";
 import Nat64 "mo:base/Nat64";
 import List "mo:base/List";
 import Array "mo:base/Array";
-import Option "mo:base/Option";
-import Bool "mo:base/Bool";
+import _Option "mo:base/Option";
+import _Bool "mo:base/Bool";
 import Principal "mo:base/Principal";
 import Types "./Types";
-import Result "mo:base/Result";
-import HashMap "mo:base/HashMap";
+import _Result "mo:base/Result";
+import _HashMap "mo:base/HashMap";
 import Blob "mo:base/Blob";
 import Time "mo:base/Time";
-import Timer "mo:base/Timer";
+import _Timer "mo:base/Timer";
 // import LedgerIndex "canister:icp_index_canister";
 
 actor {
-  stable var transactionId: Types.TransactionId = 0;
-  stable var nfts = List.nil<Types.Nft>();
+  stable var _transactionId: Types.TransactionId = 0;
+  stable var _nfts = List.nil<Types.Nft>();
   // stable var custodians = List.nil<Principal>(); 
   type MyMintedNft = Types.MyMintedNft;
   // let null_address : Principal = Principal.fromText("aaaaa-aa");
@@ -107,6 +107,11 @@ actor {
   public shared query func get_My_Bettings(user_principal:Principal): async [Create_Betting] {
     return Array.filter<Create_Betting>(user_Betting ,  func x=x.user_principal == user_principal);
   };
+
+   public shared query func get_events_by_id(betting_id:Nat64):async ?Create_Betting_data{
+    return Array.find<Create_Betting_data>(user_Betting ,  func x=x.betting_id == betting_id);
+  };
+
 
 
     
