@@ -5,6 +5,7 @@ import { useConnect } from "@connect2ic/react";
 import { ConnectButton, ConnectDialog } from "@connect2ic/react";
 import { swago_backend } from "../../../../declarations/swago_backend";
 import { WalletStatus } from "./WalletStatus";
+import { Link as RouterLink } from "react-router-dom";
 
 export const Form = () => {
   const { isConnected, principal, activeProvider } = useConnect();
@@ -120,6 +121,12 @@ export const Form = () => {
         </div>
       ) : (
         <div className="`py-4 pb-12 ">
+          <RouterLink
+            to="/"
+            className="text-[#0a0a0a] bg-[#f0e6ff] ml-4 px-4 py-2 font-semibold rounded-md"
+          >
+            Back to Home
+          </RouterLink>
           <h2 className="mt-4 text-2xl font-bold tracking-tighter text-center sm:text-4xl">
             Create a New Market
           </h2>

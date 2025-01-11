@@ -13,6 +13,7 @@ import { RecentActivity } from "./RecentActivity";
 import { TopVolumeThisWeek } from "./TopVolumeThisWeek";
 import { Footer } from "./Footer";
 import { TrustedBy } from "./TrustedBy";
+import { Link as RouterLink } from "react-router-dom";
 export const Dashboard = () => {
   const cardData = [
     {
@@ -225,10 +226,16 @@ export const Dashboard = () => {
               }}
             >
               {bettings.map((betting, index) => (
-                <OpinionCard
-                  key={`${betting?.betting_id?.toString() ?? index}-${index}`}
-                  {...betting}
-                />
+                <div className="w-fit">
+                  <RouterLink to={`/bet/${betting?.betting_id}`}>
+                    <OpinionCard
+                      key={`${
+                        betting?.betting_id?.toString() ?? index
+                      }-${index}`}
+                      {...betting}
+                    />
+                  </RouterLink>
+                </div>
               ))}
             </div>
           )}
