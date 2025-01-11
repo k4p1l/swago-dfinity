@@ -38,6 +38,20 @@ export const getAllBettings = async () => {
   }
 };
 
+export const getBetting = async (betting_id) => {
+  try {
+    const actor = await createActor();
+    const result = await actor.get_events_by_id(betting_id);
+    if (!result.length) {
+      throw new Error("Betting not found");
+    }
+    return result[0];
+  } catch (error) {
+    console.error("Error fetching betting:", error);
+    throw error;
+  }
+};
+
 export const createBetting = async (bettingData) => {
   try {
     const actor = await createActor();

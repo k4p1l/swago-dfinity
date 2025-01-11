@@ -88,7 +88,6 @@ export const Form = () => {
 
       const result = await swago_backend.add_Betting(bettingData);
       alert("Betting created successfully!");
-      // Optionally redirect to dashboard or clear form
       setFormData({
         name: "",
         email: "",
