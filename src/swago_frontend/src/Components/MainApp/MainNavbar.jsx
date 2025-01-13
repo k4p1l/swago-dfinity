@@ -138,7 +138,6 @@ export const MainNavbar = () => {
             </a>
             <a href="#">All</a> <a href="#">Sort Time</a>
             <a href="#">Market Cap</a>
-            <a href="#">Radium</a>
           </div>
           <div className="flex items-center gap-4 px-4 py-1 text-white rounded-xl">
             Support

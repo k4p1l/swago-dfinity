@@ -28,6 +28,18 @@ export const MakeBet = () => {
     fetchEvent();
   }, [id]);
 
+  // Format time to MM:SS
+  const formatTime = (time) => {
+    time = Number(time);
+    const timeInSeconds = Math.floor(time / 1000000000);
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+      2,
+      "0"
+    )}`;
+  };
+
   if (loading) {
     return (
       <div className="text-white bg-[#101a23] min-h-screen">
@@ -65,7 +77,7 @@ export const MakeBet = () => {
     <div>
       <MainNavbar />
       <div className="text-white bg-[#101a23] py-12 min-h-screen">
-        <div className="container mx-auto px-4">
+        {/* <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto bg-[#1e2a3a] rounded-lg p-6">
             <h3 className="text-xl mb-4">Bet ID: {id}</h3>
             {event && (
@@ -133,7 +145,6 @@ export const MakeBet = () => {
                   <p>Set Time: {Number(event.set_Time)} minutes</p>
                 </div>
 
-                {/* Add betting buttons */}
                 <div className="flex justify-center space-x-4 mt-6">
                   <button className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg">
                     Bet Yes
@@ -144,6 +155,56 @@ export const MakeBet = () => {
                 </div>
               </div>
             )}
+          </div>
+        </div> */}
+
+        <div className="flex justify-between items-center px-4 max-w-7xl mx-auto">
+          <div className="flex-1">
+            <div>
+              {event && (
+                <div className="flex flex-col gap-4">
+                  <h2 className="text-4xl font-bold">{event.name}</h2>
+                  <div className="flex gap-12 items-center">
+                    {event.image && (
+                      <img
+                        src={`data:image/jpeg;base64,${arrayBufferToBase64(
+                          event.image
+                        )}`}
+                        alt="Event"
+                        className="rounded-lg max-w-40 h-auto"
+                      />
+                    )}
+                    <p className="text-lg">{event.question}</p>
+                  </div>
+
+                  <p>
+                    Start Time:{" "}
+                    {new Date(Number(event.start_time) * 1000).toLocaleString()}
+                  </p>
+                  <p>
+                    End Time:{" "}
+                    {new Date(Number(event.end_time) * 1000).toLocaleString()}
+                  </p>
+                  <p>
+                    Yes <br />{" "}
+                    <span className="text-cyan-300 text-3xl">21% chance</span>
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+          <div>
+            <div className="flex flex-col gap-4">
+              <p className="text-lg">
+               Timer: {formatTime(event.set_Time)} minutes
+              </p>
+              <button className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg">
+                Bet Yes
+              </button>
+              <button className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg">
+                Bet No
+              </button>
+            </div>
           </div>
         </div>
       </div>
