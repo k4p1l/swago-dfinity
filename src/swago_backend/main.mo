@@ -1,4 +1,4 @@
-import _Nat "mo:base/Nat";
+import Nat "mo:base/Nat";
 import Nat64 "mo:base/Nat64";
 import List "mo:base/List";
 import Array "mo:base/Array";
@@ -12,6 +12,7 @@ import Blob "mo:base/Blob";
 import Time "mo:base/Time";
 import _Timer "mo:base/Timer";
 import Debug "mo:base/Debug";
+import Iter "mo:base/Iter";
 // import LedgerIndex "canister:icp_index_canister";
 
 actor {
@@ -132,7 +133,7 @@ actor {
     return "Successfully registered";
 };
 
-public shared query func get_profile_details(p: Principal): async ?Profile_Data {
+ public shared query func get_profile_details(p: Principal): async ?Profile_Data {
     Debug.print("Fetching profile for principal: " # Principal.toText(p));
     let result = profile.get(p);
     switch (result) {
@@ -220,27 +221,43 @@ type Account = {
 
   var accounts = HashMap.HashMap<Principal, Account>(0, Principal.equal, Principal.hash);
   stable var totalSupply: Nat = 0;
-
-   public func mint(accountId: Principal, amount: Nat): async () {
-      let account = accounts.get(accountId);
-      switch (account) {
-          case (?acc) {
-              let updatedAccount = {
-                  prin = acc.prin;
-                  balance = acc.balance + amount;
-              };
-              accounts.put(accountId, updatedAccount);
-          };
-          case null {
-              let newAccount = {
-                  prin = accountId;
-                  balance = amount;
-              };
-              accounts.put(accountId, newAccount);
-          };
+  // Add a function to check if an account exists
+  public query func accountExists(accountId: Principal): async Bool {
+      switch (accounts.get(accountId)) {
+          case (?_) true;
+          case null false;
       };
-      totalSupply += amount;
+  };
+
+   public shared(msg) func mint(accountId: Principal, amount: Nat): async Text {
+    Debug.print("Minting tokens for principal: " # Principal.toText(accountId));
+    Debug.print("Amount to mint: " # Nat.toText(amount));
+    
+    let account = accounts.get(accountId);
+    switch (account) {
+        case (?acc) {
+            Debug.print("Existing account found");
+            let updatedAccount = {
+                prin = acc.prin;
+                balance = acc.balance + amount;
+            };
+            accounts.put(accountId, updatedAccount);
+            totalSupply += amount;
+            Debug.print("Updated balance: " # Nat.toText(updatedAccount.balance));
+        };
+        case null {
+            Debug.print("Creating new account");
+            let newAccount = {
+                prin = accountId;
+                balance = amount;
+            };
+            accounts.put(accountId, newAccount);
+            totalSupply += amount;
+            Debug.print("New account balance: " # Nat.toText(amount));
+        };
     };
+    return "Tokens minted successfully";
+};
 
      public func transfer(from: Principal, to: Principal, amount: Nat): async Text {
         let fromAccount = accounts.get(from);
@@ -280,6 +297,7 @@ type Account = {
           };
       };
 
+
   public query func balanceOf(accountId: Principal): async Nat {
     switch (accounts.get(accountId)) {
       case (?acc) acc.balance;
@@ -290,5 +308,9 @@ type Account = {
   public shared query func total_Supply(): async Nat {
     totalSupply;
   };
+
+  public query func getAllAccounts(): async [(Principal, Account)] {
+    Iter.toArray(accounts.entries());
+};
 
 };

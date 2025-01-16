@@ -20,12 +20,57 @@ export const Profile = () => {
   const { principal: whoami, identity } = useAuth();
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [tokenBalance, setTokenBalance] = useState(0);
+  const [mintStatus, setMintStatus] = useState("");
+  const [hasMinted, setHasMinted] = useState(false);
 
-  useEffect(() => {
-    console.log("Connect Principal:", connectPrincipal?.toString());
-    console.log("Whoami Principal:", whoami?.toString());
-    console.log("Active Provider:", activeProvider?.meta?.name);
-  }, [connectPrincipal, whoami, activeProvider]);
+  // useEffect(() => {
+  //   console.log("Connect Principal:", connectPrincipal?.toString());
+  //   console.log("Whoami Principal:", whoami?.toString());
+  //   console.log("Active Provider:", activeProvider?.meta?.name);
+  // }, [connectPrincipal, whoami, activeProvider]);
+
+  const mintInitialTokens = async (principal) => {
+    try {
+      // Check if we've already minted tokens in this session
+      if (hasMinted) {
+        console.log("Already minted tokens in this session");
+        return;
+      }
+
+      console.log("Checking balance for principal:", principal.toString());
+      const currentBalance = await swago_backend.balanceOf(principal);
+      console.log("Current balance:", currentBalance.toString());
+
+      if (currentBalance === BigInt(0)) {
+        console.log("Minting tokens...");
+        const mintResult = await swago_backend.mint(principal, BigInt(100));
+        console.log("Mint result:", mintResult);
+        setHasMinted(true); // Mark as minted
+
+        // Fetch updated balance
+        const newBalance = await swago_backend.balanceOf(principal);
+        console.log("New balance after minting:", newBalance.toString());
+        setTokenBalance(Number(newBalance));
+      } else {
+        console.log("Account already has tokens");
+        setTokenBalance(Number(currentBalance));
+      }
+    } catch (error) {
+      console.error("Error in mintInitialTokens:", error);
+    }
+  };
+
+  const fetchTokenBalance = async (principal) => {
+    try {
+      console.log("Fetching balance for:", principal.toString());
+      const balance = await swago_backend.balanceOf(principal);
+      console.log("Fetched balance:", balance.toString());
+      setTokenBalance(Number(balance));
+    } catch (error) {
+      console.error("Error fetching token balance:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -49,6 +94,26 @@ export const Profile = () => {
 
     fetchProfile();
   }, [whoami]);
+
+  useEffect(() => {
+    const initializeUser = async () => {
+      try {
+        if (whoami && !hasMinted) {
+          // Add hasMinted check
+          console.log("Initializing user with principal:", whoami.toString());
+          await mintInitialTokens(whoami);
+          // Check final balance
+          await fetchTokenBalance(whoami);
+        }
+      } catch (error) {
+        console.error("Error initializing user:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeUser();
+  }, [whoami, hasMinted]);
 
   const arrayBufferToBase64 = (buffer) => {
     let binary = "";
@@ -84,6 +149,11 @@ export const Profile = () => {
               {profileData?.bio && (
                 <p className="text-gray-300">{profileData.bio}</p>
               )}
+              <div className="bg-[#2f9fff] px-6 py-3 rounded-xl">
+                <p className="text-xl font-semibold">Token Balance</p>
+                <p className="text-2xl">{tokenBalance.toString()} SWAG</p>
+                {mintStatus && <p className="text-sm">{mintStatus}</p>}
+              </div>
               <div className="flex gap-8">
                 <div className="flex flex-col gap-4">
                   <p className="px-4">Internet Identity Address</p>
