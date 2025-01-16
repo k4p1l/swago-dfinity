@@ -10,6 +10,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AstroX } from "@connect2ic/core/providers/astrox";
 import { PlugWallet } from "@connect2ic/core/providers/plug-wallet";
 import { StoicWallet } from "@connect2ic/core/providers/stoic-wallet";
+import { EditProfile } from "./Components/MainApp/EditProfile";
 
 import { createClient } from "@connect2ic/core";
 import { Connect2ICProvider } from "@connect2ic/react";
@@ -43,6 +44,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/transaction-history" element={<TransactionHistory />} />
           <Route path="/bet/:id" element={<MakeBet />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
         </Routes>
       </Router>
     </>

@@ -7,10 +7,11 @@ import _Bool "mo:base/Bool";
 import Principal "mo:base/Principal";
 import Types "./Types";
 import _Result "mo:base/Result";
-import _HashMap "mo:base/HashMap";
+import HashMap "mo:base/HashMap";
 import Blob "mo:base/Blob";
 import Time "mo:base/Time";
 import _Timer "mo:base/Timer";
+import Debug "mo:base/Debug";
 // import LedgerIndex "canister:icp_index_canister";
 
 actor {
@@ -108,13 +109,38 @@ actor {
     return Array.filter<Create_Betting>(user_Betting ,  func x=x.user_principal == user_principal);
   };
 
-   public shared query func get_events_by_id(betting_id:Nat64):async ?Create_Betting_data{
+  public shared query func get_events_by_id(betting_id:Nat64):async ?Create_Betting_data{
     return Array.find<Create_Betting_data>(user_Betting ,  func x=x.betting_id == betting_id);
   };
 
+  public type Profile_Data = {
+    principal:Principal;
+    name:Text;
+    display_ppicture:Blob;
+    bio:Text;
+  };
 
+  var profile = HashMap.HashMap<Principal , Profile_Data>(0, Principal.equal , Principal.hash);
 
+  public shared(msg) func set_profile(details: Profile_Data): async Text {
+    Debug.print("Setting profile for provided principal: " # Principal.toText(details.principal));
+    Debug.print("Caller principal: " # Principal.toText(msg.caller));
+    
+    // Use the provided principal from frontend
+    profile.put(details.principal, details);
+    Debug.print("Profile updated successfully for: " # Principal.toText(details.principal));
+    return "Successfully registered";
+};
 
+public shared query func get_profile_details(p: Principal): async ?Profile_Data {
+    Debug.print("Fetching profile for principal: " # Principal.toText(p));
+    let result = profile.get(p);
+    switch (result) {
+        case (null) { Debug.print("No profile found"); };
+        case (?profile) { Debug.print("Profile found for: " # Principal.toText(p)); };
+    };
+    return result;
+};
     
     
 //   // Mint function
@@ -184,6 +210,85 @@ actor {
   public func Yes_or_no_fun(data:yes_or_no): async Text{
     yesNo_Arr:=Array.append<yes_or_no>(yesNo_Arr , [data]);
     return "OK";
+  };
+
+
+type Account = {
+    prin: Principal;
+    balance: Nat;
+  };
+
+  var accounts = HashMap.HashMap<Principal, Account>(0, Principal.equal, Principal.hash);
+  stable var totalSupply: Nat = 0;
+
+   public func mint(accountId: Principal, amount: Nat): async () {
+      let account = accounts.get(accountId);
+      switch (account) {
+          case (?acc) {
+              let updatedAccount = {
+                  prin = acc.prin;
+                  balance = acc.balance + amount;
+              };
+              accounts.put(accountId, updatedAccount);
+          };
+          case null {
+              let newAccount = {
+                  prin = accountId;
+                  balance = amount;
+              };
+              accounts.put(accountId, newAccount);
+          };
+      };
+      totalSupply += amount;
+    };
+
+     public func transfer(from: Principal, to: Principal, amount: Nat): async Text {
+        let fromAccount = accounts.get(from);
+          switch (fromAccount) {
+            case (?acc) {
+                if (acc.balance < amount) {
+                    return ("Insufficient balance");
+                } else {
+                    let updatedFromAccount = {
+                      prin = acc.prin;
+                      balance = acc.balance - amount;
+                    };
+                    accounts.put(from, updatedFromAccount);
+                    let toAccount = accounts.get(to);
+                    switch (toAccount) {
+                        case (?accTo) {
+                            let updatedToAccount = {
+                                prin = accTo.prin;
+                                balance = accTo.balance + amount;
+                            };
+                            accounts.put(to, updatedToAccount);
+                        };
+                        case null {
+                            let newToAccount = {
+                                prin = to;
+                                balance = amount;
+                            };
+                            accounts.put(to, newToAccount);
+                        };
+                    };
+                  return "Transfered successfully";
+                };
+            };
+            case null {
+              return ("Sender account not found");
+            };
+          };
+      };
+
+  public query func balanceOf(accountId: Principal): async Nat {
+    switch (accounts.get(accountId)) {
+      case (?acc) acc.balance;
+      case null 0;
+    };
+  };
+
+  public shared query func total_Supply(): async Nat {
+    totalSupply;
   };
 
 };
