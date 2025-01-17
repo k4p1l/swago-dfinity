@@ -259,43 +259,43 @@ type Account = {
     return "Tokens minted successfully";
 };
 
-     public func transfer(from: Principal, to: Principal, amount: Nat): async Text {
-        let fromAccount = accounts.get(from);
-          switch (fromAccount) {
-            case (?acc) {
-                if (acc.balance < amount) {
-                    return ("Insufficient balance");
-                } else {
-                    let updatedFromAccount = {
-                      prin = acc.prin;
-                      balance = acc.balance - amount;
-                    };
-                    accounts.put(from, updatedFromAccount);
-                    let toAccount = accounts.get(to);
-                    switch (toAccount) {
-                        case (?accTo) {
-                            let updatedToAccount = {
-                                prin = accTo.prin;
-                                balance = accTo.balance + amount;
-                            };
-                            accounts.put(to, updatedToAccount);
-                        };
-                        case null {
-                            let newToAccount = {
-                                prin = to;
-                                balance = amount;
-                            };
-                            accounts.put(to, newToAccount);
-                        };
-                    };
-                  return "Transfered successfully";
+  public func transfer(from: Principal, to: Principal, amount: Nat): async Text {
+    let fromAccount = accounts.get(from);
+      switch (fromAccount) {
+        case (?acc) {
+            if (acc.balance < amount) {
+                return ("Insufficient balance");
+            } else {
+                let updatedFromAccount = {
+                  prin = acc.prin;
+                  balance = acc.balance - amount;
                 };
+                accounts.put(from, updatedFromAccount);
+                let toAccount = accounts.get(to);
+                switch (toAccount) {
+                    case (?accTo) {
+                        let updatedToAccount = {
+                            prin = accTo.prin;
+                            balance = accTo.balance + amount;
+                        };
+                        accounts.put(to, updatedToAccount);
+                    };
+                    case null {
+                        let newToAccount = {
+                            prin = to;
+                            balance = amount;
+                        };
+                        accounts.put(to, newToAccount);
+                    };
+                };
+              return "Transfered successfully";
             };
-            case null {
-              return ("Sender account not found");
-            };
-          };
+        };
+        case null {
+          return ("Sender account not found");
+        };
       };
+  };
 
 
   public query func balanceOf(accountId: Principal): async Nat {

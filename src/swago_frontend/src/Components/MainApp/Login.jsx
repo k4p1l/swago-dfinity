@@ -9,7 +9,7 @@ export const Login = () => {
   return (
     <div>
       <MainNavbar />
-      <div className="container bg-[#101a23] min-h-screen text-white">
+      <div className="bg-[#101a23] min-h-screen text-white">
         <div className="flex flex-col items-center justify-center gap-4 login-options">
           <h1 className="login-option font-[Inter] sm:text-4xl text-2xl tracking-tighter font-semibold mt-8">
             Sign In with your Internet Identity

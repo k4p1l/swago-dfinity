@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import doubleArrowUp from "../../assets/images/double arrow.png";
 import doubleArrowDown from "../../assets/images/double arrow down.png";
+import { useAuth } from "../../use-auth-client";
+import { Principal } from "@dfinity/principal";
+import { swago_backend } from "../../../../declarations/swago_backend";
 
 // Add this utility function at the top of your file
 const arrayBufferToImageUrl = (arrayBuffer) => {
@@ -117,13 +120,13 @@ const Button = styled.button`
   margin: 5px;
   border: none;
   border-radius: 8px;
-  cursor: pointer;
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   font-weight: bold;
   color: white;
   background-color: ${(props) => (props.variant === "yes" ? "green" : "brown")};
-
+  opacity: ${(props) => (props.disabled ? "0.7" : "1")};
   &:hover {
-    opacity: 0.8;
+    opacity: ${(props) => (props.disabled ? "0.7" : "0.8")};
   }
 `;
 
@@ -147,8 +150,15 @@ export const OpinionCard = ({
   image,
   betting_id,
 }) => {
+  const { principal: whoami } = useAuth();
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [isBettingActive, setIsBettingActive] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState(null);
+  const [betStatus, setBetStatus] = useState(null);
+  const HOUSE_WALLET = Principal.fromText(
+    "elieq-ev22i-d7yya-vgih3-bdohe-bj5qc-aoc55-rd4or-nuvef-rqhsz-mqe"
+  );
 
   // Format time to MM:SS
   const formatTime = (timeInSeconds) => {
@@ -158,6 +168,74 @@ export const OpinionCard = ({
       2,
       "0"
     )}`;
+  };
+
+  const checkBalance = async () => {
+    try {
+      if (!whoami) return 0;
+      const balance = await swago_backend.balanceOf(whoami);
+      return Number(balance);
+    } catch (error) {
+      console.error("Error checking balance:", error);
+      return 0;
+    }
+  };
+
+  const handleBet = async (betType) => {
+    try {
+      const confirmed = window.confirm(
+        `Are you sure you want to bet 5 SWAG tokens on ${betType.toUpperCase()}?`
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      setIsProcessing(true);
+      setError(null);
+      setBetStatus(null);
+
+      if (!whoami) {
+        throw new Error("Please connect your wallet first");
+      }
+
+      const balance = await checkBalance();
+      if (balance < 5) {
+        throw new Error("Insufficient balance. You need 5 SWAG tokens to bet.");
+      }
+
+      // First, transfer tokens to house wallet
+      const transferResult = await swago_backend.transfer(
+        whoami,
+        HOUSE_WALLET,
+        BigInt(5)
+      );
+
+      if (transferResult !== "Transfered successfully") {
+        throw new Error(transferResult);
+      }
+
+      // Then record the bet
+      const betData = {
+        principal: whoami,
+        event_id: betting_id,
+        yes_or_no: betType,
+        amount: BigInt(5),
+      };
+
+      const betResult = await swago_backend.Yes_or_no_fun(betData);
+
+      if (betResult === "OK") {
+        setBetStatus(`Successfully placed ${betType} bet`);
+      } else {
+        throw new Error("Failed to record bet");
+      }
+    } catch (err) {
+      console.error("Betting error:", err);
+      setError(err.message || "Failed to place bet");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   useEffect(() => {
@@ -209,16 +287,24 @@ export const OpinionCard = ({
       <div className="flex justify-between">
         {isBettingActive ? (
           <>
-            <Button variant="yes" onClick={() => handleBet("yes")}>
-              Buy Yes
+            <Button
+              variant="yes"
+              onClick={() => handleBet("yes")}
+              disabled={isProcessing}
+            >
+              {isProcessing ? "Processing..." : "Buy Yes"}
               <img
                 className="w-[28px] ml-2"
                 src={doubleArrowUp}
                 alt="double arrow"
               />
             </Button>
-            <Button variant="no" onClick={() => handleBet("no")}>
-              Buy No
+            <Button
+              variant="no"
+              onClick={() => handleBet("no")}
+              disabled={isProcessing}
+            >
+              {isProcessing ? "Processing..." : "Buy No"}
               <img
                 className="w-[28px] ml-2"
                 src={doubleArrowDown}
@@ -232,6 +318,12 @@ export const OpinionCard = ({
           </div>
         )}
       </div>
+
+      {/* Status Messages */}
+      {error && <div className="text-red-500 text-center text-sm">{error}</div>}
+      {betStatus && (
+        <div className="text-green-500 text-center text-sm">{betStatus}</div>
+      )}
 
       {/* Progress Bars */}
       {/* <ProgressBar>
