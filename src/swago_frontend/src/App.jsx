@@ -22,7 +22,7 @@ import "./input.css";
 function App() {
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 3.2,
+      duration: 1.2,
       smooth: true,
     });
 

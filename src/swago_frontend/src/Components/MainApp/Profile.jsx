@@ -158,9 +158,7 @@ export const Profile = () => {
                 <div className="flex flex-col gap-4">
                   <p className="px-4">Internet Identity Address</p>
                   <p className="text-[#c1c1c1] bg-[#354A63] px-4 py-2 rounded-3xl">
-                    {whoami
-                      ? whoami.toText().slice(0, 20) + "..."
-                      : "No Principal"}
+                    {whoami ? whoami.toText() : "No Principal"}
                   </p>
                 </div>
                 <div className="flex flex-col gap-4">
