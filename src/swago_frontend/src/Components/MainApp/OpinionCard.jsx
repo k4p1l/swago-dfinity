@@ -72,6 +72,7 @@ const CardContainer = styled.div`
   color: white;
   padding: 20px;
   width: 330px;
+  height: 100%;
   font-family: Arial, sans-serif;
 `;
 
@@ -281,7 +282,7 @@ export const OpinionCard = ({
         </Timer>
         <Title>{name}</Title>
       </Header>
-      <p>{question}</p>
+      <p className="py-2">{question}</p>
 
       {/* Buy Options */}
       <div className="flex justify-between">
@@ -313,8 +314,28 @@ export const OpinionCard = ({
             </Button>
           </>
         ) : (
-          <div className="text-red-500 w-full text-center">
-            Betting period has ended
+          <div>
+            <div className="text-red-500 w-full text-center py-2">
+              Market has ended. Your rewards will be processed soon.
+            </div>
+            <div className="flex justify-between">
+              <Button variant="yes" disabled>
+                {isProcessing ? "Processing..." : "Buy Yes"}
+                <img
+                  className="w-[28px] ml-2"
+                  src={doubleArrowUp}
+                  alt="double arrow"
+                />
+              </Button>
+              <Button variant="no" disabled>
+                {isProcessing ? "Processing..." : "Buy No"}
+                <img
+                  className="w-[28px] ml-2"
+                  src={doubleArrowDown}
+                  alt="double arrow"
+                />
+              </Button>
+            </div>
           </div>
         )}
       </div>
