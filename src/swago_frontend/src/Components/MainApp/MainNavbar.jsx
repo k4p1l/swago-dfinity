@@ -28,12 +28,12 @@ export const MainNavbar = () => {
     <div className="w-full flex flex-col sm:px-4 bg-[#101a23] border-b-4 border-[#2f9fff]">
       <div className="flex items-center justify-between gap-4 pt-2">
         <div className="flex items-center gap-2 sm:gap-8 nav">
-          <div className="sm:w-[6rem] w-[2rem]">
+          <div className="sm:w-[6rem]">
             <RouterLink to="/">
-              <img className="w-[70%]" src={logo} alt="" />
+              <img className="sm:w-[70%]" src={logo} alt="" />
             </RouterLink>
           </div>
-          <div className="sm:w-[32rem] w-[140px] search-bar flex relative">
+          <div className="sm:w-[32rem] w-[140px] search-bar relative hidden sm:flex">
             <img
               className="absolute left-1 mt-[8px] w-[28px]"
               src={searchIcon}
@@ -45,7 +45,7 @@ export const MainNavbar = () => {
               className="w-full input py-1 px-1 sm:py-2 sm:px-8 outline-none rounded-lg text-[#E4E2E2] bg-[#293643] border-2 border-[#f5f5f5]"
             />
           </div>
-          <div className="flex flex-col items-center gap-1">
+          <div className=" flex-col items-center sm:flex hidden gap-1">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -62,7 +62,7 @@ export const MainNavbar = () => {
               Activity
             </span>
           </div>
-          <div className="flex flex-col items-center sm:gap-1">
+          <div className="sm:flex flex-col items-center sm:gap-1 hidden">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -97,9 +97,8 @@ export const MainNavbar = () => {
                   onClick={() => setIsOpen(!isOpen)}
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 -960 960 960"
-                  width="38px"
                   fill="#FFFFFF"
-                  className="cursor-pointer dropdown"
+                  className="cursor-pointer dropdown sm:w-[38px] w-[30px]"
                 >
                   <path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" />
                 </svg>
@@ -132,14 +131,14 @@ export const MainNavbar = () => {
       </div>
       <div>
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-8 text-white rounded-xl text-[14px]">
+          <div className="flex items-center gap-8 py-2 text-white rounded-xl text-[14px]">
             <a href="#" className="flex items-center gap-2 text-red-500 ">
               <span className="text-[8px]">🔴</span>Live
             </a>
             <a href="#">All</a> <a href="#">Sort Time</a>
             <a href="#">Market Cap</a>
           </div>
-          <div className="flex items-center gap-4 px-4 py-1 text-white rounded-xl">
+          <div className="sm:flex items-center gap-4 px-4 py-1 text-white rounded-xl hidden">
             Support
             <a
               href="https://x.com/TheSwago_"
