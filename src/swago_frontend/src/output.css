@@ -843,6 +843,26 @@ video {
   width: 30px;
 }
 
+.w-\[90\%\] {
+  width: 90%;
+}
+
+.w-\[70\%\] {
+  width: 70%;
+}
+
+.w-\[60\%\] {
+  width: 60%;
+}
+
+.w-\[50\%\] {
+  width: 50%;
+}
+
+.w-\[24px\] {
+  width: 24px;
+}
+
 .max-w-2xl {
   max-width: 42rem;
 }
@@ -1564,6 +1584,14 @@ video {
     width: 38px;
   }
 
+  .sm\:w-\[40\%\] {
+    width: 40%;
+  }
+
+  .sm\:w-\[32px\] {
+    width: 32px;
+  }
+
   .sm\:flex-row {
     flex-direction: row;
   }
@@ -1582,6 +1610,10 @@ video {
 
   .sm\:gap-8 {
     gap: 2rem;
+  }
+
+  .sm\:gap-20 {
+    gap: 5rem;
   }
 
   .sm\:px-16 {
@@ -1609,6 +1641,16 @@ video {
     padding-bottom: 1.5rem;
   }
 
+  .sm\:py-4 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .sm\:px-0 {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
   .sm\:pb-10 {
     padding-bottom: 2.5rem;
   }
@@ -1629,5 +1671,15 @@ video {
 
   .sm\:text-\[8px\] {
     font-size: 8px;
+  }
+
+  .sm\:text-xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+
+  .sm\:text-base {
+    font-size: 1rem;
+    line-height: 1.5rem;
   }
 }

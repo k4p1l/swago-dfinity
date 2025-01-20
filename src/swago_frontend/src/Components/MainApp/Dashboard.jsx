@@ -116,15 +116,15 @@ export const Dashboard = () => {
   return (
     <div className="overflow-hidden dashboard-container">
       <MainNavbar />
-      <div className="flex items-center justify-center gap-4 bg-[#101a23] py-4">
-        <div className="bg-[#4097F3] py-2 px-8 rounded-md text-xs">
-          <p>
+      <div className="flex items-center justify-center gap-4 bg-[#101a23] py-4 px-4 sm:px-0">
+        <div className="bg-[#4097F3] py-2 sm:px-8  rounded-md text-xs">
+          <p className="text-center">
             TK2n...CBAQ{" "}
             <span className="text-[#FFEA00]">Sold 1,273.8 TRX of UNWUKONG</span>
           </p>
         </div>
         <div className="bg-[#FB84CA] py-2 px-8 text-xs rounded-md">
-          <p>
+          <p className="text-center">
             TKZu...HKcR{" "}
             <span className="text-[#FFEA00]">Sold 1,121.9 TRX of UNDOG</span>
           </p>
@@ -223,10 +223,11 @@ export const Dashboard = () => {
                 padding: "20px 0px",
                 backgroundColor: "#0f172a",
                 minHeight: "45vh",
+                justifyItems: "center",
               }}
             >
               {bettings.map((betting, index) => (
-                <div className="w-fit">
+                <div className="w-fit mx-auto">
                   <RouterLink to={`/bet/${betting?.betting_id}`}>
                     <OpinionCard
                       key={`${
@@ -254,11 +255,11 @@ export const Dashboard = () => {
             We are working hard to provide you with the best experience
             possible.
           </p>
-          <div className="flex items-center justify-center gap-20">
+          <div className="flex items-center justify-center sm:gap-20 gap-4">
             <input
               type="email"
               placeholder="Enter your Email"
-              className="w-[40%] input py-2 px-4 outline-none rounded-xl text-[#0e0e0e] bg-white border-2 border-[#f5f5f5] mt-4 placeholder-[#545454]"
+              className="sm:w-[40%] w-full input py-2 px-4 outline-none rounded-xl text-[#0e0e0e] bg-white border-2 border-[#f5f5f5] mt-4 placeholder-[#545454]"
             />
             <div>
               <button className="px-6 py-2 mt-4 font-bold tracking-wider text-black bg-white rounded-xl">
@@ -267,10 +268,10 @@ export const Dashboard = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col justify-start gap-12 px-16 my-20 sm:flex-row">
+        <div className="flex flex-col justify-start gap-12 sm:px-16 my-20 sm:flex-row px-4">
           <div
             id="recent-activity"
-            className="text-white border-2 border-[#2f9fff] bg-[#2a3642] sm:pb-10 sm:pt-6 px-6 flex-1 rounded-2xl mt-20 "
+            className="text-white border-2 border-[#2f9fff] bg-[#2a3642] sm:pb-10 sm:pt-6 px-6 flex-1 rounded-2xl mt-20 py-6 "
           >
             <div className="flex items-center justify-between ">
               <h2 className="text-xl font-medium tracking-tighter sm:text-2xl">
@@ -287,12 +288,12 @@ export const Dashboard = () => {
             <RecentActivity />
             <RecentActivity />
           </div>
-          <div className="text-white bg-[#2a3642] border-2 border-[#2f9fff] sm:py-6 px-4 flex-1 rounded-2xl mt-20">
+          <div className="text-white bg-[#2a3642] border-2 border-[#2f9fff] sm:py-6 px-4 flex-1 rounded-2xl mt-20 py-6">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-medium tracking-tighter sm:text-2xl">
                 Top Volume This Week
               </h2>
-              <button className="border-2 border-[#ffffff] rounded-2xl py-1 px-4">
+              <button className="border-2 border-[#ffffff] rounded-2xl py-1 px-4 ">
                 See All
               </button>
             </div>
