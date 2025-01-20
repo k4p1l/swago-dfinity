@@ -157,9 +157,34 @@ export const OpinionCard = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
   const [betStatus, setBetStatus] = useState(null);
+  const [profileData, setProfileData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const HOUSE_WALLET = Principal.fromText(
     "elieq-ev22i-d7yya-vgih3-bdohe-bj5qc-aoc55-rd4or-nuvef-rqhsz-mqe"
   );
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        if (whoami) {
+          console.log("Fetching profile for principal:", whoami.toString());
+          const result = await swago_backend.get_profile_details(whoami);
+          console.log("Profile fetch result:", result);
+          if (result) {
+            // Remove .length check as result might be an optional
+            setProfileData(result[0]);
+            console.log("Profile data:", profileData);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [whoami]);
 
   // Format time to MM:SS
   const formatTime = (timeInSeconds) => {
@@ -236,6 +261,25 @@ export const OpinionCard = ({
       setError(err.message || "Failed to place bet");
     } finally {
       setIsProcessing(false);
+    }
+  };
+
+  const getTimeAgo = (startTime) => {
+    const now = Math.floor(Date.now() / 1000); // Current time in seconds
+    const startTimeNumber = Number(startTime); // Convert BigInt to Number
+    const diffInSeconds = now - startTimeNumber;
+
+    if (diffInSeconds < 60) {
+      return "just now";
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `${minutes} ${minutes === 1 ? "min" : "mins"} ago`;
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+    } else {
+      const days = Math.floor(diffInSeconds / 86400);
+      return `${days} ${days === 1 ? "day" : "days"} ago`;
     }
   };
 
@@ -353,12 +397,15 @@ export const OpinionCard = ({
 
       {/* Footer */}
       <Footer>
-        <MetaText>Created By {}</MetaText>
+        <MetaText>Created By {profileData?.name || "User"}</MetaText>
         <MetaText>VOL: ${betting_id}</MetaText>
       </Footer>
       <div className="flex items-center justify-between op-card-icons bg-[#375066] rounded-xl p-2 mt-2">
         <div>
-          <span className="text-[#9aa0b2] text-[14px]">1 min ago</span>
+          <span className="text-[#9aa0b2] text-[14px]">
+            {" "}
+            {getTimeAgo(start_time)}
+          </span>
         </div>
         <div className="flex gap-2">
           <ion-icon name="chatbubble-ellipses-sharp"></ion-icon>
