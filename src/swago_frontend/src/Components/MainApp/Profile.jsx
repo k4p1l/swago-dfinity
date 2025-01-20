@@ -129,8 +129,8 @@ export const Profile = () => {
     <div className="w-full min-h-screen text-white bg-[#101a23]">
       <MainNavbar />
       <div className="">
-        <div className="flex items-center justify-between mt-12 px-12 ">
-          <div className="flex items-center gap-20">
+        <div className="flex sm:items-start items-center flex-col sm:flex-row justify-between mt-12 px-12 ">
+          <div className="flex flex-col sm:flex-row items-center sm:gap-20 gap-8">
             <img
               src={
                 profileData?.display_ppicture
@@ -140,29 +140,32 @@ export const Profile = () => {
                   : pfp
               }
               alt=""
-              className="w-[250px] h-[250px] object-cover rounded-full"
+              className="sm:w-[250px] sm:h-[250px] w-[150px] h-[150px] object-cover rounded-full"
             />
             <div className="flex flex-col gap-6">
               <h1 className="text-4xl font-semibold mt-2">
                 {profileData?.name || "User"}
               </h1>
               {profileData?.bio && (
-                <p className="text-gray-300">{profileData.bio}</p>
+                <p className="text-gray-300">
+                  {profileData.bio}</p>
               )}
-              <div className="bg-[#2f9fff] px-6 py-3 rounded-xl">
-                <p className="text-xl font-semibold">Token Balance</p>
-                <p className="text-2xl">{tokenBalance.toString()} SWAG</p>
+              <div className="bg-[#354A63] px-6 py-3 rounded-xl">
+                <p className="sm:text-xl font-semibold">
+                  Test Token Balance - {tokenBalance.toString()} SWAG
+                </p>
+                {/* <p className="sm:text-2xl">{tokenBalance.toString()} SWAG</p> */}
                 {mintStatus && <p className="text-sm">{mintStatus}</p>}
               </div>
-              <div className="flex gap-8">
+              <div className="flex flex-col sm:flex-row gap-8">
                 <div className="flex flex-col gap-4">
-                  <p className="px-4">Internet Identity Address</p>
+                  <p className="sm:px-4">Internet Identity Address</p>
                   <p className="text-[#c1c1c1] bg-[#354A63] px-4 py-2 rounded-3xl">
                     {whoami ? whoami.toText() : "No Principal"}
                   </p>
                 </div>
                 <div className="flex flex-col gap-4">
-                  <p className="px-4">Connected Provider</p>
+                  <p className="sm:px-4">Connected Provider</p>
                   <p className="text-[#c1c1c1] bg-[#354A63] px-4 py-2 rounded-3xl">
                     {activeProvider?.meta?.name
                       ? activeProvider?.meta?.name
@@ -176,12 +179,12 @@ export const Profile = () => {
             </div>
           </div>
           <RouterLink to="/edit-profile">
-            <button className="px-8 py-2 border-2 rounded-3xl border-[#ffffff]">
+            <button className="px-8 block py-2 sm:mt-0 mt-4 border-2 rounded-3xl border-[#ffffff] text-nowrap">
               Edit Profile
             </button>
           </RouterLink>
         </div>
-        <div className="flex justify-center items-center gap-20 mt-8">
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-20 mt-8">
           <RouterLink to="/transaction-history">
             <div className="w-[250px] h-[250px]  rounded-lg flex justify-center items-center flex-col gap-4 text-white border-2 border-[#ffffff]">
               <div className="w-[90px] h-[90px] bg-[#ffffff] rounded-full flex justify-center items-center ">

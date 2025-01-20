@@ -105,7 +105,7 @@ export const EditProfile = () => {
     <div className="min-h-screen bg-[#101a23] text-white">
       <MainNavbar />
       <div className="container mx-auto px-4 py-8">
-        <h2 className="text-2xl font-bold mb-6">Edit Profile</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">Edit Profile</h2>
 
         {error && (
           <div className="bg-red-500/20 border border-red-500 p-4 mb-6 rounded">
@@ -157,7 +157,7 @@ export const EditProfile = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 hover:bg-blue-600 py-2 rounded-md transition-colors"
+            className="w-full bg-[#245bdf] hover:bg-blue-600 py-3 rounded-md transition-colors font-semibold"
           >
             {loading ? "Updating..." : "Update Profile"}
           </button>
