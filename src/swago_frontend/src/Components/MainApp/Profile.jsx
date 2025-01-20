@@ -147,8 +147,7 @@ export const Profile = () => {
                 {profileData?.name || "User"}
               </h1>
               {profileData?.bio && (
-                <p className="text-gray-300">
-                  {profileData.bio}</p>
+                <p className="text-gray-300">{profileData.bio}</p>
               )}
               <div className="bg-[#354A63] px-6 py-3 rounded-xl">
                 <p className="sm:text-xl font-semibold">

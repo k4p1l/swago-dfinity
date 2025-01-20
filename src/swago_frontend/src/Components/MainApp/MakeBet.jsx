@@ -13,6 +13,7 @@ export const MakeBet = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [betAmount, setBetAmount] = useState(1);
   const [betStatus, setBetStatus] = useState(null);
   const [userBalance, setUserBalance] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(0);
@@ -104,10 +105,15 @@ export const MakeBet = () => {
       if (now >= Number(event.end_time)) {
         throw new Error("Betting period has ended");
       }
+      if (!betAmount || betAmount <= 0) {
+        throw new Error("Please enter a valid bet amount");
+      }
 
       // Check balance
-      if (userBalance < 5) {
-        throw new Error("Insufficient balance. You need 5 SWAG tokens to bet.");
+      if (userBalance < betAmount) {
+        throw new Error(
+          `Insufficient balance. You need ${betAmount} SWAG tokens to bet.`
+        );
       }
 
       // Ask for confirmation
@@ -127,7 +133,7 @@ export const MakeBet = () => {
       const transferResult = await swago_backend.transfer(
         whoami,
         HOUSE_WALLET,
-        BigInt(5)
+        BigInt(betAmount)
       );
 
       if (transferResult !== "Transfered successfully") {
@@ -139,13 +145,13 @@ export const MakeBet = () => {
         principal: whoami,
         event_id: BigInt(id),
         yes_or_no: betType,
-        amount: BigInt(5),
+        amount: BigInt(betAmount),
       };
 
       const betResult = await swago_backend.Yes_or_no_fun(betData);
 
       if (betResult === "OK") {
-        setBetStatus(`Successfully placed ${betType} bet`);
+        setBetStatus(`Successfully placed ${betType} bet of ${betAmount} SWAG`);
         // Update user balance
         const newBalance = await swago_backend.balanceOf(whoami);
         setUserBalance(Number(newBalance));
@@ -197,11 +203,11 @@ export const MakeBet = () => {
     <div>
       <MainNavbar />
       <div className="text-white bg-[#101a23] py-12 min-h-screen">
-        <div className="flex justify-between items-center px-4 max-w-7xl mx-auto">
+        <div className="flex flex-col sm:flex-row sm:gap-0 gap-12 justify-between items-center px-4 py-4 max-w-6xl mx-auto">
           <div className="flex-1">
             <div>
               {event && (
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-8">
                   <h2 className="text-4xl font-bold">{event.name}</h2>
                   <div className="flex gap-12 items-center">
                     {event.image && (
@@ -213,54 +219,75 @@ export const MakeBet = () => {
                         className="rounded-lg max-w-40 h-auto"
                       />
                     )}
-                    <p className="text-lg">{event.question}</p>
+                    <p className="text-xl">{event.question}</p>
                   </div>
 
-                  <p>
+                  <p className="text-lg">
                     Start Time:{" "}
                     {new Date(Number(event.start_time) * 1000).toLocaleString()}
                   </p>
-                  <p>
+                  <p className="text-lg">
                     End Time:{" "}
                     {new Date(Number(event.end_time) * 1000).toLocaleString()}
                   </p>
-                  <p>
+                  {/* <p>
                     Yes <br />{" "}
                     <span className="text-cyan-300 text-3xl">21% chance</span>
-                  </p>
+                  </p> */}
                 </div>
               )}
             </div>
           </div>
           <div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 border-2 border-[#354A63] rounded-lg p-4 px-8 w-full">
               <p className="text-lg">
                 Time Remaining: {formatTime(timeRemaining)}
               </p>
               <p className="text-lg">Your Balance: {userBalance} SWAG</p>
-              <button
-                className={`${
-                  isProcessing
-                    ? "bg-gray-500"
-                    : "bg-green-500 hover:bg-green-600"
-                } text-white px-6 py-2 rounded-lg transition-colors`}
-                onClick={() => handleBet("yes")}
-                disabled={isProcessing}
-              >
-                {isProcessing ? "Processing..." : "Bet Yes"}
-              </button>
-              <button
-                className={`${
-                  isProcessing ? "bg-gray-500" : "bg-red-500 hover:bg-red-600"
-                } text-white px-6 py-2 rounded-lg transition-colors`}
-                onClick={() => handleBet("no")}
-                disabled={isProcessing}
-              >
-                {isProcessing ? "Processing..." : "Bet No"}
-              </button>
+              <p>Outcome:</p>
+              <div className="flex gap-4">
+                <button
+                  className={`${
+                    isProcessing
+                      ? "bg-gray-500"
+                      : "bg-green-500 hover:bg-green-600"
+                  } text-white text-lg px-14 py-2 rounded-lg transition-colors`}
+                  onClick={() => handleBet("yes")}
+                  disabled={isProcessing}
+                >
+                  Yes
+                </button>
+                <button
+                  className={`${
+                    isProcessing ? "bg-gray-500" : "bg-red-500 hover:bg-red-600"
+                  } text-white text-lg px-14 py-2 rounded-lg transition-colors`}
+                  onClick={() => handleBet("no")}
+                  disabled={isProcessing}
+                >
+                  No
+                </button>
+              </div>
+              <div className="mt-4">
+                <label className="block text-sm font-medium mb-2">
+                  Amount (SWAG Tokens):
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={betAmount}
+                  onChange={(e) =>
+                    setBetAmount(Math.max(1, parseInt(e.target.value) || 0))
+                  }
+                  className="w-full px-3 py-2 bg-[#1F2937] border border-[#354A63] rounded-lg text-white"
+                  placeholder="Enter amount"
+                />
+              </div>
+              <p className="text-sm mt-4 text-gray-500">
+                By trading you agree to our Terms of Use
+              </p>
             </div>
             {betStatus && (
-              <div className="text-green-500 text-center p-2 bg-green-500/20 rounded">
+              <div className="text-green-500 text-center p-2 bg-green-500/20 rounded mt-4">
                 {betStatus}
               </div>
             )}
