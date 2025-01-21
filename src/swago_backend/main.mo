@@ -208,10 +208,35 @@ actor {
   };
 
   var yesNo_Arr:[yes_or_no] = [];
-  public func Yes_or_no_fun(data:yes_or_no): async Text{
-    yesNo_Arr:=Array.append<yes_or_no>(yesNo_Arr , [data]);
+  public func Yes_or_no_fun(data: yes_or_no): async Text {
+    // Check if the combination of principal and event_id already exists
+    let exists = Array.find<yes_or_no>(yesNo_Arr, func x = 
+        x.principal == data.principal and x.event_id == data.event_id
+    );
+    
+    // If it exists, return a message indicating the duplicate
+    if (exists != null) {
+        return "you already voted";
+    };
+    
+    // Otherwise, append the new data to the array
+    yesNo_Arr := Array.append<yes_or_no>(yesNo_Arr, [data]);
     return "OK";
-  };
+};
+
+public func get_no_of_Votes(event_id: Nat64): async {yesVotes: Nat; noVotes: Nat} {
+    // Filter votes matching the event_id
+    let votesForEvent = Array.filter<yes_or_no>(yesNo_Arr, func(vote) = vote.event_id == event_id);
+
+    // Count "yes" votes
+    let yesVotes = Array.size(Array.filter<yes_or_no>(votesForEvent, func(vote) = vote.yes_or_no == "yes"));
+
+    // Count "no" votes
+    let noVotes = Array.size(Array.filter<yes_or_no>(votesForEvent, func(vote) = vote.yes_or_no == "no"));
+
+    // Return the counts
+    return {yesVotes; noVotes};
+};
 
 
 type Account = {

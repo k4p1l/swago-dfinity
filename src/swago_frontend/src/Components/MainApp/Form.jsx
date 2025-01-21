@@ -6,6 +6,7 @@ import { ConnectButton, ConnectDialog } from "@connect2ic/react";
 import { swago_backend } from "../../../../declarations/swago_backend";
 import { WalletStatus } from "./WalletStatus";
 import { Link as RouterLink } from "react-router-dom";
+import { DialogModal } from "./DialogModal";
 
 export const Form = () => {
   const { isConnected, principal, activeProvider } = useConnect();
@@ -23,6 +24,7 @@ export const Form = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [count, setCount] = useState(200);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -87,7 +89,7 @@ export const Form = () => {
       };
 
       const result = await swago_backend.add_Betting(bettingData);
-      alert("Market created successfully!");
+      setShowSuccessDialog(true);
       setFormData({
         name: "",
         email: "",
@@ -111,6 +113,11 @@ export const Form = () => {
     <div className="text-white bg-[#101a23]">
       <MainNavbar />
       <WalletStatus />
+      <DialogModal
+        isOpen={showSuccessDialog}
+        onClose={() => setShowSuccessDialog(false)}
+        message="Market created successfully!"
+      />
       {!isConnected ? (
         <div className="h-screen flex justify-center mt-28">
           <div className="flex flex-col items-center gap-4">
