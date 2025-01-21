@@ -105,7 +105,7 @@ export const MainNavbar = () => {
                 <div className={`dropdown-content ${isOpen ? "show" : ""}`}>
                   <RouterLink to="/profile">Profile</RouterLink>
                   <a href="">Settings</a>
-                  <a href="">Waitlist</a>
+                  <a href="">WatchList</a>
                   <a href="">Learn</a>
                   <a href="">Documentation</a>
                   <a href="">Terms of Use</a>

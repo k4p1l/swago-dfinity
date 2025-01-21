@@ -87,7 +87,7 @@ export const Form = () => {
       };
 
       const result = await swago_backend.add_Betting(bettingData);
-      alert("Betting created successfully!");
+      alert("Market created successfully!");
       setFormData({
         name: "",
         email: "",
@@ -252,7 +252,7 @@ export const Form = () => {
             <div className="flex flex-col w-[350px] gap-2">
               <label htmlFor="image">
                 Image
-                <p className="text-xs text-red-600 mb-2">
+                <p className="text-xs text-gray-400 mb-2">
                   *Image should be less than 2MB.
                 </p>
                 <input

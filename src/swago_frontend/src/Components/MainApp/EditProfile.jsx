@@ -140,7 +140,7 @@ export const EditProfile = () => {
           <div>
             <label className="block mb-2">
               Profile Picture
-              <p className="text-sm text-red-400">
+              <p className="text-sm text-gray-400">
                 *Image should be less than 2MB
               </p>
             </label>
