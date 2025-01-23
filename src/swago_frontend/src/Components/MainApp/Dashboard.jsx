@@ -168,17 +168,17 @@ export const Dashboard = () => {
                   placeholder="Search market by name or question..."
                   className="w-full input py-2 px-12  outline-none rounded-lg text-[#E4E2E2] bg-[#293643] border-2 border-[#f5f5f5] text-[14px]"
                 />
-                {searchQuery && (
+                {/* {searchQuery && (
                   <button
                     onClick={() => {
                       setSearchQuery("");
                       setFilteredBettings(bettings);
                     }}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                    className=" right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
                   >
                     ×
                   </button>
-                )}
+                )} */}
               </div>
               <div className="flex items-center gap-4 bg-[#354350] px-4 py-2 rounded-lg ">
                 <img src={top} alt="" />

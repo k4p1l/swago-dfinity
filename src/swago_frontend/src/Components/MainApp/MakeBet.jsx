@@ -99,6 +99,36 @@ export const MakeBet = () => {
     fetchEventAndBalance();
   }, [id, whoami]);
 
+  useEffect(() => {
+    let intervalId;
+
+    const pollVotes = async () => {
+      if (!id || !isBettingActive) return;
+
+      try {
+        const votes = await swago_backend.get_no_of_Votes(BigInt(id));
+        setVoteStats(votes);
+      } catch (err) {
+        console.error("Error polling votes:", err);
+      }
+    };
+
+    // Initial poll
+    pollVotes();
+
+    // Set up polling interval if betting is active
+    if (isBettingActive) {
+      intervalId = setInterval(pollVotes, 5000);
+    }
+
+    // Cleanup function
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [id, isBettingActive]);
+
   const handleBet = async (betType) => {
     try {
       // Check if user is connected
@@ -127,7 +157,7 @@ export const MakeBet = () => {
 
       // Ask for confirmation
       const confirmed = window.confirm(
-        `Are you sure you want to bet 5 SWAG tokens on ${betType.toUpperCase()}?`
+        `Are you sure you want to bet ${betAmount} SWAG tokens on ${betType.toUpperCase()}?`
       );
 
       if (!confirmed) {
@@ -196,23 +226,6 @@ export const MakeBet = () => {
       total,
     };
   };
-
-  useEffect(() => {
-    const pollVotes = async () => {
-      if (!id) return;
-
-      try {
-        const votes = await swago_backend.get_no_of_Votes(BigInt(id));
-        setVoteStats(votes);
-      } catch (err) {
-        console.error("Error polling votes:", err);
-      }
-    };
-
-    const interval = setInterval(pollVotes, 10000); // Poll every 10 seconds
-
-    return () => clearInterval(interval);
-  }, [id]);
 
   if (loading) {
     return (
