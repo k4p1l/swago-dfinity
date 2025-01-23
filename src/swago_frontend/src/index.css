@@ -7,73 +7,11 @@
   font-family: Poppins;
 }
 
-.banner {
-  background: linear-gradient(
-    to right,
-    rgb(252, 214, 255, 0.7),
-    rgb(41, 216, 255, 0.7),
-    rgb(255, 253, 128, 0.7),
-    rgb(247, 153, 191, 0.7),
-    rgb(252, 214, 255, 0.7)
-  );
+/* Add to your CSS */
+.vote-percentage {
+  transition: all 0.3s ease-in-out;
 }
 
-.hamburger ion-icon {
-  color: white;
-  font-size: 2rem;
-}
-
-.rainbow-text {
-  background: linear-gradient(
-    to right,
-    #f97aff,
-    #2fd8fe,
-    #ffdd99,
-    #c3f0b2,
-    #2fd8fe,
-    #f97aff
-  );
-  background-size: 300%;
-}
-
-.animated-gradient {
-  animation: move-gradient 5s ease infinite;
-}
-
-@keyframes move-gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 300% 50%;
-  }
-}
-
-.hero {
-  background: linear-gradient(
-    to bottom,
-    #000,
-    #200d42 34%,
-    #4f21a1 65%,
-    #a46edb 82%
-  );
-  background-size: 100% 110%;
-  animation: gradientScroll 10s ease infinite;
-}
-@keyframes gradientScroll {
-  0% {
-    background-position: 0% 0%;
-  }
-  20% {
-    background-position: 0% 80%;
-  }
-  70% {
-    background-position: 0% 100%;
-  }
-  100% {
-    background-position: 0% 0%;
-  }
-}
-.ellipse {
-  background: radial-gradient(closest-side, #000 80%, #a064ff);
+.progress-bar {
+  transition: width 0.3s ease-in-out;
 }

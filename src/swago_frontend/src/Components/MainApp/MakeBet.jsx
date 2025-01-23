@@ -18,6 +18,7 @@ export const MakeBet = () => {
   const [userBalance, setUserBalance] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [isBettingActive, setIsBettingActive] = useState(true);
+  const [voteStats, setVoteStats] = useState({ yesVotes: 0n, noVotes: 0n });
 
   const HOUSE_WALLET = Principal.fromText(
     "elieq-ev22i-d7yya-vgih3-bdohe-bj5qc-aoc55-rd4or-nuvef-rqhsz-mqe"
@@ -73,6 +74,14 @@ export const MakeBet = () => {
         const result = await getBetting(bettingId);
         console.log("Raw event data:", result);
         setEvent(result);
+
+        // Fetch vote counts
+        const votes = await swago_backend.get_no_of_Votes(bettingId);
+        console.log("Vote stats:", votes); // Add this log
+        setVoteStats({
+          yesVotes: votes.yesVotes || 0n,
+          noVotes: votes.noVotes || 0n,
+        });
 
         // Fetch user balance
         if (whoami) {
@@ -166,6 +175,45 @@ export const MakeBet = () => {
     }
   };
 
+  const calculatePercentages = (yesVotes, noVotes) => {
+    const total = Number(yesVotes) + Number(noVotes);
+
+    // Return 0% for both if there are no votes
+    if (total === 0) {
+      return {
+        yesPercentage: 0,
+        noPercentage: 0,
+        total: 0,
+      };
+    }
+
+    const yesPercentage = Math.round((Number(yesVotes) / total) * 100);
+    const noPercentage = Math.round((Number(noVotes) / total) * 100);
+
+    return {
+      yesPercentage,
+      noPercentage,
+      total,
+    };
+  };
+
+  useEffect(() => {
+    const pollVotes = async () => {
+      if (!id) return;
+
+      try {
+        const votes = await swago_backend.get_no_of_Votes(BigInt(id));
+        setVoteStats(votes);
+      } catch (err) {
+        console.error("Error polling votes:", err);
+      }
+    };
+
+    const interval = setInterval(pollVotes, 10000); // Poll every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [id]);
+
   if (loading) {
     return (
       <div className="text-white bg-[#101a23] min-h-screen">
@@ -244,6 +292,58 @@ export const MakeBet = () => {
                 Time Remaining: {formatTime(timeRemaining)}
               </p>
               <p className="text-lg">Your Balance: {userBalance} SWAG</p>
+              <div className="flex justify-between items-center mb-4">
+                <div className="text-center">
+                  <p className="text-xl font-bold text-green-500">
+                    {
+                      calculatePercentages(
+                        voteStats.yesVotes,
+                        voteStats.noVotes
+                      ).yesPercentage
+                    }
+                    %
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    Yes Votes: {Number(voteStats.yesVotes)}
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xl font-bold text-red-500">
+                    {
+                      calculatePercentages(
+                        voteStats.yesVotes,
+                        voteStats.noVotes
+                      ).noPercentage
+                    }
+                    %
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    No Votes: {Number(voteStats.noVotes)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Progress bar */}
+              <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden mb-4">
+                {calculatePercentages(voteStats.yesVotes, voteStats.noVotes)
+                  .total > 0 ? (
+                  <div
+                    className="h-full bg-gradient-to-r from-green-500 to-red-500 transition-all duration-300"
+                    style={{
+                      width: `${
+                        calculatePercentages(
+                          voteStats.yesVotes,
+                          voteStats.noVotes
+                        ).yesPercentage
+                      }%`,
+                    }}
+                  />
+                ) : (
+                  <div className="text-center text-sm text-gray-500 mt-2">
+                    No votes yet
+                  </div>
+                )}
+              </div>
               <p>Outcome:</p>
               <div className="flex gap-4">
                 <button
