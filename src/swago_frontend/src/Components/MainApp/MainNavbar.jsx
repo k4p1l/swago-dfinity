@@ -41,7 +41,7 @@ export const MainNavbar = () => {
             />
             <input
               type="text"
-              placeholder="Search token or address"
+              placeholder="Search market by name or question..."
               className="w-full input py-1 px-1 sm:py-2 sm:px-8 outline-none rounded-lg text-[#E4E2E2] bg-[#293643] border-2 border-[#f5f5f5]"
             />
           </div>

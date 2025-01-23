@@ -95,6 +95,8 @@ export const Dashboard = () => {
   const [bettings, setBettings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredBettings, setFilteredBettings] = useState([]);
 
   useEffect(() => {
     const fetchBettings = async () => {
@@ -102,6 +104,7 @@ export const Dashboard = () => {
         const result = await getAllBettings();
         console.log("Fetched bettings:", result);
         setBettings(result);
+        setFilteredBettings(result); // Initialize filtered bettings
       } catch (err) {
         console.error("Error fetching bettings:", err);
         setError(err.message);
@@ -112,6 +115,23 @@ export const Dashboard = () => {
 
     fetchBettings();
   }, []);
+
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+
+    if (query.trim() === "") {
+      setFilteredBettings(bettings);
+    } else {
+      const filtered = bettings.filter((betting) => {
+        return (
+          betting.name?.toLowerCase().includes(query) ||
+          betting.question?.toLowerCase().includes(query)
+        );
+      });
+      setFilteredBettings(filtered);
+    }
+  };
 
   return (
     <div className="overflow-hidden dashboard-container">
@@ -143,9 +163,22 @@ export const Dashboard = () => {
                 />
                 <input
                   type="text"
-                  placeholder="Search token or address"
+                  value={searchQuery}
+                  onChange={handleSearch}
+                  placeholder="Search market by name or question..."
                   className="w-full input py-2 px-12  outline-none rounded-lg text-[#E4E2E2] bg-[#293643] border-2 border-[#f5f5f5] text-[14px]"
                 />
+                {searchQuery && (
+                  <button
+                    onClick={() => {
+                      setSearchQuery("");
+                      setFilteredBettings(bettings);
+                    }}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                  >
+                    ×
+                  </button>
+                )}
               </div>
               <div className="flex items-center gap-4 bg-[#354350] px-4 py-2 rounded-lg ">
                 <img src={top} alt="" />
@@ -226,18 +259,22 @@ export const Dashboard = () => {
                 justifyItems: "center",
               }}
             >
-              {bettings.map((betting, index) => (
-                <div className="w-fit mx-auto">
-                  <RouterLink to={`/bet/${betting?.betting_id}`}>
-                    <OpinionCard
-                      key={`${
-                        betting?.betting_id?.toString() ?? index
-                      }-${index}`}
-                      {...betting}
-                    />
-                  </RouterLink>
+              {filteredBettings.length > 0 ? (
+                filteredBettings.map((betting, index) => (
+                  <div
+                    className="w-fit mx-auto"
+                    key={betting?.betting_id?.toString() ?? index}
+                  >
+                    <RouterLink to={`/bet/${betting?.betting_id}`}>
+                      <OpinionCard {...betting} />
+                    </RouterLink>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-10 text-white">
+                  No results found for "{searchQuery}"
                 </div>
-              ))}
+              )}
             </div>
           )}
         </div>
