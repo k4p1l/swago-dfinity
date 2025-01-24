@@ -106,6 +106,36 @@ actor {
     return user_Betting ;
   };
 
+  // Add these types and functions
+public type BettingPage = {
+    bettings: [Create_Betting_data];
+    total: Nat;
+    hasMore: Bool;
+};
+
+// Modify get_All_Bettings to support pagination
+public query func get_All_Bettings_Paginated(offset: Nat, limit: Nat): async BettingPage {
+    let totalBettings = Array.size(user_Betting);
+    let start = Nat.min(offset, totalBettings);
+    let end = Nat.min(start + limit, totalBettings);
+    
+    var paginatedBettings: [Create_Betting_data] = [];
+    
+    // Get subset of bettings
+    if (start < end) {
+        paginatedBettings := Array.tabulate<Create_Betting_data>(
+            end - start,
+            func(i) = user_Betting[start + i]
+        );
+    };
+    
+    return {
+        bettings = paginatedBettings;
+        total = totalBettings;
+        hasMore = end < totalBettings;
+    };
+};
+
   public shared query func get_My_Bettings(user_principal:Principal): async [Create_Betting] {
     return Array.filter<Create_Betting>(user_Betting ,  func x=x.user_principal == user_principal);
   };

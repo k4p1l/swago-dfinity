@@ -74,6 +74,9 @@ const CardContainer = styled.div`
   width: 330px;
   height: 100%;
   font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
 const Header = styled.div`

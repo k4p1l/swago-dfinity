@@ -23,7 +23,7 @@ export const Form = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [count, setCount] = useState(200);
+  const [count, setCount] = useState(120);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   const handleChange = (e) => {
@@ -32,7 +32,7 @@ export const Form = () => {
     if (type === "file" && files) {
       setFormData((prev) => ({ ...prev, [name]: files[0] }));
     } else if (name === "question") {
-      setCount(200 - value.length);
+      setCount(120 - value.length);
       setFormData((prev) => ({ ...prev, [name]: value }));
     } else if (type === "radio") {
       setFormData((prev) => ({ ...prev, [name]: value }));
@@ -180,7 +180,7 @@ export const Form = () => {
               </div>
 
               <input
-                maxLength={200}
+                maxLength={120}
                 type="text"
                 name="question"
                 id="question"
