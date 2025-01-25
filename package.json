@@ -19,8 +19,12 @@
     "@react-three/drei": "^9.114.0",
     "@react-three/fiber": "^8.17.9",
     "@readyplayerme/react-avatar-creator": "^0.5.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
     "framer-motion": "^11.11.9",
     "lenis": "^1.1.13",
+    "node-cron": "^3.0.3",
+    "node-fetch": "^3.3.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-parallax-tilt": "^1.7.241",
@@ -29,7 +33,9 @@
     "react-slick": "^0.30.2",
     "react-tooltip": "^5.28.0",
     "slick-carousel": "^1.8.1",
-    "styled-components": "^6.1.13"
+    "styled-components": "^6.1.13",
+    "uuid": "^11.0.5",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
