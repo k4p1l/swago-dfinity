@@ -272,7 +272,7 @@ export const Dashboard = () => {
                 ))
               ) : (
                 <div className="col-span-full text-center py-10 text-white">
-                  No results found for "{searchQuery}"
+                  No results 
                 </div>
               )}
             </div>

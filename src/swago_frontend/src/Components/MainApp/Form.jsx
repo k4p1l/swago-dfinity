@@ -178,7 +178,6 @@ export const Form = () => {
                 </label>
                 <p>{count}</p>
               </div>
-
               <input
                 maxLength={120}
                 type="text"
@@ -194,66 +193,32 @@ export const Form = () => {
               <label htmlFor="website" className="text-lg">
                 Website
               </label>
-              <div className="border-2 border-[#fff] rounded-md p-2">
-                <label className="flex items-center justify-between">
-                  pump.fun
-                  <input
-                    name="website"
-                    type="radio"
-                    value="pump.fun"
-                    checked={formData.website === "pump.fun"}
-                    onChange={handleChange}
-                  />
-                </label>
-                <label className="flex items-center justify-between">
-                  sunpump.meme
-                  <input
-                    name="website"
-                    type="radio"
-                    value="sunpump.meme "
-                    checked={formData.website === "sunpump.meme "}
-                    onChange={handleChange}
-                  />
-                </label>
-              </div>
+              <select
+                name="website"
+                value={formData.website}
+                onChange={handleChange}
+                className="bg-[#1a2632] border-2 border-[#fff] rounded-md p-2 outline-none"
+              >
+                <option className="" value="">Select Website</option>
+                <option value="pump.fun">pump.fun</option>
+                <option value="sunpump.meme">sunpump.meme</option>
+              </select>
             </div>
 
             <div className="flex flex-col w-[350px] gap-2">
               <label htmlFor="timing" className="text-lg">
                 Set the Timing
               </label>
-              <div className="border-2 border-[#fff] rounded-md p-2">
-                <label className="flex items-center justify-between">
-                  5 minutes
-                  <input
-                    name="timing"
-                    type="radio"
-                    value="5"
-                    checked={formData.timing === "5"}
-                    onChange={handleChange}
-                  />
-                </label>
-                <label className="flex items-center justify-between">
-                  10 minutes
-                  <input
-                    name="timing"
-                    type="radio"
-                    value="10"
-                    checked={formData.timing === "10"}
-                    onChange={handleChange}
-                  />
-                </label>
-                <label className="flex items-center justify-between">
-                  15 minutes
-                  <input
-                    name="timing"
-                    type="radio"
-                    value="15"
-                    checked={formData.timing === "15"}
-                    onChange={handleChange}
-                  />
-                </label>
-              </div>
+              <select
+                name="timing"
+                value={formData.timing}
+                onChange={handleChange}
+                className="bg-[#1a2632] border-2 border-[#fff] rounded-md p-2 outline-none"
+              >
+                <option value="5">5 minutes</option>
+                <option value="10">10 minutes</option>
+                <option value="15">15 minutes</option>
+              </select>
             </div>
 
             <div className="flex flex-col w-[350px] gap-2">
