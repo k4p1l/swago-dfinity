@@ -169,17 +169,6 @@ export const MakeBet = () => {
       setBetStatus(null);
       setError(null);
 
-      // Transfer tokens to house wallet
-      const transferResult = await swago_backend.transfer(
-        whoami,
-        HOUSE_WALLET,
-        BigInt(betAmount)
-      );
-
-      if (transferResult !== "Transfered successfully") {
-        throw new Error(transferResult);
-      }
-
       // Record the bet
       const betData = {
         principal: whoami,
@@ -195,14 +184,25 @@ export const MakeBet = () => {
         setBetStatus(
           `Successfully placed bet on ${betType} with ${betAmount} SWAG`
         );
+
+        // Transfer tokens to house wallet
+        const transferResult = await swago_backend.transfer(
+          whoami,
+          HOUSE_WALLET,
+          BigInt(betAmount)
+        );
+
+        if (transferResult !== "Transfered successfully") {
+          throw new Error(transferResult);
+        }
         // Update user balance
         const newBalance = await swago_backend.balanceOf(whoami);
         setUserBalance(Number(newBalance));
       } else {
-        throw new Error("Failed to record bet");
+        throw new Error(betResult);
       }
     } catch (err) {
-      console.error("Betting error:", err);
+      console.error("Error placing bet:", err);
       setError(err.message || "Failed to place bet");
     } finally {
       setIsProcessing(false);

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { swago_backend } from "../../../../declarations/swago_backend";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -26,6 +27,18 @@ export const MarketGraph = ({ eventId, startTime }) => {
     labels: [],
     datasets: [],
   });
+  const formatTimestamp = (timestamp) => {
+    // Convert nanoseconds to milliseconds and create Date object
+    // Add 5 hours and 30 minutes for Indian time (IST)
+    const date = new Date(Number(timestamp) / 1_000_000);
+    return date.toLocaleTimeString("en-US", {
+      timeZone: "Asia/Kolkata",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+  };
 
   const options = {
     responsive: true,
@@ -65,7 +78,6 @@ export const MarketGraph = ({ eventId, startTime }) => {
   };
 
   useEffect(() => {
-    const dataPoints = [];
     const labels = [];
     let currentTime = Math.floor(startTime);
     const now = Math.floor(Date.now() / 1000);
@@ -76,34 +88,51 @@ export const MarketGraph = ({ eventId, startTime }) => {
       currentTime += 60; // Add one minute
     }
 
-    // Simulate data points (replace this with actual data from your backend)
     const fetchDataPoints = async () => {
       try {
-        // Here you would fetch historical voting data from your backend
-        // For now, we'll generate random data
-        const points = labels.map((_, index) => {
-          return Math.random() * 100;
-        });
+        const history = await swago_backend.getVoteHistory(BigInt(eventId));
+        console.log("Raw history:", history);
 
-        setChartData({
-          labels,
-          datasets: [
-            {
-              label: "Yes Probability (%)",
-              data: points,
-              borderColor: "rgb(75, 192, 192)",
-              tension: 0.1,
-              fill: false,
-            },
-          ],
-        });
+        if (history.length > 0) {
+          const processedHistory = history.map((h) => ({
+            timestamp: Number(h.timestamp),
+            yesPercentage: Number(h.yesPercentage),
+            totalVotes: Number(h.totalVotes),
+          }));
+
+          const sortedHistory = processedHistory.sort(
+            (a, b) => a.timestamp - b.timestamp
+          );
+
+          const data = {
+            labels: sortedHistory.map((h) => formatTimestamp(h.timestamp)),
+            datasets: [
+              {
+                label: "Yes Percentage",
+                data: sortedHistory.map((h) => ({
+                  x: h.timestamp / 1_000_000_000, // Convert to seconds
+                  y: h.yesPercentage,
+                })),
+                borderColor: "rgb(75, 192, 192)",
+                tension: 0.1,
+              },
+            ],
+          };
+          console.log("Processed chart data:", data);
+          setChartData(data);
+        }
       } catch (error) {
         console.error("Error fetching graph data:", error);
       }
     };
 
     fetchDataPoints();
-  }, [eventId, startTime]);
+    const interval = setInterval(fetchDataPoints, 30000); // Update every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [eventId]);
+
+  if (!chartData) return null;
 
   return (
     <div className="bg-[#1e293b] p-4 rounded-lg mt-8">

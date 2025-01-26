@@ -13,6 +13,8 @@ import Time "mo:base/Time";
 import _Timer "mo:base/Timer";
 import Debug "mo:base/Debug";
 import Iter "mo:base/Iter";
+import Hash "mo:base/Hash";
+import Float "mo:base/Float";
 // import LedgerIndex "canister:icp_index_canister";
 
 actor {
@@ -101,6 +103,12 @@ actor {
     };
     user_Betting := Array.append<Create_Betting_data>(user_Betting , [new_betting]);
     betting_id_no := new_betting.betting_id+1;
+    let initialSnapshot: VoteSnapshot = {
+    timestamp = Time.now();
+    yesPercentage = 0.0;
+    totalVotes = 0;
+  };
+    voteHistory.put(current_betting_id, [initialSnapshot]);
     return "Betting Created";
   };
 
@@ -243,6 +251,21 @@ public query func get_All_Bettings_Paginated(offset: Nat, limit: Nat): async Bet
     amount:Nat64;
   };
 
+// Add this helper function for Nat64 hashing
+private func nat64Hash(n: Nat64) : Hash.Hash {
+    Hash.hash(Nat64.toNat(n))
+};
+
+public type VoteSnapshot = {
+    timestamp: Int;  // Unix timestamp in seconds
+    yesPercentage: Float;  // Store percentage directly
+    totalVotes: Nat;  // Total number of votes at this point
+};
+
+
+var voteHistory = HashMap.HashMap<Nat64, [VoteSnapshot]>(0, Nat64.equal, nat64Hash);
+
+
   var yesNo_Arr:[yes_or_no] = [];
   public func Yes_or_no_fun(data: yes_or_no): async Text {
     // Check if the combination of principal and event_id already exists
@@ -257,7 +280,33 @@ public query func get_All_Bettings_Paginated(offset: Nat, limit: Nat): async Bet
     
     // Otherwise, append the new data to the array
     yesNo_Arr := Array.append<yes_or_no>(yesNo_Arr, [data]);
+    
+    let currentVotes = await get_no_of_Votes(data.event_id);
+    
+    let totalVotes = currentVotes.yesVotes + currentVotes.noVotes;
+    let yesPercentage = if (totalVotes == 0) 0.0 else Float.fromInt(currentVotes.yesVotes) / Float.fromInt(totalVotes) * 100.0;
+    let snapshot: VoteSnapshot = {
+        timestamp = Time.now();
+        yesPercentage = yesPercentage;
+        totalVotes = totalVotes;
+    };
+
+    switch (voteHistory.get(data.event_id)) {
+        case null {
+            voteHistory.put(data.event_id, [snapshot]);
+        };
+        case (?existing) {
+            voteHistory.put(data.event_id, Array.append(existing, [snapshot]));
+        };
+    };
     return "OK";
+};
+
+public query func getVoteHistory(event_id: Nat64): async [VoteSnapshot] {
+    switch (voteHistory.get(event_id)) {
+        case null { return []; };
+        case (?history) { return history; };
+    };
 };
 
 public func get_no_of_Votes(event_id: Nat64): async {yesVotes: Nat; noVotes: Nat} {
