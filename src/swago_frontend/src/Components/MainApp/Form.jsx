@@ -7,6 +7,7 @@ import { swago_backend } from "../../../../declarations/swago_backend";
 import { WalletStatus } from "./WalletStatus";
 import { Link as RouterLink } from "react-router-dom";
 import { DialogModal } from "./DialogModal";
+const BACKEND_URL = "http://localhost:3001";
 
 export const Form = () => {
   const { isConnected, principal, activeProvider } = useConnect();

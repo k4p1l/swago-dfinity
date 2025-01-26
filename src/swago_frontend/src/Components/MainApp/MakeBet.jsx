@@ -5,6 +5,7 @@ import { getBetting } from "../../utils/actor";
 import { useAuth } from "../../use-auth-client";
 import { Principal } from "@dfinity/principal";
 import { swago_backend } from "../../../../declarations/swago_backend";
+import { MarketGraph } from "./MarketGraph";
 
 export const MakeBet = () => {
   const { id } = useParams();
@@ -188,9 +189,12 @@ export const MakeBet = () => {
       };
 
       const betResult = await swago_backend.Yes_or_no_fun(betData);
+      console.log("Bet result:", betResult);
 
       if (betResult === "OK") {
-        setBetStatus(`Successfully placed ${betType} bet of ${betAmount} SWAG`);
+        setBetStatus(
+          `Successfully placed bet on ${betType} with ${betAmount} SWAG`
+        );
         // Update user balance
         const newBalance = await swago_backend.balanceOf(whoami);
         setUserBalance(Number(newBalance));
@@ -264,7 +268,7 @@ export const MakeBet = () => {
     <div>
       <MainNavbar />
       <div className="text-white bg-[#101a23] py-12 min-h-screen">
-        <div className="flex flex-col sm:flex-row sm:gap-0 gap-12 justify-between items-center px-4 py-4 max-w-6xl mx-auto">
+        <div className="flex flex-col sm:flex-row sm:gap-8 gap-12 justify-between items-center px-4 py-4 max-w-7xl mx-auto">
           <div className="flex-1">
             <div>
               {event && (
@@ -298,6 +302,7 @@ export const MakeBet = () => {
                 </div>
               )}
             </div>
+            <MarketGraph eventId={id} startTime={Number(event.start_time)} />
           </div>
           <div>
             <div className="flex flex-col gap-4 border-2 border-[#354A63] rounded-lg p-4 px-8 w-full">

@@ -7,7 +7,7 @@ import cron from "node-cron";
 import { v4 as uuidv4 } from "uuid";
 ``
 const BACKEND_URL =
-  "http://127.0.0.1:4943/?canisterId=ajuq4-ruaaa-aaaaa-qaaga-cai&id=a3shf-5eaaa-aaaaa-qaafa-cai";
+  "http://127.0.0.1:4943/?canisterId=br5f7-7uaaa-aaaaa-qaaca-cai&id=bd3sg-teaaa-aaaaa-qaaba-cai";
 const WS_URL = "wss://pumpportal.fun/api/data";
 const app = express();
 const server = http.createServer(app);

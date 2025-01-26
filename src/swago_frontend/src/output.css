@@ -888,8 +888,8 @@ video {
   max-width: 10rem;
 }
 
-.max-w-6xl {
-  max-width: 72rem;
+.max-w-7xl {
+  max-width: 80rem;
 }
 
 .max-w-\[1400px\] {
@@ -1286,10 +1286,6 @@ video {
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
-}
-
-.bg-\[\#tra\] {
-  background-color: #tra;
 }
 
 .bg-opacity-50 {
