@@ -341,27 +341,70 @@ export const MakeBet = () => {
                 </div>
               </div>
 
-              {/* Progress bar */}
-              <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden mb-4">
-                {calculatePercentages(voteStats.yesVotes, voteStats.noVotes)
-                  .total > 0 ? (
-                  <div
-                    className="h-full bg-gradient-to-r from-green-500 to-red-500 transition-all duration-300"
-                    style={{
-                      width: `${
-                        calculatePercentages(
-                          voteStats.yesVotes,
-                          voteStats.noVotes
-                        ).yesPercentage
-                      }%`,
-                    }}
-                  />
-                ) : (
-                  <div className="text-center text-sm text-gray-500 mt-2">
-                    No votes yet
+              {/* progress bar */}
+              {(() => {
+                const percentages = calculatePercentages(
+                  voteStats.yesVotes,
+                  voteStats.noVotes
+                );
+
+                if (percentages.total === 0) {
+                  return (
+                    <div className="w-full h-3 bg-gray-700 rounded-full overflow-hidden mb-4">
+                      <div className="text-center text-sm text-gray-500 mt-3">
+                        No votes yet
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="space-y-2">
+                    <div className="w-full h-3 bg-gray-700 rounded-full overflow-hidden relative">
+                      <div className="flex h-full">
+                        <div
+                          className="h-full transition-all duration-500 ease-out"
+                          style={{
+                            width: `${percentages.yesPercentage}%`,
+                            background:
+                              "linear-gradient(90deg, #34d399 0%, #10b981 100%)",
+                            boxShadow: "0 0 10px rgba(52, 211, 153, 0.5)",
+                          }}
+                        />
+                        <div
+                          className="h-full transition-all duration-500 ease-out"
+                          style={{
+                            width: `${percentages.noPercentage}%`,
+                            background:
+                              "linear-gradient(90deg, #ef4444 0%, #dc2626 100%)",
+                            boxShadow: "0 0 10px rgba(239, 68, 68, 0.5)",
+                          }}
+                        />
+                      </div>
+
+                      {/* Percentage labels overlaid on the progress bar */}
+                      <div className="absolute inset-0 flex justify-between items-center px-2">
+                        <span className="text-xs font-bold text-white drop-shadow-md">
+                          {percentages.yesPercentage}%
+                        </span>
+                        <span className="text-xs font-bold text-white drop-shadow-md">
+                          {percentages.noPercentage}%
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Vote counts */}
+                    <div className="flex justify-between text-xs">
+                      <span className="text-green-400">
+                        {Number(voteStats.yesVotes)} Yes votes
+                      </span>
+                      <span className="text-red-400">
+                        {Number(voteStats.noVotes)} No votes
+                      </span>
+                    </div>
                   </div>
-                )}
-              </div>
+                );
+              })()}
               <p>Outcome:</p>
               <div className="flex gap-4">
                 <button
