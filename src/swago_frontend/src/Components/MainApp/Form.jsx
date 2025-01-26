@@ -1,12 +1,12 @@
 import { MainNavbar } from "./MainNavbar";
 import { Principal } from "@dfinity/principal";
-import { useState } from "react";
 import { useConnect } from "@connect2ic/react";
 import { ConnectButton, ConnectDialog } from "@connect2ic/react";
 import { swago_backend } from "../../../../declarations/swago_backend";
 import { WalletStatus } from "./WalletStatus";
 import { Link as RouterLink } from "react-router-dom";
 import { DialogModal } from "./DialogModal";
+import React, { useState, useEffect } from "react";
 const BACKEND_URL = "http://localhost:3001";
 
 export const Form = () => {
@@ -18,6 +18,8 @@ export const Form = () => {
     timing: "5",
     image: null,
     website: "",
+    coin_nm: "",
+    coin_market_sol: 0,
     twitter: "",
     telegram: "",
     countdownStyle: "minimilist",
@@ -26,6 +28,30 @@ export const Form = () => {
   const [error, setError] = useState(null);
   const [count, setCount] = useState(120);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [coins, setCoins] = useState([]);
+
+  // Fetch coins from the proxy server
+  useEffect(() => {
+    const fetchCoins = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/trades`);
+        if (!response.ok) throw new Error("Failed to fetch coins");
+
+        const data = await response.json();
+        const uniqueCoins = data.filter(
+          (coin, index, self) =>
+            index === self.findIndex((c) => c.symbol === coin.symbol)
+        );
+        setCoins(uniqueCoins);
+        console.log("Coins fetched:", uniqueCoins);
+      } catch (err) {
+        console.error("Error fetching coins:", err);
+        setError("Unable to load coins. Please try again later.");
+      }
+    };
+
+    fetchCoins();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -35,6 +61,14 @@ export const Form = () => {
     } else if (name === "question") {
       setCount(120 - value.length);
       setFormData((prev) => ({ ...prev, [name]: value }));
+    } else if (name === "coin_nm") {
+      // Find the selected coin and its market cap
+      const selectedCoin = coins.find((coin) => coin.symbol === value);
+      setFormData((prev) => ({
+        ...prev,
+        coin_nm: value,
+        coin_market_sol: selectedCoin ? selectedCoin.marketCapSol : 0,
+      }));
     } else if (type === "radio") {
       setFormData((prev) => ({ ...prev, [name]: value }));
     } else {
@@ -51,7 +85,11 @@ export const Form = () => {
 
     try {
       // Validate form
-      const requiredFields = ["name", "email", "question", "website", "image"];
+      if (!formData.coin_nm) {
+        throw new Error("Please select a coin");
+      }
+
+      const requiredFields = ["name", "email", "website", "image"];
       const missingFields = requiredFields.filter((field) => !formData[field]);
 
       if (missingFields.length > 0) {
@@ -69,17 +107,21 @@ export const Form = () => {
       const timeInNanos =
         BigInt(formData.timing) * BigInt(60) * BigInt(1_000_000_000);
 
+      const generatedQuestion = `Will the market cap of ${formData.coin_nm} ${formData.direction} in the next ${formData.timing} minutes?`;
+
       // Prepare betting data
       const bettingData = {
         user_principal: Principal.fromText(principal),
         mail: formData.email,
         name: formData.name,
-        question: formData.question,
+        question: generatedQuestion,
         set_Time: timeInNanos,
         image: imageBlob,
         twitter_link: formData.twitter,
         telegram_link: formData.telegram,
         website_link: formData.website,
+        coin_nm: formData.coin_nm,
+        coin_market_sol: formData.coin_market_sol,
         countdown_style: BigInt(
           formData.countdownStyle === "minimilist"
             ? 1
@@ -100,6 +142,8 @@ export const Form = () => {
         website: "",
         twitter: "",
         telegram: "",
+        coin_nm: "",
+        coin_market_sol: 0,
         countdownStyle: "minimilist",
       });
     } catch (err) {
@@ -172,7 +216,32 @@ export const Form = () => {
                 onChange={handleChange}
               />
             </div>
-            <div className=" w-[350px] flex flex-col gap-2">
+
+            <div className="flex flex-col w-[350px] gap-2">
+              <label htmlFor="coin_nm" className="text-lg">
+                Coin Name
+              </label>
+              <select
+                name="coin_nm"
+                value={formData.coin_nm}
+                onChange={handleChange}
+                className="bg-[#1a2632] border-2 border-[#fff] rounded-md p-2 outline-none"
+              >
+                <option value="">-- Select a Coin --</option>
+                {coins.map((coin) => (
+                  <option key={coin.symbol} value={coin.symbol}>
+                    {coin.name} ({coin.symbol})
+                  </option>
+                ))}
+              </select>
+              {formData.coin_nm && (
+                <div className="text-sm text-gray-400 mt-1">
+                  Market Cap: {formData.coin_market_sol.toFixed(2)} SOL
+                </div>
+              )}
+            </div>
+
+            {/* <div className=" w-[350px] flex flex-col gap-2">
               <div className="flex justify-between">
                 <label htmlFor="question" className="text-lg">
                   Question
@@ -188,7 +257,98 @@ export const Form = () => {
                 value={formData.question}
                 onChange={handleChange}
               />
+            </div> */}
+
+            <div className="w-[350px] flex flex-col gap-2">
+              <label className="text-lg">Market Direction</label>
+              <div className="flex gap-4 bg-[#1a2632] p-4 rounded-lg">
+                <label className="flex-1">
+                  <input
+                    type="radio"
+                    name="direction"
+                    value="increase"
+                    checked={formData.direction === "increase"}
+                    onChange={handleChange}
+                    className="hidden"
+                  />
+                  <div
+                    className={`
+        p-3 rounded-lg text-center cursor-pointer transition-all
+        ${
+          formData.direction === "increase"
+            ? "bg-green-500 text-white"
+            : "bg-[#354A63] text-gray-300 hover:bg-[#455B7A]"
+        }
+      `}
+                  >
+                    <span className="flex items-center justify-center gap-2">
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 15l7-7 7 7"
+                        />
+                      </svg>
+                      Increase
+                    </span>
+                  </div>
+                </label>
+                <label className="flex-1">
+                  <input
+                    type="radio"
+                    name="direction"
+                    value="decrease"
+                    checked={formData.direction === "decrease"}
+                    onChange={handleChange}
+                    className="hidden"
+                  />
+                  <div
+                    className={`
+        p-3 rounded-lg text-center cursor-pointer transition-all
+        ${
+          formData.direction === "decrease"
+            ? "bg-red-500 text-white"
+            : "bg-[#354A63] text-gray-300 hover:bg-[#455B7A]"
+        }
+      `}
+                  >
+                    <span className="flex items-center justify-center gap-2">
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                      Decrease
+                    </span>
+                  </div>
+                </label>
+              </div>
             </div>
+
+            {formData.coin_nm && (
+              <div className="w-[350px] p-4 bg-[#1a2632] rounded-lg border border-[#354A63]">
+                <p className="text-lg font-medium">Question Preview:</p>
+                <p className="mt-2 text-gray-300">
+                  Will the market cap of{" "}
+                  {coins.find((coin) => coin.symbol === formData.coin_nm)?.name}{" "}
+                  {formData.direction} in the next {formData.timing} minutes?
+                </p>
+              </div>
+            )}
 
             <div className="flex flex-col w-[350px] gap-2">
               <label htmlFor="website" className="text-lg">
@@ -200,7 +360,9 @@ export const Form = () => {
                 onChange={handleChange}
                 className="bg-[#1a2632] border-2 border-[#fff] rounded-md p-2 outline-none"
               >
-                <option className="" value="">Select Website</option>
+                <option className="" value="">
+                  Select Website
+                </option>
                 <option value="pump.fun">pump.fun</option>
                 <option value="sunpump.meme">sunpump.meme</option>
               </select>

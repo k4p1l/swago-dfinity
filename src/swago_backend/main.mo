@@ -54,8 +54,8 @@ actor {
     telegram_link:Text;
     website_link:Text;
     countdown_style:Nat64;
-    // coin_nm:Text;
-    // coin_market_sol:Float;
+    coin_nm:Text;
+    coin_market_sol:Float;
   };
 
   public type Create_Betting_data = {
@@ -71,8 +71,8 @@ actor {
     website_link:Text;
     countdown_style:Nat64;
     betting_id: Nat64;
-    // coin_nm:Text;
-    // coin_market_sol:Float;
+    coin_nm:Text;
+    coin_market_sol:Float;
   };
 
 
@@ -98,8 +98,8 @@ actor {
       countdown_style = betting.countdown_style;
       betting_id = current_betting_id;
       status:Nat64 = 0;
-      // coin_nm = betting.coin_nm;
-      // coin_market_sol = betting.coin_market_sol;
+      coin_nm = betting.coin_nm;
+      coin_market_sol = betting.coin_market_sol;
     };
     user_Betting := Array.append<Create_Betting_data>(user_Betting , [new_betting]);
     betting_id_no := new_betting.betting_id+1;
