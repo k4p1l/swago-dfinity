@@ -6,6 +6,7 @@ import { useAuth } from "../../use-auth-client";
 import { Principal } from "@dfinity/principal";
 import { swago_backend } from "../../../../declarations/swago_backend";
 import { MarketGraph } from "./MarketGraph";
+import { EventResolver } from "./EventResolver";
 
 export const MakeBet = () => {
   const { id } = useParams();
@@ -454,6 +455,27 @@ export const MakeBet = () => {
             )}
           </div>
         </div>
+        {event &&
+          event.status === 1 &&
+          Number(event.end_time) <= Date.now() / 1000 &&
+          (console.log("Event status:", event.status),
+          console.log("End time:", Number(event.end_time)),
+          console.log("Current time:", Date.now() / 1000),
+          (
+            <div className="mt-8">
+              <h3 className="text-2xl font-bold mb-4 text-center">
+                Event Resolution
+              </h3>
+              <EventResolver
+                singleEventMode={true}
+                eventId={event.betting_id}
+                onResolutionComplete={() => {
+                  // Refresh event data
+                  fetchEventAndBalance();
+                }}
+              />
+            </div>
+          ))}
       </div>
     </div>
   );

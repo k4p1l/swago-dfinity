@@ -11,6 +11,7 @@ import { AstroX } from "@connect2ic/core/providers/astrox";
 import { PlugWallet } from "@connect2ic/core/providers/plug-wallet";
 import { StoicWallet } from "@connect2ic/core/providers/stoic-wallet";
 import { EditProfile } from "./Components/MainApp/EditProfile";
+import { EventResolver } from "./Components/MainApp/EventResolver";
 
 import { createClient } from "@connect2ic/core";
 import { Connect2ICProvider } from "@connect2ic/react";
@@ -45,6 +46,7 @@ function App() {
           <Route path="/transaction-history" element={<TransactionHistory />} />
           <Route path="/bet/:id" element={<MakeBet />} />
           <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/resolution" element={<EventResolver />} />
         </Routes>
       </Router>
     </>

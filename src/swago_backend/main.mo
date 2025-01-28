@@ -15,9 +15,13 @@ import Debug "mo:base/Debug";
 import Iter "mo:base/Iter";
 import Hash "mo:base/Hash";
 import Float "mo:base/Float";
+import Error "mo:base/Error";
+import Int "mo:base/Int";
 // import LedgerIndex "canister:icp_index_canister";
 
 actor {
+  // House wallet principal that holds and distributes funds
+  let HOUSE_WALLET: Principal = Principal.fromText("elieq-ev22i-d7yya-vgih3-bdohe-bj5qc-aoc55-rd4or-nuvef-rqhsz-mqe");
   stable var _transactionId: Types.TransactionId = 0;
   stable var _nfts = List.nil<Types.Nft>();
   // stable var custodians = List.nil<Principal>(); 
@@ -70,6 +74,7 @@ actor {
     telegram_link:Text;
     website_link:Text;
     countdown_style:Nat64;
+    status:Nat;
     betting_id: Nat64;
     coin_nm:Text;
     coin_market_sol:Float;
@@ -97,7 +102,7 @@ actor {
       website_link = betting.website_link;
       countdown_style = betting.countdown_style;
       betting_id = current_betting_id;
-      status:Nat64 = 0;
+      status = 1;
       coin_nm = betting.coin_nm;
       coin_market_sol = betting.coin_market_sol;
     };
@@ -111,6 +116,10 @@ actor {
     voteHistory.put(current_betting_id, [initialSnapshot]);
     return "Betting Created";
   };
+
+  public shared query func unresolved_events(): async [Create_Betting_data] {
+    return Array.filter<Create_Betting_data>(user_Betting, func(event) = event.status == 1);
+};
 
   public shared query func get_Betting_no(): async Nat64 {
     return betting_id_no;
@@ -186,38 +195,6 @@ public query func get_All_Bettings_Paginated(offset: Nat, limit: Nat): async Bet
     };
     return result;
 };
-    
-    
-//   // Mint function
-//   public shared func mintDip721(to: Principal, metadata: Types.MetadataDesc): async Types.MintReceipt {
-//     let newId = Nat64.fromNat(List.size(nfts));
-//     let nft: Types.Nft = {
-//       owner = to;
-//       id = newId;
-//       metadata = metadata;
-//     };
-
-//     nfts := List.push(nft, nfts);
-//     transactionId += 1;
-//     return #Ok({
-//       token_id = newId;
-//       id = transactionId;
-//     });
-//   };
-
-//   public shared func getNftsByPrincipal(owner: Principal): async [Types.Nft] {
-//     let nftArray = List.toArray(nfts); // Convert the stable list to an array
-//     let filteredArray = Array.filter(nftArray, func(nft: Types.Nft): Bool {
-//         nft.owner == owner;
-//     });
-//     return filteredArray; // Return the filtered array
-// };
-
-//   public shared func ledgerdata(): async Nat64 {
-//     let current_round = (await LedgerIndex.status()).num_blocks_synced - 1;
-//     return current_round;
-//   };
-
   public type NewToken = {
     token_Name:Text;
     token_symbol:Text;
@@ -422,5 +399,314 @@ type Account = {
   public query func getAllAccounts(): async [(Principal, Account)] {
     Iter.toArray(accounts.entries());
 };
+
+public type ResultRet = {
+    #err:Text;
+    #Time;
+    #ok:Time.Time;
+    #OK:Text;
+    #index:Nat64;
+  };
+
+  public type BetInfo = {
+    principal: Principal;
+    amount: Nat64;
+    choice: Text; // "yes" or "no"
+    event_id: Nat64;
+};
+
+public type PayoutInfo = {
+    total_pool: Nat64;
+    winning_pool: Nat64;
+    platform_fee: Nat64;
+    creator_reward: Nat64;
+    remaining_pool: Nat64;
+    winning_choice: Text;
+};
+
+public func getBetsForEvent(event_id: Nat64): async [BetInfo] {
+    // Filter votes for this event and convert to BetInfo
+    Array.map<yes_or_no, BetInfo>(
+        Array.filter<yes_or_no>(yesNo_Arr, func(vote) = vote.event_id == event_id),
+        func(vote) = {
+            principal = vote.principal;
+            amount = vote.amount;
+            choice = vote.yes_or_no;
+            event_id = vote.event_id;
+        }
+    )
+};
+
+public func calculatePayout(event_id: Nat64): async PayoutInfo {
+    Debug.print("Calculating payout for event: " # debug_show(event_id));
+    let bets = await getBetsForEvent(event_id);
+    Debug.print("Total bets found: " # debug_show(bets.size()));
+    
+    // Calculate total pool
+    let total_pool = Array.foldLeft<BetInfo, Nat64>(
+        bets, 
+        0,
+        func(acc, bet) = acc + bet.amount
+    );
+    Debug.print("Total pool: " # debug_show(total_pool));
+    
+    // Get event details to determine winning choice
+    Debug.print("Fetching event details...");
+    let event = await get_events_by_id(event_id);
+    switch(event) {
+        case(null) { 
+            Debug.print("Event not found!");
+            throw Error.reject("Event not found"); 
+        };
+        case(?event_data) {
+            Debug.print("Event found: " # event_data.name);
+            Debug.print("Initial market cap: " # debug_show(event_data.coin_market_sol));
+            Debug.print("Current market cap: " # debug_show(event_data.coin_market_sol));
+            
+            let winning_choice = if (event_data.coin_market_sol > event_data.coin_market_sol) "yes" else "no";
+            Debug.print("Winning choice: " # winning_choice);
+            
+            // Calculate winning pool
+            let winning_pool = Array.foldLeft<BetInfo, Nat64>(
+                Array.filter<BetInfo>(bets, func(bet) = bet.choice == winning_choice),
+                0,
+                func(acc, bet) = acc + bet.amount
+            );
+            Debug.print("Winning pool: " # debug_show(winning_pool));
+            
+            // Calculate fees
+            let platform_fee = total_pool * 1 / 100;
+            let creator_reward = total_pool * 5 / 1000;
+            let remaining_pool = total_pool - platform_fee - creator_reward;
+            
+            Debug.print("Platform fee: " # debug_show(platform_fee));
+            Debug.print("Creator reward: " # debug_show(creator_reward));
+            Debug.print("Remaining pool: " # debug_show(remaining_pool));
+            
+            return {
+                total_pool = total_pool;
+                winning_pool = winning_pool;
+                platform_fee = platform_fee;
+                creator_reward = creator_reward;
+                remaining_pool = remaining_pool;
+                winning_choice = winning_choice;
+            };
+        };
+    };
+};
+
+// Add this function to your backend
+public func updateEventStatus(betting_id: Nat64, newStatus: Nat): async Bool {
+    // Find the event index
+    var eventIndex: Nat = 0;
+    var found: Bool = false;
+    
+    for (i in Iter.range(0, user_Betting.size() - 1)) {
+        if (user_Betting[i].betting_id == betting_id) {
+            eventIndex := i;
+            found := true;
+        };
+    };
+
+    if (not found) {
+        return false;
+    };
+
+    // Create updated event with new status
+    let updatedEvent = {
+        user_principal = user_Betting[eventIndex].user_principal;
+        name = user_Betting[eventIndex].name;
+        question = user_Betting[eventIndex].question;
+        start_time = user_Betting[eventIndex].start_time;
+        end_time = user_Betting[eventIndex].end_time;
+        set_Time = user_Betting[eventIndex].set_Time;
+        image = user_Betting[eventIndex].image;
+        twitter_link = user_Betting[eventIndex].twitter_link;
+        telegram_link = user_Betting[eventIndex].telegram_link;
+        website_link = user_Betting[eventIndex].website_link;
+        countdown_style = user_Betting[eventIndex].countdown_style;
+        betting_id = user_Betting[eventIndex].betting_id;
+        status = newStatus;
+        coin_nm = user_Betting[eventIndex].coin_nm;
+        coin_market_sol = user_Betting[eventIndex].coin_market_sol;
+    };
+
+    // Create new array with updated event
+    let newBettings = Array.tabulate<Create_Betting_data>(
+        user_Betting.size(),
+        func(i) = if (i == eventIndex) updatedEvent else user_Betting[i]
+    );
+
+    // Update the user_Betting array
+    user_Betting := newBettings;
+    
+    return true;
+};
+
+public func distributeRewards(event_id: Nat64): async [ResultRet] {
+  Debug.print("Starting distribution for event: " # debug_show(event_id));
+    var results: [ResultRet] = [];
+    
+    try {
+        Debug.print("Fetching event details...");
+        let event = switch(await get_events_by_id(event_id)) {
+            case(null) { 
+              Debug.print("Event not found!");
+              throw Error.reject("Event not found"); };
+            case(?e) {
+               Debug.print("Event found: " # debug_show(e.name));
+               e };
+        };
+
+        Debug.print("Checking if event has ended...");
+        Debug.print("Current time: " # debug_show(Time.now()));
+        Debug.print("Event end time: " # debug_show(event.end_time));
+        
+        // Ensure event has ended
+        if (Time.now() < event.end_time) {
+            Debug.print("Event hasn't ended yet!");
+            throw Error.reject("Event hasn't ended yet");
+        };
+        Debug.print("Calculating payouts...");
+        let payout_info = await calculatePayout(event_id);
+
+        Debug.print("Payout info: " # debug_show(payout_info));
+        
+        Debug.print("Fetching bets...");
+        let bets = await getBetsForEvent(event_id);
+        Debug.print("Total bets found: " # debug_show(bets.size()));
+        
+        // Filter winning bets
+        let winning_bets = Array.filter<BetInfo>(
+            bets,
+            func(bet) = bet.choice == payout_info.winning_choice
+        );
+        
+        // Special case: if all bets are on one side
+        if (payout_info.winning_pool == 0) {
+            // Return everyone's money minus platform fee
+            for (bet in bets.vals()) {
+                let refund_amount = Nat64.toNat(bet.amount * 99 / 100); // Minus 1% platform fee
+                let result = await transfer(
+                    HOUSE_WALLET,
+                    bet.principal,
+                    refund_amount
+                );
+                results := Array.append(results, [#OK(result)]);
+            };
+        } else {
+            Debug.print("Processing normal distribution...");
+            // Normal case: distribute winnings
+            for (bet in winning_bets.vals()) {
+                let proportion = Float.fromInt(Nat64.toNat(bet.amount)) / 
+                               Float.fromInt(Nat64.toNat(payout_info.winning_pool));
+                let reward = Int.abs(Float.toInt(
+                    proportion * Float.fromInt(Nat64.toNat(payout_info.remaining_pool))
+                ));
+                
+                let result = await transfer(
+                    HOUSE_WALLET,
+                    bet.principal,
+                    reward
+                );
+                Debug.print("Transfer result: " # debug_show(result));
+                results := Array.append(results, [#OK(result)]);
+            };
+            
+            // Pay creator reward
+            Debug.print("Processing creator reward...");
+            Debug.print("Creator principal: " # Principal.toText(event.user_principal));
+            Debug.print("Creator reward amount: " # debug_show(payout_info.creator_reward));
+            let result = await transfer(
+                HOUSE_WALLET,
+                event.user_principal,
+                Nat64.toNat(payout_info.creator_reward)
+            );
+            Debug.print("Creator reward transfer result: " # debug_show(result));
+            results := Array.append(results, [#OK("Creator reward paid")]);
+        };
+        Debug.print("Updating event status...");
+        // Update event status
+        let event_update = await updateEventStatus(event_id, 0); // 0 = resolved
+        Debug.print("Event status update result: " # debug_show(event_update));
+        if (not event_update) {
+            Debug.print("Failed to update event status!");
+            throw Error.reject("Failed to update event status");
+        };
+        Debug.print("Distribution completed successfully!");
+    } catch(e) {
+        Debug.print("Error during distribution: " # Error.message(e));
+        results := Array.append(results, [#err(Error.message(e))]);
+    };
+    
+    return results;
+};
+
+// Add a function to get event statistics
+public query func getEventStats(event_id: Nat64): async {
+    total_bets: Nat;
+    total_amount: Nat64;
+    yes_bets: Nat;
+    no_bets: Nat;
+    yes_amount: Nat64;
+    no_amount: Nat64;
+} {
+    let bets = Array.filter<yes_or_no>(yesNo_Arr, func(vote) = vote.event_id == event_id);
+    let yes_bets = Array.filter<yes_or_no>(bets, func(vote) = vote.yes_or_no == "yes");
+    let no_bets = Array.filter<yes_or_no>(bets, func(vote) = vote.yes_or_no == "no");
+    
+    {
+        total_bets = bets.size();
+        total_amount = Array.foldLeft<yes_or_no, Nat64>(bets, 0, func(acc, bet) = acc + bet.amount);
+        yes_bets = yes_bets.size();
+        no_bets = no_bets.size();
+        yes_amount = Array.foldLeft<yes_or_no, Nat64>(yes_bets, 0, func(acc, bet) = acc + bet.amount);
+        no_amount = Array.foldLeft<yes_or_no, Nat64>(no_bets, 0, func(acc, bet) = acc + bet.amount);
+    }
+};
+
+public func resolve_event(
+  from_prin:Principal,
+  betting_id: Nat64,
+  // win_or_loose: Text,
+  won_amount: Nat,
+  prin: Principal,
+  current_coin_marketsol: Float,
+  increase_or_decrease: Text
+  ): async ResultRet {
+  var ans = await get_events_by_id(betting_id);
+  switch (ans) {
+    case (?data) {
+      if (data.set_Time >= Time.now()) {
+        Debug.print(debug_show("ready to resolve"));
+        
+        if (increase_or_decrease == "increase") {
+          if (current_coin_marketsol > data.coin_market_sol) {
+            var answer = await transfer(from_prin , prin , won_amount);
+             Debug.print(debug_show(answer));
+            return #OK("completed");
+          } else {
+            return #err("Market sol did not increase as expected.");
+          }
+        } else if (increase_or_decrease == "decrease") {
+          if (current_coin_marketsol < data.coin_market_sol) {
+            var answer = await transfer(from_prin , prin , won_amount);
+            Debug.print(debug_show(answer));
+            return #OK("completed");
+          } else {
+            return #err("Market sol did not decrease as expected.");
+          }
+        } else {
+          return #err("Invalid value for increase_or_decrease.");
+        }
+      } else {
+        return #err("Event resolution time has passed.");
+      }
+    };
+    case (null) {
+      return #err("Event with the specified ID not found.");
+    };
+  };
+}
 
 };

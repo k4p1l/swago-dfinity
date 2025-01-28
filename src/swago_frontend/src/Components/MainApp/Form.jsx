@@ -64,9 +64,10 @@ export const Form = () => {
     } else if (name === "coin_nm") {
       // Find the selected coin and its market cap
       const selectedCoin = coins.find((coin) => coin.symbol === value);
+      console.log("Selected coin:", selectedCoin);
       setFormData((prev) => ({
         ...prev,
-        coin_nm: value,
+        coin_nm: selectedCoin.symbol,
         coin_market_sol: selectedCoin ? selectedCoin.marketCapSol : 0,
       }));
     } else if (type === "radio") {
@@ -378,6 +379,7 @@ export const Form = () => {
                 onChange={handleChange}
                 className="bg-[#1a2632] border-2 border-[#fff] rounded-md p-2 outline-none"
               >
+                <option value="3">3 minutes</option>
                 <option value="5">5 minutes</option>
                 <option value="10">10 minutes</option>
                 <option value="15">15 minutes</option>
