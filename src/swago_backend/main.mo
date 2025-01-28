@@ -437,7 +437,7 @@ public func getBetsForEvent(event_id: Nat64): async [BetInfo] {
     )
 };
 
-public func calculatePayout(event_id: Nat64): async PayoutInfo {
+public func calculatePayout(event_id: Nat64, current_market_cap: Float): async PayoutInfo {
     Debug.print("Calculating payout for event: " # debug_show(event_id));
     let bets = await getBetsForEvent(event_id);
     Debug.print("Total bets found: " # debug_show(bets.size()));
@@ -461,9 +461,9 @@ public func calculatePayout(event_id: Nat64): async PayoutInfo {
         case(?event_data) {
             Debug.print("Event found: " # event_data.name);
             Debug.print("Initial market cap: " # debug_show(event_data.coin_market_sol));
-            Debug.print("Current market cap: " # debug_show(event_data.coin_market_sol));
+            Debug.print("Current market cap: " # debug_show(current_market_cap));
             
-            let winning_choice = if (event_data.coin_market_sol > event_data.coin_market_sol) "yes" else "no";
+            let winning_choice = if (current_market_cap > event_data.coin_market_sol) "yes" else "no";
             Debug.print("Winning choice: " # winning_choice);
             
             // Calculate winning pool
@@ -543,7 +543,7 @@ public func updateEventStatus(betting_id: Nat64, newStatus: Nat): async Bool {
     return true;
 };
 
-public func distributeRewards(event_id: Nat64): async [ResultRet] {
+public func distributeRewards(event_id: Nat64,current_market_cap: Float): async [ResultRet] {
   Debug.print("Starting distribution for event: " # debug_show(event_id));
     var results: [ResultRet] = [];
     
@@ -568,7 +568,7 @@ public func distributeRewards(event_id: Nat64): async [ResultRet] {
             throw Error.reject("Event hasn't ended yet");
         };
         Debug.print("Calculating payouts...");
-        let payout_info = await calculatePayout(event_id);
+        let payout_info = await calculatePayout(event_id, current_market_cap);
 
         Debug.print("Payout info: " # debug_show(payout_info));
         
