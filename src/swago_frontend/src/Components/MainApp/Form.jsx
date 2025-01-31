@@ -1,6 +1,7 @@
 import { MainNavbar } from "./MainNavbar";
 import { Principal } from "@dfinity/principal";
 import { useConnect } from "@connect2ic/react";
+import { useAuth } from "../../use-auth-client";
 import { ConnectButton, ConnectDialog } from "@connect2ic/react";
 import { swago_backend } from "../../../../declarations/swago_backend";
 import { WalletStatus } from "./WalletStatus";
@@ -11,6 +12,7 @@ const BACKEND_URL = "http://localhost:3001";
 
 export const Form = () => {
   const { isConnected, principal, activeProvider } = useConnect();
+  const { isAuthenticated, identity, login, logout } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -164,7 +166,19 @@ export const Form = () => {
         onClose={() => setShowSuccessDialog(false)}
         message="Market created successfully!"
       />
-      {!isConnected ? (
+      {!isAuthenticated ? (
+        <div className="h-screen flex justify-center mt-28">
+          <div className="flex flex-col items-center gap-4">
+            <p>Please login with Internet Identity first.</p>
+            <button
+              onClick={login}
+              className="bg-[#00aeef] px-6 py-2 rounded-md font-semibold"
+            >
+              Login with Internet Identity
+            </button>
+          </div>
+        </div>
+      ) : !isConnected ? (
         <div className="h-screen flex justify-center mt-28">
           <div className="flex flex-col items-center gap-4">
             Please connect your wallet before creating a new market.

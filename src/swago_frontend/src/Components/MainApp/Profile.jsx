@@ -4,7 +4,7 @@ import pfp from "../../assets/images/1330515.jpg";
 import { useConnect } from "@connect2ic/react";
 import { useAuth } from "../../use-auth-client";
 import { swago_backend } from "../../../../declarations/swago_backend";
-import { Principal } from "@dfinity/principal"; // Add this import
+import { Principal } from "@dfinity/principal";
 import transactionIcon from "../../assets/icons/transaction.svg";
 import leaderboardIcon from "../../assets/icons/leaderboard.svg";
 import eventsIcons from "../../assets/icons/participated.svg";
