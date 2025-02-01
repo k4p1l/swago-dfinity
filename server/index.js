@@ -2,119 +2,109 @@ import WebSocket from "ws";
 import express from "express";
 import http from "http";
 import cors from "cors";
-// import fetch from "node-fetch";
-// import cron from "node-cron";
-// import { v4 as uuidv4 } from "uuid";
 
-// const BACKEND_URL = "https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=o5777-ciaaa-aaaam-adywq-cai";
 const WS_URL = "wss://pumpportal.fun/api/data";
 const app = express();
 const server = http.createServer(app);
 
-let latestData = []; // Store the most recent trade data
-// Enable CORS for all origins
+let Data = []; // Store all trade data
+
 app.use(cors());
 app.use(express.json());
 
+// REST API to fetch all trade data
+app.get("/api/trades", (req, res) => {
+    res.json({ trades: Data });
+});
+
 function connectWebSocket() {
-  const ws = new WebSocket(WS_URL);
+    let ws = new WebSocket(WS_URL);
 
-  ws.on("open", () => {
-    console.log("WebSocket connected");
+    ws.on("open", () => {
+        console.log(" WebSocket connected successfully");
 
-    // Define subscriptions
-    const subscriptions = [
-      { method: "subscribeNewToken" },
-      {
-        method: "subscribeAccountTrade",
-        keys: ["AArPXm8JatJiuyEffuC1un2Sc835SULa4uQqDcaGpAjV"],
-      },
-      {
-        method: "subscribeTokenTrade",
-        keys: ["91WNez8D22NwBssQbkzjy4s2ipFrzpmn5hfvWVe2aY5p"],
-      },
-    ];
+        const subscriptions = [
+            { method: "subscribeNewToken" },
+            { 
+                method: "subscribeAccountTrade", 
+                keys: ["AArPXm8JatJiuyEffuC1un2Sc835SULa4uQqDcaGpAjV"] 
+            },
+            { 
+                method: "subscribeTokenTrade", 
+                keys: ["91WNez8D22NwBssQbkzjy4s2ipFrzpmn5hfvWVe2aY5p"] 
+            }
+        ];
 
-    // Send subscriptions when WebSocket is ready
-    subscriptions.forEach((payload) => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify(payload));
-        console.log(`Sent subscription: ${payload.method}`);
-      } else {
-        console.error(`WebSocket not open for ${payload.method}`);
-      }
+        subscriptions.forEach(payload => {
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify(payload));
+                console.log(`📩 Subscribed to: ${payload.method}`);
+            }
+        });
     });
-  });
 
-  ws.on("message", (data) => {
-    try {
-      const parsedData = JSON.parse(data);
+    ws.on("message", (data) => {
+        try {
+            const parsedData = JSON.parse(data);
 
-      // Check if the required fields exist
-      if (
-        parsedData.signature &&
-        parsedData.mint &&
-        parsedData.traderPublicKey &&
-        parsedData.txType &&
-        parsedData.initialBuy &&
-        parsedData.solAmount &&
-        parsedData.bondingCurveKey &&
-        parsedData.vTokensInBondingCurve &&
-        parsedData.vSolInBondingCurve &&
-        parsedData.marketCapSol &&
-        parsedData.name &&
-        parsedData.symbol &&
-        parsedData.uri &&
-        parsedData.pool
-      ) {
-        // Store the complete trade data
-        const trade = {
-          signature: parsedData.signature,
-          mint: parsedData.mint,
-          traderPublicKey: parsedData.traderPublicKey,
-          txType: parsedData.txType,
-          initialBuy: parsedData.initialBuy,
-          solAmount: parsedData.solAmount,
-          bondingCurveKey: parsedData.bondingCurveKey,
-          vTokensInBondingCurve: parsedData.vTokensInBondingCurve,
-          vSolInBondingCurve: parsedData.vSolInBondingCurve,
-          marketCapSol: parsedData.marketCapSol,
-          name: parsedData.name,
-          symbol: parsedData.symbol,
-          uri: parsedData.uri,
-          pool: parsedData.pool,
-          timestamp: new Date().toISOString(),
-        };
+            if (
+                parsedData.signature &&
+                parsedData.mint &&
+                parsedData.traderPublicKey &&
+                parsedData.txType &&
+                parsedData.name &&
+                parsedData.symbol &&
+                parsedData.uri &&
+                parsedData.pool
+            ) {
+                let pricePerToken = null;
+                if (parsedData.vTokensInBondingCurve > 0) {
+                    pricePerToken = (parsedData.vSolInBondingCurve / parsedData.vTokensInBondingCurve).toFixed(9);
+                }
 
-        latestData.push(trade);
-        if (latestData.length > 100) latestData.shift(); // Keep only the latest 100 messages
+                let totalCost = pricePerToken ? (pricePerToken * parsedData.vTokensInBondingCurve).toFixed(9) : null;
 
-        console.log("Updated latest data:", latestData);
-      } else {
-        console.warn("⚠️ Incomplete trade data received:", parsedData);
-      }
-    } catch (err) {
-      console.error("Error parsing WebSocket message:", err);
-    }
-  });
+                const trade = {
+                    signature: parsedData.signature,
+                    mint: parsedData.mint,
+                    traderPublicKey: parsedData.traderPublicKey,
+                    txType: parsedData.txType,
+                    name: parsedData.name,
+                    symbol: parsedData.symbol,
+                    uri: parsedData.uri,
+                    pool: parsedData.pool,
+                    timestamp: new Date().toISOString()
+                };
 
-  ws.on("close", () => {
-    console.log(" WebSocket connection closed. Reconnecting in 5 seconds...");
-    setTimeout(connectWebSocket, 5000); // Reconnect after 5 seconds
-  });
+                Data.push(trade); 
 
-  ws.on("error", (err) => {
-    console.error("WebSocket error:", err);
-    ws.close();
-  });
+                console.log(` New Trade: ${trade.name} (${trade.symbol}) - ${trade.solAmount} SOL`);
+                console.log(trade);
+            } else {
+                console.warn(" Incomplete trade data received:", parsedData);
+            }
+        } catch (err) {
+            console.error(" Error parsing WebSocket message:", err);
+        }
+    });
 
-  return ws;
+    ws.on("close", () => {
+        console.warn("🔄 WebSocket connection lost. Reconnecting in 5 seconds...");
+        setTimeout(connectWebSocket, 5000);
+    });
+
+    ws.on("error", (err) => {
+        console.error(" WebSocket error:", err);
+        ws.close();
+    });
+
+    return ws;
 }
 
-// Start WebSocket connection
-const ws = connectWebSocket();
 
-// Start the server
+connectWebSocket();
+
+
 server.listen(3001, () => {
-  console.log("Proxy server running on http://localhost:3001");
+    console.log(" Proxy server running on http://localhost:3001");
 });

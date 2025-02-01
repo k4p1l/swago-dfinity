@@ -40,6 +40,7 @@ export const Form = () => {
         if (!response.ok) throw new Error("Failed to fetch coins");
 
         const data = await response.json();
+        console.log("Raw coin data:", data);
         const uniqueCoins = data.filter(
           (coin, index, self) =>
             index === self.findIndex((c) => c.symbol === coin.symbol)
