@@ -9,6 +9,8 @@ import { Link as RouterLink } from "react-router-dom";
 import { DialogModal } from "./DialogModal";
 import React, { useState, useEffect } from "react";
 const BACKEND_URL = "http://localhost:3001";
+import { initializeMoralis } from "../../../moralisConfig";
+import Moralis from "moralis";
 
 export const Form = () => {
   const { isConnected, principal, activeProvider } = useConnect();
@@ -31,6 +33,11 @@ export const Form = () => {
   const [count, setCount] = useState(120);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [coins, setCoins] = useState([]);
+  const [marketPrice, setMarketPrice] = useState(null);
+
+  useEffect(() => {
+    initializeMoralis(); // Ensure Moralis initializes once
+  }, []);
 
   // Fetch coins from the proxy server
   useEffect(() => {
@@ -40,8 +47,11 @@ export const Form = () => {
         if (!response.ok) throw new Error("Failed to fetch coins");
 
         const data = await response.json();
-        console.log("Raw coin data:", data);
-        const uniqueCoins = data.filter(
+        if (!data.trades || !Array.isArray(data.trades)) {
+          throw new Error("Invalid API response format");
+        }
+        console.log("Raw coin data:", data.trades);
+        const uniqueCoins = data.trades.filter(
           (coin, index, self) =>
             index === self.findIndex((c) => c.symbol === coin.symbol)
         );
@@ -56,6 +66,44 @@ export const Form = () => {
     fetchCoins();
   }, []);
 
+  // Fetch token price using Moralis API
+  const fetchMarketPrice = async (mint) => {
+    if (!mint) return;
+
+    try {
+      console.log(`🔍 Fetching price for mint: ${mint}`);
+
+      const response = await Moralis.SolApi.token.getTokenPrice({
+        network: "mainnet",
+        address: mint,
+      });
+
+      console.log("📊 Full API Response:", response);
+
+      if (response?.jsonResponse?.nativePrice?.value) {
+        const nativeValue = response.jsonResponse.nativePrice.value;
+        const nativeSymbol = response.jsonResponse.nativePrice.symbol;
+
+        console.log(" Native Price Found:", nativeValue, nativeSymbol);
+        console.log("typeof nativeValue", typeof nativeValue);
+        console.log("native value", nativeValue);
+        const marketCap = parseFloat(nativeValue);
+
+        setMarketPrice(marketCap);
+      } else {
+        console.warn(" No native price found in response");
+        setMarketPrice("Native price not available");
+      }
+    } catch (e) {
+      console.error("Error fetching token price:");
+      setMarketPrice("Error fetching price");
+    }
+  };
+
+  useEffect(() => {
+    console.log("UI Updated - Market Price:", marketPrice);
+  }, [marketPrice]);
+
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
 
@@ -68,10 +116,11 @@ export const Form = () => {
       // Find the selected coin and its market cap
       const selectedCoin = coins.find((coin) => coin.symbol === value);
       console.log("Selected coin:", selectedCoin);
+      fetchMarketPrice(selectedCoin.mint);
       setFormData((prev) => ({
         ...prev,
         coin_nm: selectedCoin.symbol,
-        coin_market_sol: selectedCoin ? selectedCoin.marketCapSol : 0,
+        coin_market_sol: marketPrice ? marketPrice : 0,
       }));
     } else if (type === "radio") {
       setFormData((prev) => ({ ...prev, [name]: value }));
@@ -250,9 +299,9 @@ export const Form = () => {
                   </option>
                 ))}
               </select>
-              {formData.coin_nm && (
+              {marketPrice !== null && (
                 <div className="text-sm text-gray-400 mt-1">
-                  Market Cap: {formData.coin_market_sol.toFixed(2)} SOL
+                  Market Cap: {marketPrice}
                 </div>
               )}
             </div>

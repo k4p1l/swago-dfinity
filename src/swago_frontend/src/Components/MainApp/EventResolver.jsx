@@ -1,6 +1,8 @@
 // EventResolver.jsx
 import React, { useEffect, useState } from "react";
 import { swago_backend } from "../../../../declarations/swago_backend";
+import Moralis from "moralis";
+import { initializeMoralis } from "../../../moralisConfig";
 import { Principal } from "@dfinity/principal";
 
 export const EventResolver = ({
@@ -8,6 +10,9 @@ export const EventResolver = ({
   eventId = null,
   onResolutionComplete = () => {},
 }) => {
+  useEffect(() => {
+    initializeMoralis();
+  }, []);
   const [unresolvedEvents, setUnresolvedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
