@@ -1,34 +1,34 @@
 // EventResolver.jsx
 import React, { useEffect, useState } from "react";
 import { swago_backend } from "../../../../declarations/swago_backend";
+import { Principal } from "@dfinity/principal";
 import Moralis from "moralis";
 import { initializeMoralis } from "../../../moralisConfig";
-import { Principal } from "@dfinity/principal";
 
 export const EventResolver = ({
   singleEventMode = false,
   eventId = null,
   onResolutionComplete = () => {},
 }) => {
-  useEffect(() => {
-    initializeMoralis();
-  }, []);
   const [unresolvedEvents, setUnresolvedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [resolutionStatus, setResolutionStatus] = useState({});
+
+  // Initialize Moralis
+  useEffect(() => {
+    initializeMoralis();
+  }, []);
 
   // Fetch events based on mode
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         if (singleEventMode && eventId) {
-          // Fetch single event
           const event = await swago_backend.get_events_by_id(BigInt(eventId));
           setUnresolvedEvents(event ? [event] : []);
           console.log("Single event:", event);
         } else {
-          // Fetch all unresolved events
           const events = await swago_backend.unresolved_events();
           setUnresolvedEvents(events);
           console.log("All unresolved events:", events);
@@ -48,52 +48,28 @@ export const EventResolver = ({
     }
   }, [singleEventMode, eventId]);
 
-  const fetchCurrentMarketData = async (symbol) => {
+  // Fetch current market price using Moralis
+  const fetchCurrentMarketPrice = async (mint) => {
     try {
-      const response = await fetch("http://localhost:3001/api/trades");
-      if (!response.ok) {
-        throw new Error("Failed to fetch market data");
-      }
-      const trades = await response.json();
+      console.log(`🔍 Fetching price for mint: ${mint}`);
 
-      // Log sample trade data
-      console.log("Sample trade structure:", trades[0]);
-      console.log(
-        "All available symbols:",
-        trades.map((t) => t.symbol)
-      );
-      console.log(
-        "All available names:",
-        trades.map((t) => t.name)
-      );
-
-      // Try different variations of the symbol
-      const symbolNormalized = symbol.toUpperCase().trim();
-      console.log("Looking for symbol:", symbolNormalized);
-
-      const currentData = trades.find((trade) => {
-        console.log("Comparing with trade:", {
-          symbol: trade.symbol,
-          name: trade.name,
-          normalized: trade.symbol?.toUpperCase().trim(),
-        });
-        return trade.symbol?.toUpperCase().trim() === symbolNormalized;
+      const response = await Moralis.SolApi.token.getTokenPrice({
+        network: "mainnet",
+        address: mint,
       });
 
-      if (!currentData) {
-        // Try fuzzy matching
-        const possibleMatches = trades.filter(
-          (trade) =>
-            trade.symbol?.toUpperCase().includes(symbolNormalized) ||
-            symbolNormalized.includes(trade.symbol?.toUpperCase())
-        );
-        console.log("Possible matches:", possibleMatches);
-      }
+      console.log("📊 Full API Response:", response);
 
-      return currentData;
+      if (response?.jsonResponse?.nativePrice?.value) {
+        const nativeValue = response.jsonResponse.nativePrice.value;
+        console.log("Native Price Found:", nativeValue);
+        return parseFloat(nativeValue);
+      } else {
+        throw new Error("No price data found in response");
+      }
     } catch (err) {
-      console.error("Error fetching market data:", err);
-      throw new Error(`Failed to fetch market data for ${symbol}`);
+      console.error("Error fetching token price:", err);
+      throw new Error(`Failed to fetch price for mint ${mint}: ${err.message}`);
     }
   };
 
@@ -109,12 +85,13 @@ export const EventResolver = ({
         },
       }));
 
-      // Get current market data
-      const currentMarketData = await fetchCurrentMarketData(event.coin_nm);
-      console.log("Fetched market data:", currentMarketData);
+      // Get current market price using mint address
+      const currentMarketCap = await fetchCurrentMarketPrice(event.coin_mint);
+      console.log("Current market cap:", currentMarketCap);
+      console.log("Initial market cap:", event.coin_market_sol);
 
-      if (!currentMarketData) {
-        throw new Error(`No market data found for ${event.coin_nm}`);
+      if (typeof currentMarketCap !== "number" || isNaN(currentMarketCap)) {
+        throw new Error(`Invalid market cap value for ${event.coin_nm}`);
       }
 
       // Get event statistics
@@ -127,11 +104,15 @@ export const EventResolver = ({
           ...prev[event.betting_id],
           message: "Calculating payouts...",
           stats,
+          currentMarketCap,
         },
       }));
 
-      // Calculate payouts
-      const payoutInfo = await swago_backend.calculatePayout(event.betting_id);
+      // Calculate payouts with current market cap
+      const payoutInfo = await swago_backend.calculatePayout(
+        event.betting_id,
+        currentMarketCap
+      );
       console.log("Payout info:", payoutInfo);
 
       setResolutionStatus((prev) => ({
@@ -143,14 +124,14 @@ export const EventResolver = ({
         },
       }));
 
-      // Distribute rewards
+      // Distribute rewards with current market cap
       const distributionResults = await swago_backend.distributeRewards(
-        event.betting_id
+        event.betting_id,
+        currentMarketCap
       );
       console.log("Distribution results:", distributionResults);
-      // Check for errors in distribution
-      const hasErrors = distributionResults.some((result) => "err" in result);
 
+      const hasErrors = distributionResults.some((result) => "err" in result);
       if (hasErrors) {
         throw new Error("Some rewards failed to distribute");
       }
@@ -163,6 +144,7 @@ export const EventResolver = ({
           stats,
           payoutInfo,
           distributionResults,
+          currentMarketCap,
         },
       }));
 
@@ -170,6 +152,8 @@ export const EventResolver = ({
       setUnresolvedEvents((prev) =>
         prev.filter((e) => e.betting_id !== event.betting_id)
       );
+
+      onResolutionComplete();
     } catch (err) {
       console.error("Error resolving event:", err);
       setResolutionStatus((prev) => ({
@@ -182,12 +166,11 @@ export const EventResolver = ({
     }
   };
 
-  // Check for events that need resolution
+  // Auto-check for events that need resolution
   useEffect(() => {
     const checkForResolution = async () => {
-      if (!unresolvedEvents.length) return;
-
       const now = Math.floor(Date.now() / 1000);
+
       for (const event of unresolvedEvents) {
         console.log("Checking event:", event.betting_id);
         console.log("Event end time:", Number(event.end_time));
@@ -200,7 +183,6 @@ export const EventResolver = ({
       }
     };
 
-    checkForResolution();
     const interval = setInterval(checkForResolution, 30000);
     return () => clearInterval(interval);
   }, [unresolvedEvents]);
@@ -241,9 +223,9 @@ export const EventResolver = ({
                 End Time:{" "}
                 {new Date(Number(event.end_time) * 1000).toLocaleString()}
               </p>
-              {/* <p className="text-gray-300">
-                Status: {event.status === 1 ? "Unresolved" : "Resolved"}
-              </p> */}
+              <p className="text-gray-300">
+                Initial Market Cap: {event.coin_market_sol} SOL
+              </p>
             </div>
 
             {resolutionStatus[event.betting_id] && (
@@ -265,92 +247,28 @@ export const EventResolver = ({
                     {resolutionStatus[event.betting_id].message}
                   </p>
 
-                  {resolutionStatus[event.betting_id].stats && (
-                    <div className="bg-[#2a3642] p-4 rounded-lg">
+                  {resolutionStatus[event.betting_id].currentMarketCap && (
+                    <div className="bg-[#2a3642] p-4 rounded-lg mb-4">
                       <h4 className="text-white font-semibold mb-2">
-                        Event Statistics
-                      </h4>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <p className="text-gray-300">
-                            Total Bets:{" "}
-                            {
-                              resolutionStatus[event.betting_id].stats
-                                .total_bets
-                            }
-                          </p>
-                          <p className="text-gray-300">
-                            Yes Bets:{" "}
-                            {resolutionStatus[event.betting_id].stats.yes_bets}
-                          </p>
-                          <p className="text-gray-300">
-                            No Bets:{" "}
-                            {resolutionStatus[event.betting_id].stats.no_bets}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-gray-300">
-                            Total Amount:{" "}
-                            {
-                              resolutionStatus[event.betting_id].stats
-                                .total_amount
-                            }{" "}
-                            SWAG
-                          </p>
-                          <p className="text-gray-300">
-                            Yes Amount:{" "}
-                            {
-                              resolutionStatus[event.betting_id].stats
-                                .yes_amount
-                            }{" "}
-                            SWAG
-                          </p>
-                          <p className="text-gray-300">
-                            No Amount:{" "}
-                            {resolutionStatus[event.betting_id].stats.no_amount}{" "}
-                            SWAG
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {resolutionStatus[event.betting_id].payoutInfo && (
-                    <div className="bg-[#2a3642] p-4 rounded-lg mt-4">
-                      <h4 className="text-white font-semibold mb-2">
-                        Payout Information
+                        Market Data
                       </h4>
                       <div className="grid grid-cols-2 gap-4">
                         <p className="text-gray-300">
-                          Total Pool:{" "}
-                          {
-                            resolutionStatus[event.betting_id].payoutInfo
-                              .total_pool
-                          }{" "}
-                          SWAG
+                          Initial Price: {event.coin_market_sol} SOL
                         </p>
                         <p className="text-gray-300">
-                          Platform Fee:{" "}
-                          {
-                            resolutionStatus[event.betting_id].payoutInfo
-                              .platform_fee
-                          }{" "}
-                          SWAG
+                          Current Price:{" "}
+                          {resolutionStatus[event.betting_id].currentMarketCap}{" "}
+                          SOL
                         </p>
                         <p className="text-gray-300">
-                          Creator Reward:{" "}
-                          {
-                            resolutionStatus[event.betting_id].payoutInfo
-                              .creator_reward
-                          }{" "}
-                          SWAG
-                        </p>
-                        <p className="text-gray-300">
-                          Winning Side:{" "}
-                          {
-                            resolutionStatus[event.betting_id].payoutInfo
-                              .winning_choice
-                          }
+                          Change:{" "}
+                          {((resolutionStatus[event.betting_id]
+                            .currentMarketCap -
+                            event.coin_market_sol) /
+                            event.coin_market_sol) *
+                            100}
+                          %
                         </p>
                       </div>
                     </div>

@@ -59,6 +59,7 @@ actor {
     website_link : Text;
     countdown_style : Nat64;
     coin_nm : Text;
+    coin_mint : Text;
     coin_market_sol : Float;
   };
 
@@ -77,6 +78,7 @@ actor {
     status : Nat;
     betting_id : Nat64;
     coin_nm : Text;
+    coin_mint : Text;
     coin_market_sol : Float;
   };
 
@@ -102,6 +104,7 @@ actor {
       betting_id = current_betting_id;
       status = 1;
       coin_nm = betting.coin_nm;
+      coin_mint = betting.coin_mint;
       coin_market_sol = betting.coin_market_sol;
     };
     user_Betting := Array.append<Create_Betting_data>(user_Betting, [new_betting]);
@@ -528,6 +531,7 @@ actor {
       betting_id = user_Betting[eventIndex].betting_id;
       status = newStatus;
       coin_nm = user_Betting[eventIndex].coin_nm;
+      coin_mint = user_Betting[eventIndex].coin_mint;
       coin_market_sol = user_Betting[eventIndex].coin_market_sol;
     };
 

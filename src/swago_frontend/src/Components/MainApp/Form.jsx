@@ -34,6 +34,7 @@ export const Form = () => {
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [coins, setCoins] = useState([]);
   const [marketPrice, setMarketPrice] = useState(null);
+  const [coin_mint, setCoinMint] = useState(null);
 
   useEffect(() => {
     initializeMoralis(); // Ensure Moralis initializes once
@@ -88,6 +89,7 @@ export const Form = () => {
         console.log("typeof nativeValue", typeof nativeValue);
         console.log("native value", nativeValue);
         const marketCap = parseFloat(nativeValue);
+        console.log("float Market Cap:", marketCap);
 
         setMarketPrice(marketCap);
       } else {
@@ -116,6 +118,7 @@ export const Form = () => {
       // Find the selected coin and its market cap
       const selectedCoin = coins.find((coin) => coin.symbol === value);
       console.log("Selected coin:", selectedCoin);
+      setCoinMint(selectedCoin.mint);
       fetchMarketPrice(selectedCoin.mint);
       setFormData((prev) => ({
         ...prev,
@@ -174,6 +177,7 @@ export const Form = () => {
         telegram_link: formData.telegram,
         website_link: formData.website,
         coin_nm: formData.coin_nm,
+        coin_mint: coin_mint,
         coin_market_sol: formData.coin_market_sol,
         countdown_style: BigInt(
           formData.countdownStyle === "minimilist"
@@ -186,6 +190,7 @@ export const Form = () => {
 
       const result = await swago_backend.add_Betting(bettingData);
       setShowSuccessDialog(true);
+      setCoinMint(null);
       setFormData({
         name: "",
         email: "",
