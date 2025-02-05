@@ -5,11 +5,7 @@ import { Principal } from "@dfinity/principal";
 import Moralis from "moralis";
 import { initializeMoralis } from "../../../moralisConfig";
 
-export const EventResolver = ({
-  singleEventMode = false,
-  eventId = null,
-  onResolutionComplete = () => {},
-}) => {
+export const EventResolver = ({ singleEventMode = false, eventId = null }) => {
   const [unresolvedEvents, setUnresolvedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -153,7 +149,7 @@ export const EventResolver = ({
         prev.filter((e) => e.betting_id !== event.betting_id)
       );
 
-      onResolutionComplete();
+      // onResolutionComplete();
     } catch (err) {
       console.error("Error resolving event:", err);
       setResolutionStatus((prev) => ({

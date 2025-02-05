@@ -616,10 +616,6 @@ video {
   right: 1rem;
 }
 
-.right-\[calc\(50\%-390px\)\] {
-  right: calc(50% - 390px);
-}
-
 .top-1\/2 {
   top: 50%;
 }
@@ -725,6 +721,14 @@ video {
 
 .mt-\[8px\] {
   margin-top: 8px;
+}
+
+.mt-44 {
+  margin-top: 11rem;
+}
+
+.mt-32 {
+  margin-top: 8rem;
 }
 
 .block {
@@ -1808,8 +1812,16 @@ video {
 }
 
 @media (min-width: 640px) {
+  .sm\:right-\[calc\(50\%-390px\)\] {
+    right: calc(50% - 390px);
+  }
+
   .sm\:mt-0 {
     margin-top: 0px;
+  }
+
+  .sm\:mt-32 {
+    margin-top: 8rem;
   }
 
   .sm\:block {

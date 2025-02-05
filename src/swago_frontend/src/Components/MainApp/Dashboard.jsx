@@ -272,7 +272,7 @@ export const Dashboard = () => {
                 ))
               ) : (
                 <div className="col-span-full text-center py-10 text-white">
-                  No results 
+                  No results
                 </div>
               )}
             </div>
@@ -339,7 +339,7 @@ export const Dashboard = () => {
         </div>
         <TrustedBy />
         <div className="relative">
-          <div className="flex items-center justify-center gap-4 mt-20 bg-[#EBEBEB] py-4 absolute top-[-200px] right-[calc(50%-390px)] px-16 rounded-xl">
+          <div className="flex sm:flex-row flex-col items-center justify-center gap-4 mt-20 bg-[#EBEBEB] py-4 absolute top-[-200px] sm:right-[calc(50%-390px)] px-16 rounded-xl">
             <img className="w-[100px]" src={wallet} alt="" />
             <p className="text-2xl font-bold">
               Please <span className="text-[#0638ff]">Connect</span> your Wallet
@@ -352,7 +352,9 @@ export const Dashboard = () => {
           </div>
         </div>
       </div>
-      <Footer />
+      <div className="sm:mt-0 mt-32">
+        <Footer />
+      </div>
     </div>
   );
 };

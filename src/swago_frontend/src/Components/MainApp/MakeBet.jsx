@@ -455,7 +455,7 @@ export const MakeBet = () => {
           </div>
         </div>
         {event &&
-          event.status === 1 &&
+          event.status == 1 &&
           Number(event.end_time) <= Date.now() / 1000 &&
           (console.log("Event status:", event.status),
           console.log("End time:", Number(event.end_time)),
@@ -468,13 +468,19 @@ export const MakeBet = () => {
               <EventResolver
                 singleEventMode={true}
                 eventId={event.betting_id}
-                onResolutionComplete={() => {
-                  // Refresh event data
-                  fetchEventAndBalance();
-                }}
               />
             </div>
           ))}
+
+        {event && event.status == 0 && (
+          <div className="mt-8 text-center p-4 bg-green-500/20 rounded-lg max-w-2xl mx-auto">
+            <h3 className="text-2xl font-bold mb-2">Event Resolved</h3>
+            <p className="text-lg">
+              Rewards have been successfully processed and distributed to
+              participants.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
