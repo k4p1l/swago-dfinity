@@ -289,6 +289,10 @@ export const OpinionCard = ({
     }
   };
 
+  const handleCardClick = () => {
+    navigate(`/bet/${betting_id}`);
+  };
+
   useEffect(() => {
     const calculateTimeRemaining = () => {
       const now = Math.floor(Date.now() / 1000); // Current time in seconds
@@ -340,7 +344,7 @@ export const OpinionCard = ({
           <>
             <Button
               variant="yes"
-              onClick={navigate(`/bet/${betting_id}`)}
+              onClick={handleCardClick}
               disabled={isProcessing}
             >
               Buy Yes
@@ -352,7 +356,7 @@ export const OpinionCard = ({
             </Button>
             <Button
               variant="no"
-              onClick={navigate(`/bet/${betting_id}`)}
+              onClick={handleCardClick}
               disabled={isProcessing}
             >
               Buy No

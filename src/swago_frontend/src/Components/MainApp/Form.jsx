@@ -36,6 +36,7 @@ export const Form = () => {
   const [coins, setCoins] = useState([]);
   const [marketPrice, setMarketPrice] = useState(null);
   const [coin_mint, setCoinMint] = useState(null);
+  const [marketPriceLoading, setMarketPriceLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -72,7 +73,8 @@ export const Form = () => {
 
   // Fetch token price using Moralis API
   const fetchMarketPrice = async (mint) => {
-    if (!mint) return;
+    if (!mint) return null;
+    setMarketPriceLoading(true);
 
     try {
       console.log(`🔍 Fetching price for mint: ${mint}`);
@@ -86,30 +88,32 @@ export const Form = () => {
 
       if (response?.jsonResponse?.nativePrice?.value) {
         const nativeValue = response.jsonResponse.nativePrice.value;
-        const nativeSymbol = response.jsonResponse.nativePrice.symbol;
-
-        console.log(" Native Price Found:", nativeValue, nativeSymbol);
-        console.log("typeof nativeValue", typeof nativeValue);
-        console.log("native value", nativeValue);
         const marketCap = parseFloat(nativeValue);
-        console.log("float Market Cap:", marketCap);
-
-        setMarketPrice(marketCap);
-      } else {
-        console.warn(" No native price found in response");
-        setMarketPrice("Native price not available");
+        console.log("Parsed Market Cap:", marketCap);
+        return marketCap;
       }
+      return null;
     } catch (e) {
-      console.error("Error fetching token price:");
-      setMarketPrice("Error fetching price");
+      console.error("Error fetching token price:", e);
+      return null;
+    } finally {
+      setMarketPriceLoading(false);
     }
   };
-
   useEffect(() => {
     console.log("UI Updated - Market Price:", marketPrice);
   }, [marketPrice]);
 
-  const handleChange = (e) => {
+  useEffect(() => {
+    if (marketPrice !== null && !marketPriceLoading) {
+      setFormData((prev) => ({
+        ...prev,
+        coin_market_sol: marketPrice,
+      }));
+    }
+  }, [marketPrice, marketPriceLoading]);
+
+  const handleChange = async (e) => {
     const { name, value, type, files } = e.target;
 
     if (type === "file" && files) {
@@ -121,22 +125,29 @@ export const Form = () => {
       // Find the selected coin and its market cap
       const selectedCoin = coins.find((coin) => coin.symbol === value);
       console.log("Selected coin:", selectedCoin);
-      setCoinMint(selectedCoin.mint);
-      fetchMarketPrice(selectedCoin.mint);
-      setFormData((prev) => ({
-        ...prev,
-        coin_nm: selectedCoin.symbol,
-        coin_market_sol: marketPrice ? marketPrice : 0,
-      }));
-    } else if (type === "radio") {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      if (selectedCoin) {
+        setCoinMint(selectedCoin.mint);
+        // First update the form with selected coin
+        setFormData((prev) => ({
+          ...prev,
+          coin_nm: selectedCoin.symbol,
+          coin_market_sol: 0, // Set to 0 initially
+        }));
+        // Then fetch and update the market price
+        const price = await fetchMarketPrice(selectedCoin.mint);
+        if (price !== null) {
+          setMarketPrice(price);
+          setFormData((prev) => ({
+            ...prev,
+            coin_market_sol: price,
+          }));
+        }
+      }
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
-
-    // Debug log
-    console.log(`Field ${name} changed to:`, value);
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -146,6 +157,25 @@ export const Form = () => {
       // Validate form
       if (!formData.coin_nm) {
         throw new Error("Please select a coin");
+      }
+
+      if (marketPriceLoading) {
+        throw new Error("Please wait for market price to load");
+      }
+
+      if (!formData.coin_market_sol || formData.coin_market_sol === 0) {
+        // Try to fetch price one more time
+        const selectedCoin = coins.find(
+          (coin) => coin.symbol === formData.coin_nm
+        );
+        if (selectedCoin) {
+          const price = await fetchMarketPrice(selectedCoin.mint);
+          if (price) {
+            formData.coin_market_sol = price;
+          } else {
+            throw new Error("Failed to get market price. Please try again.");
+          }
+        }
       }
 
       const requiredFields = ["name", "email", "website", "image"];
@@ -209,7 +239,7 @@ export const Form = () => {
         countdownStyle: "minimilist",
       });
 
-      navigate("/", { replace: true });
+      navigate("/");
     } catch (err) {
       console.error("Error creating bet:", err);
       setError(err.message || "Failed to create bet. Please try again.");
@@ -312,7 +342,14 @@ export const Form = () => {
               </select>
               {marketPrice !== null && (
                 <div className="text-sm text-gray-400 mt-1">
-                  Market Cap: {marketPrice}
+                  {marketPriceLoading ? (
+                    <div className="flex items-center">
+                      <div className="animate-spin mr-2 h-4 w-4 border-2 border-blue-500"></div>
+                      Loading market cap...
+                    </div>
+                  ) : (
+                    <>Market Cap: {marketPrice} SOL</>
+                  )}
                 </div>
               )}
             </div>
@@ -504,10 +541,19 @@ export const Form = () => {
             </div>
 
             <button
-              className="bg-[#00aeef] w-[350px] text-xl font-bold py-2 px-4 rounded-md"
+              className={`w-[350px] text-xl font-bold py-2 px-4 rounded-md ${
+                loading || marketPriceLoading
+                  ? "bg-gray-500 cursor-not-allowed"
+                  : "bg-[#00aeef] hover:bg-[#0096ce]"
+              }`}
               type="submit"
+              disabled={loading || marketPriceLoading}
             >
-              {loading ? "Creating..." : "Create Market"}
+              {loading
+                ? "Creating..."
+                : marketPriceLoading
+                ? "Loading Market Price..."
+                : "Create Market"}
             </button>
           </form>
         </div>
