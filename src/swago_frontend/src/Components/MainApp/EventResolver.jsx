@@ -84,6 +84,7 @@ export const EventResolver = ({ singleEventMode = false, eventId = null }) => {
       // Get current market price using mint address
       const currentMarketCap = await fetchCurrentMarketPrice(event.coin_mint);
       console.log("Current market cap:", currentMarketCap);
+      console.log("Target market cap:", event.coin_market_sol);
       console.log("Initial market cap:", event.coin_market_sol);
 
       if (typeof currentMarketCap !== "number" || isNaN(currentMarketCap)) {

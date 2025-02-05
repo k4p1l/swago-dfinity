@@ -25,6 +25,8 @@ export const Form = () => {
     website: "",
     coin_nm: "",
     coin_market_sol: 0,
+    initial_market_sol: 0,
+    direction: "",
     twitter: "",
     telegram: "",
     countdownStyle: "minimilist",
@@ -108,7 +110,7 @@ export const Form = () => {
     if (marketPrice !== null && !marketPriceLoading) {
       setFormData((prev) => ({
         ...prev,
-        coin_market_sol: marketPrice,
+        initial_market_sol: marketPrice,
       }));
     }
   }, [marketPrice, marketPriceLoading]);
@@ -131,7 +133,7 @@ export const Form = () => {
         setFormData((prev) => ({
           ...prev,
           coin_nm: selectedCoin.symbol,
-          coin_market_sol: 0, // Set to 0 initially
+          initial_market_sol: 0, // Set to 0 initially
         }));
         // Then fetch and update the market price
         const price = await fetchMarketPrice(selectedCoin.mint);
@@ -139,13 +141,15 @@ export const Form = () => {
           setMarketPrice(price);
           setFormData((prev) => ({
             ...prev,
-            coin_market_sol: price,
+            initial_market_sol: price,
           }));
         }
       }
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
+
+    console.log("Form Data Updated:", formData);
   };
 
   const handleSubmit = async (e) => {
@@ -163,7 +167,7 @@ export const Form = () => {
         throw new Error("Please wait for market price to load");
       }
 
-      if (!formData.coin_market_sol || formData.coin_market_sol === 0) {
+      if (!formData.initial_market_sol || formData.initial_market_sol === 0) {
         // Try to fetch price one more time
         const selectedCoin = coins.find(
           (coin) => coin.symbol === formData.coin_nm
@@ -171,33 +175,47 @@ export const Form = () => {
         if (selectedCoin) {
           const price = await fetchMarketPrice(selectedCoin.mint);
           if (price) {
-            formData.coin_market_sol = price;
+            formData.initial_market_sol = price;
           } else {
             throw new Error("Failed to get market price. Please try again.");
           }
         }
       }
 
-      const requiredFields = ["name", "email", "website", "image"];
+      const requiredFields = ["name", "email", "website"];
       const missingFields = requiredFields.filter((field) => !formData[field]);
 
       if (missingFields.length > 0) {
         throw new Error(`Please fill out: ${missingFields.join(", ")}`);
       }
 
-      // Convert image to blob
-      const imageBlob = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(new Uint8Array(reader.result));
-        reader.onerror = reject;
-        reader.readAsArrayBuffer(formData.image);
-      });
+      let imageBlob = new Uint8Array(0); // Empty array for no image
+
+      if (formData.image) {
+        try {
+          const arrayBuffer = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsArrayBuffer(formData.image);
+          });
+
+          imageBlob = new Uint8Array(arrayBuffer);
+        } catch (imageError) {
+          console.error("Error processing image:", imageError);
+          // Continue with empty blob if image processing fails
+        }
+      }
 
       const timeInNanos =
         BigInt(formData.timing) * BigInt(60) * BigInt(1_000_000_000);
 
-      const generatedQuestion = `Will the market cap of ${formData.coin_nm} ${formData.direction} in the next ${formData.timing} minutes?`;
-      console.log("market cap", formData.coin_market_sol);
+      const generatedQuestion = `Will the market cap of ${
+        formData.coin_nm
+      } reach ${formData.target_market_cap} SOL ${
+        formData.direction === "increase" ? "or above" : "or below"
+      } in the next ${formData.timing} minutes?`;
+      console.log("market cap", formData.initial_market_sol);
       // Prepare betting data
       const bettingData = {
         user_principal: Principal.fromText(principal),
@@ -211,7 +229,9 @@ export const Form = () => {
         website_link: formData.website,
         coin_nm: formData.coin_nm,
         coin_mint: coin_mint,
-        coin_market_sol: formData.coin_market_sol,
+        initial_market_sol: formData.initial_market_sol,
+        direction: formData.direction,
+        coin_market_sol: parseFloat(formData.target_market_cap),
         countdown_style: BigInt(
           formData.countdownStyle === "minimilist"
             ? 1
@@ -236,6 +256,8 @@ export const Form = () => {
         telegram: "",
         coin_nm: "",
         coin_market_sol: 0,
+        direction: "",
+        initial_market_sol: 0,
         countdownStyle: "minimilist",
       });
 
@@ -452,13 +474,29 @@ export const Form = () => {
               </div>
             </div>
 
+            <div className="flex flex-col gap-2 w-[350px] ">
+              <label htmlFor="target_market_cap" className="text-lg">
+                Target Market Cap
+              </label>
+              <input
+                type="text"
+                name="target_market_cap"
+                id="target_market_cap"
+                className="bg-[#1a2632] border-2 border-[#fff] rounded-md outline-none px-2 py-1"
+                value={formData.target}
+                onChange={handleChange}
+              />
+            </div>
+
             {formData.coin_nm && (
               <div className="w-[350px] p-4 bg-[#1a2632] rounded-lg border border-[#354A63]">
                 <p className="text-lg font-medium">Question Preview:</p>
                 <p className="mt-2 text-gray-300">
                   Will the market cap of{" "}
                   {coins.find((coin) => coin.symbol === formData.coin_nm)?.name}{" "}
-                  {formData.direction} in the next {formData.timing} minutes?
+                  reach {formData.target_market_cap} SOL{" "}
+                  {formData.direction === "increase" ? "or above" : "or below"}{" "}
+                  in the next {formData.timing} minutes?
                 </p>
               </div>
             )}

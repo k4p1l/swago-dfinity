@@ -58,7 +58,7 @@ const ImageDisplay = ({ imageData }) => {
       src={imageUrl}
       alt="Betting image"
       className="w-[50px] h-[50px] rounded-lg object-cover"
-      onError={() => setError("Failed to load image")}
+      onError={() => setError("No image")}
     />
   ) : null;
 };

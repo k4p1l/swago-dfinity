@@ -47,7 +47,7 @@ actor {
   //   return Array.find<Mail_id>(UserMail , func x=x.mailId == mailId);
   // };
 
-  var betting_id_no : Nat64 = 0;
+  var betting_id_no : Nat64 = 1;
   public type Create_Betting = {
     user_principal : Principal;
     name : Text;
@@ -60,7 +60,9 @@ actor {
     countdown_style : Nat64;
     coin_nm : Text;
     coin_mint : Text;
-    coin_market_sol : Float;
+    coin_market_sol : Float; //target market cap
+    initial_market_sol : Float;
+    direction : Text;
   };
 
   public type Create_Betting_data = {
@@ -80,6 +82,8 @@ actor {
     coin_nm : Text;
     coin_mint : Text;
     coin_market_sol : Float;
+    initial_market_sol : Float;
+    direction : Text;
   };
 
   var user_Betting : [Create_Betting_data] = [];
@@ -106,6 +110,8 @@ actor {
       coin_nm = betting.coin_nm;
       coin_mint = betting.coin_mint;
       coin_market_sol = betting.coin_market_sol;
+      initial_market_sol = betting.initial_market_sol;
+      direction = betting.direction;
     };
     user_Betting := Array.append<Create_Betting_data>(user_Betting, [new_betting]);
     betting_id_no := new_betting.betting_id + 1;
@@ -440,65 +446,6 @@ actor {
     );
   };
 
-  public func calculatePayout(event_id : Nat64, current_market_cap : Float) : async PayoutInfo {
-    Debug.print("Calculating payout for event: " # debug_show (event_id));
-    let bets = await getBetsForEvent(event_id);
-    Debug.print("Total bets found: " # debug_show (bets.size()));
-
-    // Calculate total pool
-    let total_pool = Array.foldLeft<BetInfo, Nat64>(
-      bets,
-      0,
-      func(acc, bet) = acc + bet.amount,
-    );
-    Debug.print("Total pool: " # debug_show (total_pool));
-
-    // Get event details to determine winning choice
-    Debug.print("Fetching event details...");
-    let event = await get_events_by_id(event_id);
-    switch (event) {
-      case (null) {
-        Debug.print("Event not found!");
-        throw Error.reject("Event not found");
-      };
-      case (?event_data) {
-        Debug.print("Event found: " # event_data.name);
-        Debug.print("Initial market cap: " # debug_show (event_data.coin_market_sol));
-        Debug.print("Current market cap: " # debug_show (current_market_cap));
-
-        let winning_choice = if (current_market_cap > event_data.coin_market_sol) "yes" else "no";
-        Debug.print("Winning choice: " # winning_choice);
-
-        // Calculate winning pool
-        let winning_pool = Array.foldLeft<BetInfo, Nat64>(
-          Array.filter<BetInfo>(bets, func(bet) = bet.choice == winning_choice),
-          0,
-          func(acc, bet) = acc + bet.amount,
-        );
-        Debug.print("Winning pool: " # debug_show (winning_pool));
-
-        // Calculate fees
-        let platform_fee = total_pool * 1 / 100;
-        let creator_reward = total_pool * 5 / 1000;
-        let remaining_pool = total_pool - platform_fee - creator_reward;
-
-        Debug.print("Platform fee: " # debug_show (platform_fee));
-        Debug.print("Creator reward: " # debug_show (creator_reward));
-        Debug.print("Remaining pool: " # debug_show (remaining_pool));
-
-        return {
-          total_pool = total_pool;
-          winning_pool = winning_pool;
-          platform_fee = platform_fee;
-          creator_reward = creator_reward;
-          remaining_pool = remaining_pool;
-          winning_choice = winning_choice;
-        };
-      };
-    };
-  };
-
-  // Add this function to your backend
   public func updateEventStatus(betting_id : Nat64, newStatus : Nat) : async Bool {
     // Find the event index
     var eventIndex : Nat = 0;
@@ -533,6 +480,8 @@ actor {
       coin_nm = user_Betting[eventIndex].coin_nm;
       coin_mint = user_Betting[eventIndex].coin_mint;
       coin_market_sol = user_Betting[eventIndex].coin_market_sol;
+      initial_market_sol = user_Betting[eventIndex].initial_market_sol;
+      direction = user_Betting[eventIndex].direction;
     };
 
     // Create new array with updated event
@@ -545,6 +494,75 @@ actor {
     user_Betting := newBettings;
 
     return true;
+  };
+
+  public func calculatePayout(event_id : Nat64, current_market_cap : Float) : async PayoutInfo {
+    Debug.print("Calculating payout for event: " # debug_show (event_id));
+    let bets = await getBetsForEvent(event_id);
+    Debug.print("Total bets found: " # debug_show (bets.size()));
+
+    // Calculate total pool
+    let total_pool = Array.foldLeft<BetInfo, Nat64>(
+      bets,
+      0,
+      func(acc, bet) = acc + bet.amount,
+    );
+    Debug.print("Total pool: " # debug_show (total_pool));
+
+    // Get event details to determine winning choice
+    Debug.print("Fetching event details...");
+    let event = await get_events_by_id(event_id);
+    switch (event) {
+      case (null) {
+        Debug.print("Event not found!");
+        throw Error.reject("Event not found");
+      };
+      case (?event_data) {
+        Debug.print("Event found: " # event_data.name);
+        Debug.print("Target market cap: " # debug_show (event_data.coin_market_sol));
+        Debug.print("Current market cap: " # debug_show (current_market_cap));
+
+        let winning_choice = switch (event_data.direction) {
+          case ("increase") {
+            // If question was about increasing, check if current is higher
+            if (current_market_cap >= event_data.coin_market_sol) "yes" else "no";
+          };
+          case ("decrease") {
+            // If question was about decreasing, check if current is lower
+            if (current_market_cap <= event_data.coin_market_sol) "yes" else "no";
+          };
+          case (_) {
+            throw Error.reject("Invalid direction specified");
+          };
+        };
+
+        // Calculate winning pool
+        let winning_pool = Array.foldLeft<BetInfo, Nat64>(
+          Array.filter<BetInfo>(bets, func(bet) = bet.choice == winning_choice),
+          0,
+          func(acc, bet) = acc + bet.amount,
+        );
+        Debug.print("Winning pool: " # debug_show (winning_pool));
+
+        // Calculate fees
+        let platform_fee = total_pool * 1 / 100;
+        let creator_reward = total_pool * 5 / 1000;
+        let remaining_pool = total_pool - platform_fee - creator_reward;
+
+        Debug.print("Platform fee: " # debug_show (platform_fee));
+        Debug.print("Creator reward: " # debug_show (creator_reward));
+        Debug.print("Remaining pool: " # debug_show (remaining_pool));
+
+        return {
+          total_pool = total_pool;
+          winning_pool = winning_pool;
+          platform_fee = platform_fee;
+          creator_reward = creator_reward;
+          remaining_pool = remaining_pool;
+          winning_choice = winning_choice;
+        };
+      };
+    };
   };
 
   public func distributeRewards(event_id : Nat64, current_market_cap : Float) : async [ResultRet] {
@@ -672,10 +690,17 @@ actor {
     };
   };
 
+  public shared query func get_User_Principal(betting_id : Nat64) : async ?Principal {
+    let result = Array.find<Create_Betting_data>(user_Betting, func x = x.betting_id == betting_id);
+    return switch (result) {
+      case (?bet) ?bet.user_principal;
+      case null null;
+    };
+  };
+
   public func resolve_event(
     from_prin : Principal,
     betting_id : Nat64,
-    // win_or_loose: Text,
     won_amount : Nat,
     prin : Principal,
     current_coin_marketsol : Float,
@@ -685,26 +710,54 @@ actor {
     switch (ans) {
       case (?data) {
         if (data.set_Time >= Time.now()) {
-          Debug.print(debug_show ("ready to resolve"));
+          Debug.print(debug_show ("Ready to resolve"));
 
-          if (increase_or_decrease == "increase") {
-            if (current_coin_marketsol > data.coin_market_sol) {
-              var answer = await transfer(from_prin, prin, won_amount);
-              Debug.print(debug_show (answer));
-              return #OK("completed");
-            } else {
-              return #err("Market sol did not increase as expected.");
+          let creator_principal_opt = await get_User_Principal(betting_id);
+          switch (creator_principal_opt) {
+            case (?creator_principal) {
+              let platform_share = (won_amount * 1) / 100;
+              let creator_share = (won_amount * 5) / 10000;
+              let winner_share = won_amount - (platform_share + creator_share);
+
+              if (increase_or_decrease == "increase") {
+                if (current_coin_marketsol > data.coin_market_sol) {
+                  let platform_transfer = await transfer(from_prin, from_prin, platform_share);
+                  let creator_transfer = await transfer(from_prin, creator_principal, creator_share);
+                  let winner_transfer = await transfer(from_prin, prin, winner_share);
+
+                  Debug.print(debug_show (platform_transfer));
+                  Debug.print(debug_show (creator_transfer));
+                  Debug.print(debug_show (winner_transfer));
+
+                  let event_update = await updateEventStatus(betting_id, 0); // 0 = resolved
+                  Debug.print("Event status update result: " # debug_show (event_update));
+                  return #OK("Completed");
+                } else {
+                  return #err("Market sol did not increase as expected.");
+                };
+              } else if (increase_or_decrease == "decrease") {
+                if (current_coin_marketsol < data.coin_market_sol) {
+                  let platform_transfer = await transfer(from_prin, from_prin, platform_share);
+                  let creator_transfer = await transfer(from_prin, creator_principal, creator_share);
+                  let winner_transfer = await transfer(from_prin, prin, winner_share);
+
+                  Debug.print(debug_show (platform_transfer));
+                  Debug.print(debug_show (creator_transfer));
+                  Debug.print(debug_show (winner_transfer));
+
+                  let event_update = await updateEventStatus(betting_id, 0); // 0 = resolved
+                  Debug.print("Event status update result: " # debug_show (event_update));
+                  return #OK("Completed");
+                } else {
+                  return #err("Market sol did not decrease as expected.");
+                };
+              } else {
+                return #err("Invalid value for increase_or_decrease.");
+              };
             };
-          } else if (increase_or_decrease == "decrease") {
-            if (current_coin_marketsol < data.coin_market_sol) {
-              var answer = await transfer(from_prin, prin, won_amount);
-              Debug.print(debug_show (answer));
-              return #OK("completed");
-            } else {
-              return #err("Market sol did not decrease as expected.");
+            case (null) {
+              return #err("Creator principal not found.");
             };
-          } else {
-            return #err("Invalid value for increase_or_decrease.");
           };
         } else {
           return #err("Event resolution time has passed.");

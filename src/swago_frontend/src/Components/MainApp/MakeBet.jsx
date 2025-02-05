@@ -297,7 +297,10 @@ export const MakeBet = () => {
                     {new Date(Number(event.end_time) * 1000).toLocaleString()}
                   </p>
                   <p className="text-lg">
-                    Initial Market Cap: {event.coin_market_sol} SOL
+                    Initial Market Cap: {event.initial_market_sol} SOL
+                  </p>
+                  <p className="text-lg">
+                    Target Market Cap: {event.coin_market_sol} SOL
                   </p>
                 </div>
               )}
