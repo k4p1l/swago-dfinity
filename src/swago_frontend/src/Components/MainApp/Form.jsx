@@ -11,6 +11,7 @@ import React, { useState, useEffect } from "react";
 const BACKEND_URL = "http://localhost:3001";
 import { initializeMoralis } from "../../../moralisConfig";
 import Moralis from "moralis";
+import { useNavigate } from "react-router-dom";
 
 export const Form = () => {
   const { isConnected, principal, activeProvider } = useConnect();
@@ -35,6 +36,8 @@ export const Form = () => {
   const [coins, setCoins] = useState([]);
   const [marketPrice, setMarketPrice] = useState(null);
   const [coin_mint, setCoinMint] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     initializeMoralis(); // Ensure Moralis initializes once
@@ -164,7 +167,7 @@ export const Form = () => {
         BigInt(formData.timing) * BigInt(60) * BigInt(1_000_000_000);
 
       const generatedQuestion = `Will the market cap of ${formData.coin_nm} ${formData.direction} in the next ${formData.timing} minutes?`;
-
+      console.log("market cap", formData.coin_market_sol);
       // Prepare betting data
       const bettingData = {
         user_principal: Principal.fromText(principal),
@@ -189,6 +192,7 @@ export const Form = () => {
       };
 
       const result = await swago_backend.add_Betting(bettingData);
+
       setShowSuccessDialog(true);
       setCoinMint(null);
       setFormData({
@@ -204,6 +208,8 @@ export const Form = () => {
         coin_market_sol: 0,
         countdownStyle: "minimilist",
       });
+
+      navigate("/", { replace: true });
     } catch (err) {
       console.error("Error creating bet:", err);
       setError(err.message || "Failed to create bet. Please try again.");

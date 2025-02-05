@@ -5,6 +5,7 @@ import doubleArrowDown from "../../assets/images/double arrow down.png";
 import { useAuth } from "../../use-auth-client";
 import { Principal } from "@dfinity/principal";
 import { swago_backend } from "../../../../declarations/swago_backend";
+import { useNavigate } from "react-router-dom";
 
 // Add this utility function at the top of your file
 const arrayBufferToImageUrl = (arrayBuffer) => {
@@ -165,6 +166,8 @@ export const OpinionCard = ({
   const HOUSE_WALLET = Principal.fromText(
     "elieq-ev22i-d7yya-vgih3-bdohe-bj5qc-aoc55-rd4or-nuvef-rqhsz-mqe"
   );
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -337,10 +340,10 @@ export const OpinionCard = ({
           <>
             <Button
               variant="yes"
-              onClick={() => handleBet("yes")}
+              onClick={navigate(`/bet/${betting_id}`)}
               disabled={isProcessing}
             >
-              {isProcessing ? "Processing..." : "Buy Yes"}
+              Buy Yes
               <img
                 className="w-[28px] ml-2"
                 src={doubleArrowUp}
@@ -349,10 +352,10 @@ export const OpinionCard = ({
             </Button>
             <Button
               variant="no"
-              onClick={() => handleBet("no")}
+              onClick={navigate(`/bet/${betting_id}`)}
               disabled={isProcessing}
             >
-              {isProcessing ? "Processing..." : "Buy No"}
+              Buy No
               <img
                 className="w-[28px] ml-2"
                 src={doubleArrowDown}
