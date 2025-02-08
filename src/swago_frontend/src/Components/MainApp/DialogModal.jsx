@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 
-
 export const DialogModal = ({ isOpen, onClose, message }) => {
   if (!isOpen) return null;
   useEffect(() => {

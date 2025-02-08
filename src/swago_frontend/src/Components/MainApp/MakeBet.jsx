@@ -7,6 +7,7 @@ import { Principal } from "@dfinity/principal";
 import { swago_backend } from "../../../../declarations/swago_backend";
 import { MarketGraph } from "./MarketGraph";
 import { EventResolver } from "./EventResolver";
+import { BetConfirmationDialog } from "./BetConfirmationDialog";
 
 export const MakeBet = () => {
   const { id } = useParams();
@@ -21,6 +22,8 @@ export const MakeBet = () => {
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [isBettingActive, setIsBettingActive] = useState(true);
   const [voteStats, setVoteStats] = useState({ yesVotes: 0n, noVotes: 0n });
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [pendingBet, setPendingBet] = useState(null);
 
   const HOUSE_WALLET = Principal.fromText(
     "elieq-ev22i-d7yya-vgih3-bdohe-bj5qc-aoc55-rd4or-nuvef-rqhsz-mqe"
@@ -132,61 +135,59 @@ export const MakeBet = () => {
   }, [id, isBettingActive]);
 
   const handleBet = async (betType) => {
-    try {
-      // Check if user is connected
-      if (!whoami) {
-        throw new Error("Please connect your wallet first");
-      }
-      if (!isBettingActive) {
-        throw new Error("Betting period has ended");
-      }
+    // Check if user is connected
+    if (!whoami) {
+      throw new Error("Please connect your wallet first");
+    }
+    if (!isBettingActive) {
+      throw new Error("Betting period has ended");
+    }
 
-      // Check if betting is still active
-      const now = Math.floor(Date.now() / 1000);
-      if (now >= Number(event.end_time)) {
-        throw new Error("Betting period has ended");
-      }
-      if (!betAmount || betAmount <= 0) {
-        throw new Error("Please enter a valid bet amount");
-      }
+    // Check if betting is still active
+    const now = Math.floor(Date.now() / 1000);
+    if (now >= Number(event.end_time)) {
+      throw new Error("Betting period has ended");
+    }
+    if (!betAmount || betAmount <= 0) {
+      throw new Error("Please enter a valid bet amount");
+    }
 
-      // Check balance
-      if (userBalance < betAmount) {
-        throw new Error(
-          `Insufficient balance. You need ${betAmount} SWAG tokens to bet.`
-        );
-      }
-
-      // Ask for confirmation
-      const confirmed = window.confirm(
-        `Are you sure you want to bet ${betAmount} SWAG tokens on ${betType.toUpperCase()}?`
+    // Check balance
+    if (userBalance < betAmount) {
+      throw new Error(
+        `Insufficient balance. You need ${betAmount} SWAG tokens to bet.`
       );
+    }
 
-      if (!confirmed) {
-        return;
-      }
+    setPendingBet(betType);
+    setShowConfirmDialog(true);
+  };
 
+  // Ask for confirmation
+  // const confirmed = window.confirm(
+  //   `Are you sure you want to bet ${betAmount} SWAG tokens on ${betType.toUpperCase()}?`
+  // );
+
+  // if (!confirmed) {
+  //   return;
+  // }
+
+  const handleConfirmBet = async () => {
+    try {
       setIsProcessing(true);
       setBetStatus(null);
       setError(null);
 
-      // Record the bet
       const betData = {
         principal: whoami,
         event_id: BigInt(id),
-        yes_or_no: betType,
+        yes_or_no: pendingBet,
         amount: BigInt(betAmount),
       };
 
       const betResult = await swago_backend.Yes_or_no_fun(betData);
-      console.log("Bet result:", betResult);
 
       if (betResult === "OK") {
-        setBetStatus(
-          `Successfully placed bet on ${betType} with ${betAmount} SWAG`
-        );
-
-        // Transfer tokens to house wallet
         const transferResult = await swago_backend.transfer(
           whoami,
           HOUSE_WALLET,
@@ -196,9 +197,13 @@ export const MakeBet = () => {
         if (transferResult !== "Transfered successfully") {
           throw new Error(transferResult);
         }
-        // Update user balance
+
         const newBalance = await swago_backend.balanceOf(whoami);
         setUserBalance(Number(newBalance));
+
+        setBetStatus(
+          `Successfully placed bet on ${pendingBet} with ${betAmount} SWAG`
+        );
       } else {
         throw new Error(betResult);
       }
@@ -207,6 +212,8 @@ export const MakeBet = () => {
       setError(err.message || "Failed to place bet");
     } finally {
       setIsProcessing(false);
+      setShowConfirmDialog(false);
+      setPendingBet(null);
     }
   };
 
@@ -412,25 +419,32 @@ export const MakeBet = () => {
               <div className="flex gap-4">
                 <button
                   className={`${
-                    isProcessing
-                      ? "bg-gray-500"
+                    !isBettingActive || isProcessing
+                      ? "bg-gray-500 cursor-not-allowed"
                       : "bg-green-500 hover:bg-green-600"
                   } text-white text-lg px-14 py-2 rounded-lg transition-colors`}
                   onClick={() => handleBet("yes")}
-                  disabled={isProcessing}
+                  disabled={!isBettingActive || isProcessing}
                 >
                   Yes
                 </button>
                 <button
                   className={`${
-                    isProcessing ? "bg-gray-500" : "bg-red-500 hover:bg-red-600"
+                    !isBettingActive || isProcessing
+                      ? "bg-gray-500 cursor-not-allowed"
+                      : "bg-red-500 hover:bg-red-600"
                   } text-white text-lg px-14 py-2 rounded-lg transition-colors`}
                   onClick={() => handleBet("no")}
-                  disabled={isProcessing}
+                  disabled={!isBettingActive || isProcessing}
                 >
                   No
                 </button>
               </div>
+              {!isBettingActive && (
+                <p className="text-red-500 text-center">
+                  Betting period has ended
+                </p>
+              )}
               <div className="mt-4">
                 <label className="block text-sm font-medium mb-2">
                   Amount (SWAG Tokens):
@@ -484,6 +498,18 @@ export const MakeBet = () => {
             </p>
           </div>
         )}
+
+        <BetConfirmationDialog
+          isOpen={showConfirmDialog}
+          onClose={() => {
+            setShowConfirmDialog(false);
+            setPendingBet(null);
+          }}
+          onConfirm={handleConfirmBet}
+          betAmount={betAmount}
+          betType={pendingBet}
+          isProcessing={isProcessing}
+        />
       </div>
     </div>
   );

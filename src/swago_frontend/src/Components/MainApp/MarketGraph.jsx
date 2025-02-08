@@ -118,7 +118,6 @@ export const MarketGraph = ({ eventId, startTime }) => {
               },
             ],
           };
-          console.log("Processed chart data:", data);
           setChartData(data);
         }
       } catch (error) {
