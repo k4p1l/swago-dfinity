@@ -24,44 +24,44 @@ const arrayBufferToImageUrl = (arrayBuffer) => {
   return `data:image/jpeg;base64,${base64}`;
 };
 
-const ImageDisplay = ({ imageData }) => {
-  const [imageUrl, setImageUrl] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+// const ImageDisplay = ({ imageData }) => {
+//   const [imageUrl, setImageUrl] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (imageData) {
-      try {
-        setLoading(true);
-        // Check if imageData is a Uint8Array
-        if (imageData instanceof Uint8Array) {
-          const url = arrayBufferToImageUrl(imageData);
-          setImageUrl(url);
-        } else {
-          // If it's already a blob or other format
-          setImageUrl(URL.createObjectURL(new Blob([imageData])));
-        }
-        setLoading(false);
-      } catch (err) {
-        console.error("Image conversion error:", err);
-        setError("Failed to load image");
-        setLoading(false);
-      }
-    }
-  }, [imageData]);
+//   useEffect(() => {
+//     if (imageData) {
+//       try {
+//         setLoading(true);
+//         // Check if imageData is a Uint8Array
+//         if (imageData instanceof Uint8Array) {
+//           const url = arrayBufferToImageUrl(imageData);
+//           setImageUrl(url);
+//         } else {
+//           // If it's already a blob or other format
+//           setImageUrl(URL.createObjectURL(new Blob([imageData])));
+//         }
+//         setLoading(false);
+//       } catch (err) {
+//         console.error("Image conversion error:", err);
+//         setError("Failed to load image");
+//         setLoading(false);
+//       }
+//     }
+//   }, [imageData]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+//   if (loading) return <div>Loading...</div>;
+//   if (error) return <div>{error}</div>;
 
-  return imageUrl ? (
-    <img
-      src={imageUrl}
-      alt="Betting image"
-      className="w-[50px] h-[50px] rounded-lg object-cover"
-      onError={() => setError("No image")}
-    />
-  ) : null;
-};
+//   return imageUrl ? (
+//     <img
+//       src={imageUrl}
+//       alt="Betting image"
+//       className="w-[50px] h-[50px] rounded-lg object-cover"
+//       onError={() => setError("No image")}
+//     />
+//   ) : null;
+// };
 
 // Styled components for styling
 const CardContainer = styled.div`
@@ -330,7 +330,22 @@ export const OpinionCard = ({
     <CardContainer>
       {/* Header */}
       <Header>
-        <ImageDisplay imageData={image} />
+        {/* <ImageDisplay imageData={image} /> */}
+        {image ? (
+          <img
+            src={image}
+            alt={name}
+            className="w-[50px] h-[50px] rounded-lg object-cover"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "https://placehold.co/50x50?text=No+Image";
+            }}
+          />
+        ) : (
+          <div className="w-[50px] h-[50px] rounded-lg bg-gray-600 flex items-center justify-center">
+            <span className="text-xs text-gray-300">No Image</span>
+          </div>
+        )}
         <Timer timeLeft={timeRemaining}>
           Timer {formatTime(timeRemaining)}
         </Timer>

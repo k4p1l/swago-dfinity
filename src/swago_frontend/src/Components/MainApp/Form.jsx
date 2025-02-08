@@ -73,6 +73,17 @@ export const Form = () => {
     fetchCoins();
   }, []);
 
+  const fetchTokenMetadata = async (uri) => {
+    try {
+      const response = await fetch(uri);
+      const metadata = await response.json();
+      return metadata;
+    } catch (error) {
+      console.error("Error fetching metadata:", error);
+      return null;
+    }
+  };
+
   // Fetch token price using Moralis API
   const fetchMarketPrice = async (mint) => {
     if (!mint) return null;
@@ -129,10 +140,14 @@ export const Form = () => {
       console.log("Selected coin:", selectedCoin);
       if (selectedCoin) {
         setCoinMint(selectedCoin.mint);
+
+        const metadata = await fetchTokenMetadata(selectedCoin.uri);
+
         // First update the form with selected coin
         setFormData((prev) => ({
           ...prev,
           coin_nm: selectedCoin.symbol,
+          image_url: metadata?.image || "",
           initial_market_sol: 0, // Set to 0 initially
         }));
         // Then fetch and update the market price
@@ -189,23 +204,23 @@ export const Form = () => {
         throw new Error(`Please fill out: ${missingFields.join(", ")}`);
       }
 
-      let imageBlob = new Uint8Array(0); // Empty array for no image
+      // let imageBlob = new Uint8Array(0); // Empty array for no image
 
-      if (formData.image) {
-        try {
-          const arrayBuffer = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsArrayBuffer(formData.image);
-          });
+      // if (formData.image) {
+      //   try {
+      //     const arrayBuffer = await new Promise((resolve, reject) => {
+      //       const reader = new FileReader();
+      //       reader.onload = () => resolve(reader.result);
+      //       reader.onerror = reject;
+      //       reader.readAsArrayBuffer(formData.image);
+      //     });
 
-          imageBlob = new Uint8Array(arrayBuffer);
-        } catch (imageError) {
-          console.error("Error processing image:", imageError);
-          // Continue with empty blob if image processing fails
-        }
-      }
+      //     imageBlob = new Uint8Array(arrayBuffer);
+      //   } catch (imageError) {
+      //     console.error("Error processing image:", imageError);
+      //     // Continue with empty blob if image processing fails
+      //   }
+      // }
 
       const timeInNanos =
         BigInt(formData.timing) * BigInt(60) * BigInt(1_000_000_000);
@@ -223,7 +238,7 @@ export const Form = () => {
         name: formData.name,
         question: generatedQuestion,
         set_Time: timeInNanos,
-        image: imageBlob,
+        image: formData.image_url,
         twitter_link: formData.twitter,
         telegram_link: formData.telegram,
         website_link: formData.website,
@@ -376,24 +391,6 @@ export const Form = () => {
               )}
             </div>
 
-            {/* <div className=" w-[350px] flex flex-col gap-2">
-              <div className="flex justify-between">
-                <label htmlFor="question" className="text-lg">
-                  Question
-                </label>
-                <p>{count}</p>
-              </div>
-              <input
-                maxLength={120}
-                type="text"
-                name="question"
-                id="question"
-                className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
-                value={formData.question}
-                onChange={handleChange}
-              />
-            </div> */}
-
             <div className="w-[350px] flex flex-col gap-2">
               <label className="text-lg">Market Direction</label>
               <div className="flex gap-4 bg-[#1a2632] p-4 rounded-lg">
@@ -536,7 +533,7 @@ export const Form = () => {
               </select>
             </div>
 
-            <div className="flex flex-col w-[350px] gap-2">
+            {/* <div className="flex flex-col w-[350px] gap-2">
               <label htmlFor="image">
                 Image
                 <p className="text-xs text-gray-400 mb-2">
@@ -550,7 +547,7 @@ export const Form = () => {
                   onChange={handleChange}
                 />
               </label>
-            </div>
+            </div> */}
 
             <div className="flex flex-col w-[350px] gap-2">
               <label htmlFor="twitter">Twitter Link</label>

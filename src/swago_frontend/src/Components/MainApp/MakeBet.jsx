@@ -285,11 +285,14 @@ export const MakeBet = () => {
                   <div className="flex gap-12 items-center">
                     {event.image && (
                       <img
-                        src={`data:image/jpeg;base64,${arrayBufferToBase64(
-                          event.image
-                        )}`}
+                        src={event.image}
                         alt="Event"
                         className="rounded-lg max-w-40 h-auto"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src =
+                            "https://placehold.co/50x50?text=No+Image";
+                        }}
                       />
                     )}
                     <p className="text-xl">{event.question}</p>

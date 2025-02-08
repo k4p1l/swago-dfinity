@@ -53,7 +53,7 @@ actor {
     name : Text;
     question : Text;
     set_Time : Time.Time;
-    image : Blob;
+    image : Text;
     twitter_link : Text;
     telegram_link : Text;
     website_link : Text;
@@ -72,7 +72,7 @@ actor {
     start_time : Time.Time;
     end_time : Time.Time;
     set_Time : Time.Time;
-    image : Blob;
+    image : Text;
     twitter_link : Text;
     telegram_link : Text;
     website_link : Text;
@@ -119,6 +119,9 @@ actor {
       timestamp = Time.now();
       yesPercentage = 0.0;
       totalVotes = 0;
+      yesAmount = 0;
+      noAmount = 0;
+      totalAmount = 0;
     };
     voteHistory.put(current_betting_id, [initialSnapshot]);
     return "Betting Created";
@@ -246,6 +249,9 @@ actor {
     timestamp : Int; // Unix timestamp in seconds
     yesPercentage : Float; // Store percentage directly
     totalVotes : Nat; // Total number of votes at this point
+    yesAmount : Nat;
+    noAmount : Nat;
+    totalAmount : Nat;
   };
 
   var voteHistory = HashMap.HashMap<Nat64, [VoteSnapshot]>(0, Nat64.equal, nat64Hash);
@@ -253,15 +259,15 @@ actor {
   var yesNo_Arr : [yes_or_no] = [];
   public func Yes_or_no_fun(data : yes_or_no) : async Text {
     // Check if the combination of principal and event_id already exists
-    let exists = Array.find<yes_or_no>(
-      yesNo_Arr,
-      func x = x.principal == data.principal and x.event_id == data.event_id,
-    );
+    // let exists = Array.find<yes_or_no>(
+    //   yesNo_Arr,
+    //   func x = x.principal == data.principal and x.event_id == data.event_id,
+    // );
 
-    // If it exists, return a message indicating the duplicate
-    if (exists != null) {
-      return "you already voted";
-    };
+    // // If it exists, return a message indicating the duplicate
+    // if (exists != null) {
+    //   return "you already voted";
+    // };
 
     // Otherwise, append the new data to the array
     yesNo_Arr := Array.append<yes_or_no>(yesNo_Arr, [data]);
@@ -274,6 +280,9 @@ actor {
       timestamp = Time.now();
       yesPercentage = yesPercentage;
       totalVotes = totalVotes;
+      yesAmount = currentVotes.yesVotes;
+      noAmount = currentVotes.noVotes;
+      totalAmount = currentVotes.yesVotes + currentVotes.noVotes;
     };
 
     switch (voteHistory.get(data.event_id)) {
