@@ -17,7 +17,6 @@ export const Form = () => {
   const { isConnected, principal, activeProvider } = useConnect();
   const { isAuthenticated, identity, login, logout } = useAuth();
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     question: "",
     timing: "5",
@@ -197,7 +196,7 @@ export const Form = () => {
         }
       }
 
-      const requiredFields = ["name", "email", "website"];
+      const requiredFields = ["coin_nm", "email", "website"];
       const missingFields = requiredFields.filter((field) => !formData[field]);
 
       if (missingFields.length > 0) {
@@ -235,7 +234,6 @@ export const Form = () => {
       const bettingData = {
         user_principal: Principal.fromText(principal),
         mail: formData.email,
-        name: formData.name,
         question: generatedQuestion,
         set_Time: timeInNanos,
         image: formData.image_url,
@@ -261,7 +259,6 @@ export const Form = () => {
       setShowSuccessDialog(true);
       setCoinMint(null);
       setFormData({
-        name: "",
         email: "",
         question: "",
         timing: "5",
@@ -334,19 +331,6 @@ export const Form = () => {
             onSubmit={handleSubmit}
           >
             <div className="flex flex-col gap-2 w-[350px] ">
-              <label htmlFor="name" className="text-lg">
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                className="bg-transparent border-2 border-[#fff] rounded-md outline-none px-2 py-1"
-                value={formData.name}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="flex flex-col gap-2 w-[350px] ">
               <label htmlFor="email" className="text-lg">
                 Email
               </label>
@@ -359,144 +343,6 @@ export const Form = () => {
                 onChange={handleChange}
               />
             </div>
-
-            <div className="flex flex-col w-[350px] gap-2">
-              <label htmlFor="coin_nm" className="text-lg">
-                Coin Name
-              </label>
-              <select
-                name="coin_nm"
-                value={formData.coin_nm}
-                onChange={handleChange}
-                className="bg-[#1a2632] border-2 border-[#fff] rounded-md p-2 outline-none"
-              >
-                <option value="">-- Select a Coin --</option>
-                {coins.map((coin) => (
-                  <option key={coin.symbol} value={coin.symbol}>
-                    {coin.name} ({coin.symbol})
-                  </option>
-                ))}
-              </select>
-              {marketPrice !== null && (
-                <div className="text-sm text-gray-400 mt-1">
-                  {marketPriceLoading ? (
-                    <div className="flex items-center">
-                      <div className="animate-spin mr-2 h-4 w-4 border-2 border-blue-500"></div>
-                      Loading market cap...
-                    </div>
-                  ) : (
-                    <>Market Cap: {marketPrice} SOL</>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <div className="w-[350px] flex flex-col gap-2">
-              <label className="text-lg">Market Direction</label>
-              <div className="flex gap-4 bg-[#1a2632] p-4 rounded-lg">
-                <label className="flex-1">
-                  <input
-                    type="radio"
-                    name="direction"
-                    value="increase"
-                    checked={formData.direction === "increase"}
-                    onChange={handleChange}
-                    className="hidden"
-                  />
-                  <div
-                    className={`
-        p-3 rounded-lg text-center cursor-pointer transition-all
-        ${
-          formData.direction === "increase"
-            ? "bg-green-500 text-white"
-            : "bg-[#354A63] text-gray-300 hover:bg-[#455B7A]"
-        }
-      `}
-                  >
-                    <span className="flex items-center justify-center gap-2">
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 15l7-7 7 7"
-                        />
-                      </svg>
-                      Increase
-                    </span>
-                  </div>
-                </label>
-                <label className="flex-1">
-                  <input
-                    type="radio"
-                    name="direction"
-                    value="decrease"
-                    checked={formData.direction === "decrease"}
-                    onChange={handleChange}
-                    className="hidden"
-                  />
-                  <div
-                    className={`
-        p-3 rounded-lg text-center cursor-pointer transition-all
-        ${
-          formData.direction === "decrease"
-            ? "bg-red-500 text-white"
-            : "bg-[#354A63] text-gray-300 hover:bg-[#455B7A]"
-        }
-      `}
-                  >
-                    <span className="flex items-center justify-center gap-2">
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                      Decrease
-                    </span>
-                  </div>
-                </label>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-2 w-[350px] ">
-              <label htmlFor="target_market_cap" className="text-lg">
-                Target Market Cap
-              </label>
-              <input
-                type="text"
-                name="target_market_cap"
-                id="target_market_cap"
-                className="bg-[#1a2632] border-2 border-[#fff] rounded-md outline-none px-2 py-1"
-                value={formData.target}
-                onChange={handleChange}
-              />
-            </div>
-
-            {formData.coin_nm && (
-              <div className="w-[350px] p-4 bg-[#1a2632] rounded-lg border border-[#354A63]">
-                <p className="text-lg font-medium">Question Preview:</p>
-                <p className="mt-2 text-gray-300">
-                  Will the market cap of{" "}
-                  {coins.find((coin) => coin.symbol === formData.coin_nm)?.name}{" "}
-                  reach {formData.target_market_cap} SOL{" "}
-                  {formData.direction === "increase" ? "or above" : "or below"}{" "}
-                  in the next {formData.timing} minutes?
-                </p>
-              </div>
-            )}
 
             <div className="flex flex-col w-[350px] gap-2">
               <label htmlFor="website" className="text-lg">
@@ -515,6 +361,147 @@ export const Form = () => {
                 <option value="sunpump.meme">sunpump.meme</option>
               </select>
             </div>
+
+            {formData.website && (
+              <>
+                <div className="flex flex-col w-[350px] gap-2">
+                  <label htmlFor="coin_nm" className="text-lg">
+                    Coin Name
+                  </label>
+                  <select
+                    name="coin_nm"
+                    value={formData.coin_nm}
+                    onChange={handleChange}
+                    className="bg-[#1a2632] border-2 border-[#fff] rounded-md p-2 outline-none"
+                  >
+                    <option value="">-- Select a Coin --</option>
+                    {coins.map((coin) => (
+                      <option key={coin.symbol} value={coin.symbol}>
+                        {coin.name} ({coin.symbol})
+                      </option>
+                    ))}
+                  </select>
+                  {marketPrice !== null && (
+                    <div className="text-sm text-gray-400 mt-1">
+                      {marketPriceLoading ? (
+                        <div className="flex items-center">
+                          <div className="animate-spin mr-2 h-4 w-4 border-2 border-blue-500"></div>
+                          Loading market cap...
+                        </div>
+                      ) : (
+                        <>Market Cap: {marketPrice} SOL</>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <div className="w-[350px] flex flex-col gap-2">
+                  <label className="text-lg">Market Direction</label>
+                  <div className="flex gap-4 bg-[#1a2632] p-4 rounded-lg">
+                    <label className="flex-1">
+                      <input
+                        type="radio"
+                        name="direction"
+                        value="increase"
+                        checked={formData.direction === "increase"}
+                        onChange={handleChange}
+                        className="hidden"
+                      />
+                      <div
+                        className={`
+        p-3 rounded-lg text-center cursor-pointer transition-all
+        ${
+          formData.direction === "increase"
+            ? "bg-green-500 text-white"
+            : "bg-[#354A63] text-gray-300 hover:bg-[#455B7A]"
+        }
+      `}
+                      >
+                        <span className="flex items-center justify-center gap-2">
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 15l7-7 7 7"
+                            />
+                          </svg>
+                          Increase
+                        </span>
+                      </div>
+                    </label>
+                    <label className="flex-1">
+                      <input
+                        type="radio"
+                        name="direction"
+                        value="decrease"
+                        checked={formData.direction === "decrease"}
+                        onChange={handleChange}
+                        className="hidden"
+                      />
+                      <div
+                        className={`
+        p-3 rounded-lg text-center cursor-pointer transition-all
+        ${
+          formData.direction === "decrease"
+            ? "bg-red-500 text-white"
+            : "bg-[#354A63] text-gray-300 hover:bg-[#455B7A]"
+        }
+      `}
+                      >
+                        <span className="flex items-center justify-center gap-2">
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                          Decrease
+                        </span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2 w-[350px] ">
+                  <label htmlFor="target_market_cap" className="text-lg">
+                    Target Market Cap
+                  </label>
+                  <input
+                    type="text"
+                    name="target_market_cap"
+                    id="target_market_cap"
+                    className="bg-[#1a2632] border-2 border-[#fff] rounded-md outline-none px-2 py-1"
+                    value={formData.target}
+                    onChange={handleChange}
+                  />
+                </div>
+              </>
+            )}
+
+            {formData.coin_nm && (
+              <div className="w-[350px] p-4 bg-[#1a2632] rounded-lg border border-[#354A63]">
+                <p className="text-lg font-medium">Question Preview:</p>
+                <p className="mt-2 text-gray-300">
+                  Will the market cap of{" "}
+                  {coins.find((coin) => coin.symbol === formData.coin_nm)?.name}{" "}
+                  reach {formData.target_market_cap} SOL{" "}
+                  {formData.direction === "increase" ? "or above" : "or below"}{" "}
+                  in the next {formData.timing} minutes?
+                </p>
+              </div>
+            )}
 
             <div className="flex flex-col w-[350px] gap-2">
               <label htmlFor="timing" className="text-lg">

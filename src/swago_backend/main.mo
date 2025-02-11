@@ -50,7 +50,6 @@ actor {
   var betting_id_no : Nat64 = 1;
   public type Create_Betting = {
     user_principal : Principal;
-    name : Text;
     question : Text;
     set_Time : Time.Time;
     image : Text;
@@ -67,7 +66,6 @@ actor {
 
   public type Create_Betting_data = {
     user_principal : Principal;
-    name : Text;
     question : Text;
     start_time : Time.Time;
     end_time : Time.Time;
@@ -95,7 +93,6 @@ actor {
 
     let new_betting = {
       user_principal = betting.user_principal;
-      name = betting.name;
       question = betting.question;
       start_time = current_time;
       end_time = current_time + duration;
@@ -474,7 +471,6 @@ actor {
     // Create updated event with new status
     let updatedEvent = {
       user_principal = user_Betting[eventIndex].user_principal;
-      name = user_Betting[eventIndex].name;
       question = user_Betting[eventIndex].question;
       start_time = user_Betting[eventIndex].start_time;
       end_time = user_Betting[eventIndex].end_time;
@@ -527,7 +523,6 @@ actor {
         throw Error.reject("Event not found");
       };
       case (?event_data) {
-        Debug.print("Event found: " # event_data.name);
         Debug.print("Target market cap: " # debug_show (event_data.coin_market_sol));
         Debug.print("Current market cap: " # debug_show (current_market_cap));
 
@@ -586,7 +581,7 @@ actor {
           throw Error.reject("Event not found");
         };
         case (?e) {
-          Debug.print("Event found: " # debug_show (e.name));
+          Debug.print("Event found: " # debug_show (e.coin_nm));
           e;
         };
       };

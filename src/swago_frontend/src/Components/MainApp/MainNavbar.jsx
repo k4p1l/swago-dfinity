@@ -9,10 +9,18 @@ import { Link as RouterLink } from "react-router-dom";
 import searchIcon from "../../assets/images/search.png";
 import { useConnect } from "@connect2ic/react";
 import { useAuth } from "../../use-auth-client";
+import { swago_backend } from "../../../../declarations/swago_backend";
 
 export const MainNavbar = () => {
   const { isConnected, disconnect } = useConnect();
-  const { isAuthenticated, identity, login, logout } = useAuth();
+  const [tokenBalance, setTokenBalance] = useState(0);
+  const {
+    principal: whoami,
+    isAuthenticated,
+    identity,
+    login,
+    logout,
+  } = useAuth();
 
   //for dropdown menu
   const [isOpen, setIsOpen] = useState(false);
@@ -21,8 +29,23 @@ export const MainNavbar = () => {
     if (isConnected) {
       const randomAvatar = `https://robohash.org/${Math.random()}.png?size=50x50`;
       setAvatarUrl(randomAvatar);
+      if (whoami) {
+        console.log("Initializing user with principal:", whoami.toString());
+        fetchTokenBalance(whoami);
+      }
     }
   }, [isConnected]);
+
+  const fetchTokenBalance = async (principal) => {
+    try {
+      console.log("Fetching balance for:", principal.toString());
+      const balance = await swago_backend.balanceOf(principal);
+      console.log("Fetched balance:", balance.toString());
+      setTokenBalance(Number(balance));
+    } catch (error) {
+      console.error("Error fetching token balance:", error);
+    }
+  };
 
   return (
     <div className="w-full flex flex-col sm:px-4 bg-[#101a23] border-b-4 border-[#2f9fff]">
@@ -78,13 +101,9 @@ export const MainNavbar = () => {
           </div>
         </div>
         <div className="flex items-center gap-2 sm:gap-8">
+          <div className="text-white">Balance : {tokenBalance}</div>
           {isAuthenticated ? (
             <div className="flex items-center gap-2">
-              <RouterLink to="/">
-                <button className="login-btn" onClick={logout}>
-                  Logout
-                </button>
-              </RouterLink>
               <ConnectButton />
               <ConnectDialog />
               <div className="flex ">
@@ -109,6 +128,9 @@ export const MainNavbar = () => {
                   <a href="">Learn</a>
                   <a href="">Documentation</a>
                   <a href="">Terms of Use</a>
+                  <RouterLink to="/">
+                    <button onClick={logout}>Logout</button>
+                  </RouterLink>
                 </div>
               </div>
             </div>

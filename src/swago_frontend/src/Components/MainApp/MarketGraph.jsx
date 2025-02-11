@@ -168,7 +168,7 @@ export const MarketGraph = ({ eventId, startTime }) => {
             }`}
             onClick={() => setSelectedOption("yes")}
           >
-            Yes Probability
+            Yes
           </button>
           <button
             className={`px-4 py-2 rounded transition-colors duration-200 ${
@@ -178,7 +178,7 @@ export const MarketGraph = ({ eventId, startTime }) => {
             }`}
             onClick={() => setSelectedOption("no")}
           >
-            No Probability
+            No
           </button>
         </div>
         <div className="text-white bg-gray-700 px-4 py-2 rounded">

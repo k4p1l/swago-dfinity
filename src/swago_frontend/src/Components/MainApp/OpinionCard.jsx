@@ -147,11 +147,11 @@ const MetaText = styled.small`
 `;
 
 export const OpinionCard = ({
-  name,
   question,
   set_Time,
   start_time,
   end_time,
+  coin_nm,
   image,
   betting_id,
 }) => {
@@ -349,7 +349,7 @@ export const OpinionCard = ({
         <Timer timeLeft={timeRemaining}>
           Timer {formatTime(timeRemaining)}
         </Timer>
-        <Title>{name}</Title>
+        <Title>{coin_nm}</Title>
       </Header>
       <p className="py-2">{question}</p>
 
