@@ -115,6 +115,7 @@ actor {
     let initialSnapshot : VoteSnapshot = {
       timestamp = Time.now();
       yesPercentage = 0.0;
+      noPercentage = 0.0;
       totalVotes = 0;
       yesAmount = 0;
       noAmount = 0;
@@ -244,8 +245,9 @@ actor {
 
   public type VoteSnapshot = {
     timestamp : Int; // Unix timestamp in seconds
-    yesPercentage : Float; // Store percentage directly
-    totalVotes : Nat; // Total number of votes at this point
+    yesPercentage : Float;
+    noPercentage : Float;
+    totalVotes : Nat;
     yesAmount : Nat;
     noAmount : Nat;
     totalAmount : Nat;
@@ -273,12 +275,14 @@ actor {
 
     let totalVotes = currentVotes.yesVotes + currentVotes.noVotes;
     let yesPercentage = if (totalVotes == 0) 0.0 else Float.fromInt(currentVotes.yesVotes) / Float.fromInt(totalVotes) * 100.0;
+    let noPercentage = if (totalVotes == 0) 0.0 else Float.fromInt(currentVotes.noVotes) / Float.fromInt(totalVotes) * 100.0;
     let snapshot : VoteSnapshot = {
       timestamp = Time.now();
       yesPercentage = yesPercentage;
+      noPercentage = noPercentage;
       totalVotes = totalVotes;
-      yesAmount = currentVotes.yesVotes;
-      noAmount = currentVotes.noVotes;
+      yesAmount = Nat64.toNat(currentVotes.yesAmount);
+      noAmount = Nat64.toNat(currentVotes.noAmount);
       totalAmount = currentVotes.yesVotes + currentVotes.noVotes;
     };
 
@@ -303,18 +307,35 @@ actor {
   public func get_no_of_Votes(event_id : Nat64) : async {
     yesVotes : Nat;
     noVotes : Nat;
+    yesAmount : Nat64;
+    noAmount : Nat64;
   } {
     // Filter votes matching the event_id
     let votesForEvent = Array.filter<yes_or_no>(yesNo_Arr, func(vote) = vote.event_id == event_id);
 
-    // Count "yes" votes
-    let yesVotes = Array.size(Array.filter<yes_or_no>(votesForEvent, func(vote) = vote.yes_or_no == "yes"));
+    // Get yes votes and amounts
+    let yesVotes = Array.filter<yes_or_no>(votesForEvent, func(vote) = vote.yes_or_no == "yes");
+    let yesAmount = Array.foldLeft<yes_or_no, Nat64>(
+      yesVotes,
+      0,
+      func(acc, vote) = acc + vote.amount,
+    );
 
-    // Count "no" votes
-    let noVotes = Array.size(Array.filter<yes_or_no>(votesForEvent, func(vote) = vote.yes_or_no == "no"));
+    // Get no votes and amounts
+    let noVotes = Array.filter<yes_or_no>(votesForEvent, func(vote) = vote.yes_or_no == "no");
+    let noAmount = Array.foldLeft<yes_or_no, Nat64>(
+      noVotes,
+      0,
+      func(acc, vote) = acc + vote.amount,
+    );
 
-    // Return the counts
-    return { yesVotes; noVotes };
+    // Return both counts and amounts
+    return {
+      yesVotes = yesVotes.size();
+      noVotes = noVotes.size();
+      yesAmount = yesAmount;
+      noAmount = noAmount;
+    };
   };
 
   type Account = {

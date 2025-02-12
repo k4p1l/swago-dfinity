@@ -21,9 +21,14 @@ export const MakeBet = () => {
   const [userBalance, setUserBalance] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [isBettingActive, setIsBettingActive] = useState(true);
-  const [voteStats, setVoteStats] = useState({ yesVotes: 0n, noVotes: 0n });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [pendingBet, setPendingBet] = useState(null);
+  const [voteStats, setVoteStats] = useState({
+    yesVotes: 0n,
+    noVotes: 0n,
+    yesAmount: 0n,
+    noAmount: 0n,
+  });
 
   const HOUSE_WALLET = Principal.fromText(
     "elieq-ev22i-d7yya-vgih3-bdohe-bj5qc-aoc55-rd4or-nuvef-rqhsz-mqe"
@@ -81,11 +86,13 @@ export const MakeBet = () => {
         setEvent(result);
 
         // Fetch vote counts
-        const votes = await swago_backend.get_no_of_Votes(bettingId);
+        const votes = await swago_backend.getEventStats(bettingId);
         console.log("Vote stats:", votes); // Add this log
         setVoteStats({
           yesVotes: votes.yesVotes || 0n,
           noVotes: votes.noVotes || 0n,
+          yesAmount: Number(votes.yes_amount || 0),
+          noAmount: Number(votes.no_amount || 0),
         });
 
         // Fetch user balance
@@ -276,7 +283,7 @@ export const MakeBet = () => {
     <div>
       <MainNavbar />
       <div className="text-white bg-[#101a23] py-12 min-h-screen">
-        <div className="flex flex-col sm:flex-row sm:gap-8 gap-12 justify-between items-center px-4 py-4 max-w-7xl mx-auto">
+        <div className="flex flex-col sm:flex-row sm:gap-8 gap-12 justify-between items-start px-4 py-4 max-w-7xl mx-auto">
           <div className="flex-1">
             <div>
               {event && (
@@ -296,6 +303,14 @@ export const MakeBet = () => {
                       />
                     )}
                     <p className="text-xl">{event.question}</p>
+                  </div>
+                  <div className="flex flex-col items-center bg-[#1e293b] px-6 py-3 rounded-lg">
+                    <span className="text-gray-400">Total Volume</span>
+                    <span className="text-2xl font-bold text-white">
+                      {Number(voteStats.yesAmount || 0) +
+                        Number(voteStats.noAmount || 0)}{" "}
+                      SWAG
+                    </span>
                   </div>
 
                   <p className="text-lg">

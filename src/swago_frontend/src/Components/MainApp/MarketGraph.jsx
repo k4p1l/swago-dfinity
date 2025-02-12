@@ -55,16 +55,31 @@ export const MarketGraph = ({ eventId, startTime }) => {
           const processedHistory = history.map((h) => ({
             timestamp: Number(h.timestamp),
             yesPercentage: Number(h.yesPercentage),
-            noPercentage: 100 - Number(h.yesPercentage),
+            noPercentage: Number(h.noPercentage),
             totalVotes: Number(h.totalVotes),
+            yesAmount: Number(h.yesAmount),
+            noAmount: Number(h.noAmount),
           }));
-
-          // Calculate total volume
-          const totalVolume = Number(stats.total_amount);
-          setTotalVolume(totalVolume);
 
           const sortedHistory = processedHistory.sort(
             (a, b) => a.timestamp - b.timestamp
+          );
+
+          if (sortedHistory.length === 0) {
+            sortedHistory.push({
+              timestamp: startTime,
+              yesPercentage: 0,
+              noPercentage: 0,
+              yesAmount: 0,
+              noAmount: 0,
+              totalVotes: 0,
+            });
+          }
+
+          setTotalVolume(
+            selectedOption === "yes"
+              ? Number(stats.yes_amount)
+              : Number(stats.no_amount)
           );
 
           const data = {
@@ -95,7 +110,7 @@ export const MarketGraph = ({ eventId, startTime }) => {
     };
 
     fetchDataPoints();
-    const interval = setInterval(fetchDataPoints, 30000);
+    const interval = setInterval(fetchDataPoints, 3000);
 
     return () => clearInterval(interval);
   }, [eventId, selectedOption]); // Add selectedOption to dependencies
@@ -182,7 +197,7 @@ export const MarketGraph = ({ eventId, startTime }) => {
           </button>
         </div>
         <div className="text-white bg-gray-700 px-4 py-2 rounded">
-          Total Volume: {totalVolume} SWAG
+          {selectedOption.toUpperCase()} Volume: {totalVolume} SWAG
         </div>
       </div>
       <Line options={options} data={chartData} />

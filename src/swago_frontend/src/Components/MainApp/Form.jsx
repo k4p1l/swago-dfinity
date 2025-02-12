@@ -76,6 +76,7 @@ export const Form = () => {
     try {
       const response = await fetch(uri);
       const metadata = await response.json();
+
       return metadata;
     } catch (error) {
       console.error("Error fetching metadata:", error);
@@ -382,14 +383,28 @@ export const Form = () => {
                     ))}
                   </select>
                   {marketPrice !== null && (
-                    <div className="text-sm text-gray-400 mt-1">
+                    <div className="text-sm text-gray-400 mt-1 space-y-2">
                       {marketPriceLoading ? (
                         <div className="flex items-center">
                           <div className="animate-spin mr-2 h-4 w-4 border-2 border-blue-500"></div>
                           Loading market cap...
                         </div>
                       ) : (
-                        <>Market Cap: {marketPrice} SOL</>
+                        <>
+                          <div>Market Cap: {marketPrice} SOL</div>
+                          {coin_mint && (
+                            <div className="rounded-lg space-y-1">
+                              <a
+                                href={`https://pump.fun/coin/${coin_mint}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-400 hover:text-blue-300 underline block "
+                              >
+                                View on pump.fun ➡️
+                              </a>
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   )}
