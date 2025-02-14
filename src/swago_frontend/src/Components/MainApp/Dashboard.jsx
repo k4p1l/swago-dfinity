@@ -15,83 +15,6 @@ import { Footer } from "./Footer";
 import { TrustedBy } from "./TrustedBy";
 import { Link as RouterLink } from "react-router-dom";
 export const Dashboard = () => {
-  const cardData = [
-    {
-      image: image,
-      title: "How likely is Dogecoin to reach $1 by [specific date]?",
-      timerDuration: 5, // Timer in minutes
-      progressYes: "65%",
-      progressNo: "35%",
-      createdBy: "K.John",
-      volume: "6.1K",
-    },
-    {
-      image: image,
-      title: "How likely is Dogecoin to reach $1 by [specific date]?",
-      timerDuration: 5, // Timer in minutes
-      progressYes: "65%",
-      progressNo: "35%",
-      createdBy: "K.John",
-      volume: "6.1K",
-    },
-    {
-      image: image,
-      title: "How likely is Dogecoin to reach $1 by [specific date]?",
-      timerDuration: 5, // Timer in minutes
-      progressYes: "65%",
-      progressNo: "35%",
-      createdBy: "K.John",
-      volume: "6.1K",
-    },
-    {
-      image: image,
-      title: "How likely is Dogecoin to reach $1 by [specific date]?",
-      timerDuration: 5, // Timer in minutes
-      progressYes: "65%",
-      progressNo: "35%",
-      createdBy: "K.John",
-      volume: "6.1K",
-    },
-    {
-      image: image,
-      title: "How likely is Dogecoin to reach $1 by [specific date]?",
-      timerDuration: 5, // Timer in minutes
-      progressYes: "65%",
-      progressNo: "35%",
-      createdBy: "K.John",
-      volume: "6.1K",
-    },
-    {
-      image: image,
-      title: "How likely is Dogecoin to reach $1 by [specific date]?",
-      timerDuration: 5, // Timer in minutes
-      progressYes: "65%",
-      progressNo: "35%",
-      createdBy: "K.John",
-      volume: "6.1K",
-    },
-    {
-      image: image,
-      title: "How likely is Dogecoin to reach $1 by [specific date]?",
-      timerDuration: 5, // Timer in minutes
-      progressYes: "65%",
-      progressNo: "35%",
-      createdBy: "K.John",
-      volume: "6.1K",
-    },
-    {
-      image: image,
-      title: "How likely is Dogecoin to reach $1 by [specific date]?",
-      timerDuration: 5, // Timer in minutes
-      progressYes: "65%",
-      progressNo: "35%",
-      createdBy: "K.John",
-      volume: "6.1K",
-    },
-
-    // Add more cards here
-  ];
-
   const [bettings, setBettings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -133,7 +56,7 @@ export const Dashboard = () => {
     } else {
       const filtered = bettings.filter((betting) => {
         return (
-          betting.name?.toLowerCase().includes(query) ||
+          betting.coin_nm?.toLowerCase().includes(query) ||
           betting.question?.toLowerCase().includes(query)
         );
       });

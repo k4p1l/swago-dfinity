@@ -76,40 +76,76 @@ export const MakeBet = () => {
     ).padStart(2, "0")}`;
   };
 
-  useEffect(() => {
-    const fetchEventAndBalance = async () => {
-      try {
-        console.log("Fetching event with ID:", id);
-        const bettingId = BigInt(id);
-        const result = await getBetting(bettingId);
-        console.log("Raw event data:", result);
-        setEvent(result);
+  const fetchEventAndBalance = async () => {
+    try {
+      console.log("Fetching event with ID:", id);
+      const bettingId = BigInt(id);
+      const result = await getBetting(bettingId);
+      console.log("Raw event data:", result);
+      setEvent(result);
 
-        // Fetch vote counts
-        const votes = await swago_backend.getEventStats(bettingId);
-        console.log("Vote stats:", votes); // Add this log
-        setVoteStats({
-          yesVotes: votes.yesVotes || 0n,
-          noVotes: votes.noVotes || 0n,
-          yesAmount: Number(votes.yes_amount || 0),
-          noAmount: Number(votes.no_amount || 0),
-        });
+      // Fetch vote counts
+      const votes = await swago_backend.getEventStats(bettingId);
+      console.log("Vote stats:", votes);
+      setVoteStats({
+        yesVotes: votes.yes_bets || 0n,
+        noVotes: votes.no_bets || 0n,
+        yesAmount: Number(votes.yes_amount || 0),
+        noAmount: Number(votes.no_amount || 0),
+      });
 
-        // Fetch user balance
-        if (whoami) {
-          const balance = await swago_backend.balanceOf(whoami);
-          setUserBalance(Number(balance));
-        }
-      } catch (err) {
-        console.error("Detailed error:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      // Fetch user balance
+      if (whoami) {
+        const balance = await swago_backend.balanceOf(whoami);
+        setUserBalance(Number(balance));
       }
-    };
+    } catch (err) {
+      console.error("Detailed error:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // Use fetchEventAndBalance in useEffect
+  useEffect(() => {
     fetchEventAndBalance();
   }, [id, whoami]);
+
+  // useEffect(() => {
+  //   const fetchEventAndBalance = async () => {
+  //     try {
+  //       console.log("Fetching event with ID:", id);
+  //       const bettingId = BigInt(id);
+  //       const result = await getBetting(bettingId);
+  //       console.log("Raw event data:", result);
+  //       setEvent(result);
+
+  //       // Fetch vote counts
+  //       const votes = await swago_backend.getEventStats(bettingId);
+  //       console.log("Vote stats:", votes); // Add this log
+  //       setVoteStats({
+  //         yesVotes: votes.yesVotes || 0n,
+  //         noVotes: votes.noVotes || 0n,
+  //         yesAmount: Number(votes.yes_amount || 0),
+  //         noAmount: Number(votes.no_amount || 0),
+  //       });
+
+  //       // Fetch user balance
+  //       if (whoami) {
+  //         const balance = await swago_backend.balanceOf(whoami);
+  //         setUserBalance(Number(balance));
+  //       }
+  //     } catch (err) {
+  //       console.error("Detailed error:", err);
+  //       setError(err.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchEventAndBalance();
+  // }, [id, whoami]);
 
   useEffect(() => {
     let intervalId;
@@ -489,32 +525,33 @@ export const MakeBet = () => {
             )}
           </div>
         </div>
-        {event &&
-          event.status == 1 &&
-          Number(event.end_time) <= Date.now() / 1000 &&
-          (console.log("Event status:", event.status),
-          console.log("End time:", Number(event.end_time)),
-          console.log("Current time:", Date.now() / 1000),
-          (
-            <div className="mt-8">
-              <h3 className="text-2xl font-bold mb-4 text-center">
-                Event Resolution
-              </h3>
-              <EventResolver
-                singleEventMode={true}
-                eventId={event.betting_id}
-              />
-            </div>
-          ))}
-
-        {event && event.status == 0 && (
-          <div className="mt-8 text-center p-4 bg-green-500/20 rounded-lg max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold mb-2">Event Resolved</h3>
-            <p className="text-lg">
-              Rewards have been successfully processed and distributed to
-              participants.
-            </p>
-          </div>
+        {/* Event Resolution Section */}
+        {event && (
+          <>
+            {event.status == 1 &&
+            Number(event.end_time) <= Date.now() / 1000 ? (
+              <div className="mt-8">
+                <h3 className="text-2xl font-bold mb-4 text-center">
+                  Event Resolution
+                </h3>
+                <EventResolver
+                  singleEventMode={true}
+                  eventId={event.betting_id}
+                  onResolutionComplete={() => {
+                    fetchEventAndBalance();
+                  }}
+                />
+              </div>
+            ) : event.status == 0 ? (
+              <div className="mt-8 text-center p-4 bg-green-500/20 rounded-lg max-w-2xl mx-auto">
+                <h3 className="text-2xl font-bold mb-2">Event Resolved</h3>
+                <p className="text-lg">
+                  Rewards have been successfully processed and distributed to
+                  participants.
+                </p>
+              </div>
+            ) : null}
+          </>
         )}
 
         <BetConfirmationDialog

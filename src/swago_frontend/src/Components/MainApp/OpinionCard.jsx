@@ -154,6 +154,7 @@ export const OpinionCard = ({
   coin_nm,
   image,
   betting_id,
+  user_principal,
 }) => {
   const { principal: whoami } = useAuth();
   const [timeRemaining, setTimeRemaining] = useState(0);
@@ -326,6 +327,11 @@ export const OpinionCard = ({
     }
   }, [end_time]);
 
+  const formatPrincipal = (principal) => {
+    const text = principal.toString();
+    return text.length > 10 ? `${text.slice(0, 5)}...${text.slice(-5)}` : text;
+  };
+
   return (
     <CardContainer>
       {/* Header */}
@@ -422,7 +428,7 @@ export const OpinionCard = ({
 
       {/* Footer */}
       <Footer>
-        <MetaText>Created By {profileData?.name || "User"}</MetaText>
+        <MetaText>Created By {formatPrincipal(user_principal)}</MetaText>
         <MetaText>VOL: ${betting_id}</MetaText>
       </Footer>
       <div className="flex items-center justify-between op-card-icons bg-[#375066] rounded-xl p-2 mt-2">
