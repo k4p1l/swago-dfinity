@@ -6,7 +6,7 @@ const isLocalEnv = process.env.DFX_NETWORK === "local";
 // Create an actor to interact with the backend
 export const createActor = async () => {
   // For local development
-  const host = "http://localhost:38411";
+  const host = "http://localhost:36297";
 
   // Initialize an agent
   const agent = new HttpAgent({

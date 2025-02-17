@@ -537,6 +537,7 @@ export const MakeBet = () => {
                 <EventResolver
                   singleEventMode={true}
                   eventId={event.betting_id}
+                  userPrincipal={whoami}
                   onResolutionComplete={() => {
                     fetchEventAndBalance();
                   }}
@@ -549,6 +550,25 @@ export const MakeBet = () => {
                   Rewards have been successfully processed and distributed to
                   participants.
                 </p>
+                <div className="max-w-2xl mx-auto">
+                  <ResolutionResult
+                    event={event}
+                    resolutionStatus={{
+                      status: "completed",
+                      currentMarketCap:
+                        event.final_market_cap || event.coin_market_sol,
+                      payoutInfo: {
+                        winning_choice:
+                          event.winning_choice ||
+                          (event.direction === "increase" &&
+                            event.final_market_cap >= event.coin_market_sol)
+                            ? "yes"
+                            : "no",
+                      },
+                    }}
+                    userPrincipal={whoami}
+                  />
+                </div>
               </div>
             ) : null}
           </>
@@ -565,6 +585,116 @@ export const MakeBet = () => {
           betType={pendingBet}
           isProcessing={isProcessing}
         />
+      </div>
+    </div>
+  );
+};
+
+const ResolutionResult = ({ event, resolutionStatus, userPrincipal }) => {
+  const [userResult, setUserResult] = useState(null);
+
+  useEffect(() => {
+    const fetchUserResult = async () => {
+      if (userPrincipal && event?.betting_id) {
+        try {
+          // First try to get user's bet
+          const bets = await swago_backend.getBetsForEvent(event.betting_id);
+          const userBet = bets.find(
+            (bet) => bet.principal.toString() === userPrincipal.toString()
+          );
+
+          if (userBet) {
+            const won =
+              userBet.choice === resolutionStatus.payoutInfo.winning_choice;
+            setUserResult({
+              choice: userBet.choice,
+              bet_amount: Number(userBet.amount),
+              won: won,
+              payout_amount: won ? Number(userBet.amount) * 2 : 0, // Simplified payout calculation
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching user result:", error);
+        }
+      }
+    };
+
+    fetchUserResult();
+  }, [userPrincipal, event, resolutionStatus]);
+
+  return (
+    <div className="bg-[#2a3642] p-6 rounded-lg mt-4">
+      <h4 className="text-xl font-bold text-white mb-4">Resolution Results</h4>
+
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <span className="text-gray-400">Winning Choice:</span>
+          <span
+            className={`font-bold ${
+              resolutionStatus.payoutInfo.winning_choice === "yes"
+                ? "text-green-500"
+                : "text-red-500"
+            }`}
+          >
+            {resolutionStatus.payoutInfo.winning_choice.toUpperCase()}
+          </span>
+        </div>
+
+        <div className="flex justify-between items-center">
+          <span className="text-gray-400">Target Price:</span>
+          <span className="text-white">{event.coin_market_sol} SOL</span>
+        </div>
+
+        <div className="flex justify-between items-center">
+          <span className="text-gray-400">Final Price:</span>
+          <span className="text-white">
+            {resolutionStatus.currentMarketCap} SOL
+          </span>
+        </div>
+
+        {userResult && (
+          <div className="mt-6 p-4 bg-[#1e293b] rounded-lg">
+            <h5 className="text-lg font-semibold text-white mb-3">
+              Your Result
+            </h5>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-gray-400">Your Choice:</span>
+                <span
+                  className={`font-bold ${
+                    userResult.choice === "yes"
+                      ? "text-green-500"
+                      : "text-red-500"
+                  }`}
+                >
+                  {userResult.choice.toUpperCase()}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Bet Amount:</span>
+                <span className="text-white">{userResult.bet_amount} SWAG</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Outcome:</span>
+                <span
+                  className={`font-bold ${
+                    userResult.won ? "text-green-500" : "text-red-500"
+                  }`}
+                >
+                  {userResult.won ? "WON" : "LOST"}
+                </span>
+              </div>
+              {userResult.won && (
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Payout:</span>
+                  <span className="text-green-500 font-bold">
+                    +{userResult.payout_amount} SWAG
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

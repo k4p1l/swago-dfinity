@@ -458,6 +458,59 @@ actor {
     creator_reward : Nat64;
     remaining_pool : Nat64;
     winning_choice : Text;
+    current_market_cap : Float;
+    target_market_cap : Float;
+  };
+
+  public type UserBetResult = {
+    principal : Principal;
+    bet_amount : Nat64;
+    choice : Text;
+    won : Bool;
+    payout_amount : Nat64;
+  };
+
+  public func getUserBetResult(event_id : Nat64, user_principal : Principal) : async ?UserBetResult {
+    let bets = Array.filter<yes_or_no>(
+      yesNo_Arr,
+      func(bet) = bet.event_id == event_id and bet.principal == user_principal,
+    );
+
+    if (bets.size() == 0) {
+      return null;
+    };
+
+    let bet = bets[0];
+    let event = await get_events_by_id(event_id);
+
+    switch (event) {
+      case (null) { return null };
+      case (?event_data) {
+        let payout_info = await calculatePayout(event_id, event_data.coin_market_sol);
+        let won = bet.yes_or_no == payout_info.winning_choice;
+
+        let payout_amount = if (won) {
+          let proportion = Float.fromInt(Nat64.toNat(bet.amount)) / Float.fromInt(Nat64.toNat(payout_info.winning_pool));
+          Nat64.fromNat(
+            Int.abs(
+              Float.toInt(
+                proportion * Float.fromInt(Nat64.toNat(payout_info.remaining_pool))
+              )
+            )
+          );
+        } else {
+          0 : Nat64;
+        };
+
+        return ?{
+          principal = user_principal;
+          bet_amount = bet.amount;
+          choice = bet.yes_or_no;
+          won = won;
+          payout_amount = payout_amount;
+        };
+      };
+    };
   };
 
   public func getBetsForEvent(event_id : Nat64) : async [BetInfo] {
@@ -585,6 +638,8 @@ actor {
           creator_reward = creator_reward;
           remaining_pool = remaining_pool;
           winning_choice = winning_choice;
+          current_market_cap = current_market_cap;
+          target_market_cap = event_data.coin_market_sol;
         };
       };
     };
@@ -792,6 +847,29 @@ actor {
         return #err("Event with the specified ID not found.");
       };
     };
-  }
+  };
+
+  public shared query func get_Latest_Bettings(limit : Nat) : async [Create_Betting_data] {
+    let allBettings = Iter.toArray(user_Betting.vals());
+    let total = allBettings.size();
+
+    if (limit >= total) {
+      return allBettings;
+    } else {
+      return Array.tabulate<Create_Betting_data>(
+        limit,
+        func(i) { allBettings[total - limit + i] },
+      );
+    };
+  };
+
+  public func get_by_event_id(event_id : Nat64) : async ?(Principal, Nat64) {
+    let filtered = Array.filter<yes_or_no>(yesNo_Arr, func x = x.event_id == event_id);
+    if (filtered.size() == 0) {
+      return null;
+    } else {
+      return ?(filtered[filtered.size() - 1].principal, filtered[filtered.size() - 1].amount);
+    };
+  };
 
 };
