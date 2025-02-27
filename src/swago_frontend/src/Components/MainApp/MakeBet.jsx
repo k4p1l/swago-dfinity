@@ -7,6 +7,7 @@ import { Principal } from "@dfinity/principal";
 import { swago_backend } from "../../../../declarations/swago_backend";
 import { MarketGraph } from "./MarketGraph";
 import { EventResolver } from "./EventResolver";
+import { ResolveSingleEvent } from "./ResolveSingleEvent";
 import { BetConfirmationDialog } from "./BetConfirmationDialog";
 
 export const MakeBet = () => {
@@ -534,10 +535,8 @@ export const MakeBet = () => {
                 <h3 className="text-2xl font-bold mb-4 text-center">
                   Event Resolution
                 </h3>
-                <EventResolver
-                  singleEventMode={true}
+                <ResolveSingleEvent
                   eventId={Number(event.betting_id)}
-                  userPrincipal={whoami}
                   onResolutionComplete={() => {
                     fetchEventAndBalance();
                   }}
