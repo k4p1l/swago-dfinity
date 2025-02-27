@@ -439,6 +439,19 @@ actor {
     };
   };
 
+  public shared query func get_user_transaction_history(user : Principal) : async [transaction_history] {
+    // Filter transaction history to include only transactions
+    // where the user is either the sender or receiver
+    let user_transactions = Array.filter<transaction_history>(
+      trans_history,
+      func(transaction) {
+        transaction.t_from == user or transaction.t_to == user;
+      },
+    );
+
+    return user_transactions;
+  };
+
   public query func balanceOf(accountId : Principal) : async Nat {
     switch (accounts.get(accountId)) {
       case (?acc) acc.balance;

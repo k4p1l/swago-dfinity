@@ -252,7 +252,7 @@ export const ResolveSingleEvent = ({ eventId, onResolutionComplete }) => {
                 {resolutionStatus[event.betting_id].message}
               </p>
 
-              {resolutionStatus[event.betting_id].currentMarketCap && (
+              {resolutionStatus[event.betting_id] && (
                 <div className="bg-[#2a3642] p-4 rounded-lg mb-4">
                   <h4 className="text-white font-semibold mb-2">Market Data</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

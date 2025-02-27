@@ -24,6 +24,7 @@ export const MakeBet = () => {
   const [isBettingActive, setIsBettingActive] = useState(true);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [pendingBet, setPendingBet] = useState(null);
+  
   const [voteStats, setVoteStats] = useState({
     yesVotes: 0n,
     noVotes: 0n,
@@ -79,7 +80,6 @@ export const MakeBet = () => {
 
   const fetchEventAndBalance = async () => {
     try {
-      console.log("Fetching event with ID:", id);
       const bettingId = BigInt(id);
       const result = await getBetting(bettingId);
       console.log("Raw event data:", result);
