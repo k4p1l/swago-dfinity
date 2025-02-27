@@ -12,6 +12,7 @@ import { PlugWallet } from "@connect2ic/core/providers/plug-wallet";
 import { StoicWallet } from "@connect2ic/core/providers/stoic-wallet";
 import { EditProfile } from "./Components/MainApp/EditProfile";
 import { EventResolver } from "./Components/MainApp/EventResolver";
+import { EventsCreated } from "./Components/MainApp/EventsCreated";
 
 import { createClient } from "@connect2ic/core";
 import { Connect2ICProvider } from "@connect2ic/react";
@@ -47,6 +48,10 @@ function App() {
           <Route path="/bet/:id" element={<MakeBet />} />
           <Route path="/edit-profile" element={<EditProfile />} />
           <Route path="/resolution" element={<EventResolver />} />
+          <Route
+            path="/eventsCreated/:principalId"
+            element={<EventsCreated />}
+          />
         </Routes>
       </Router>
     </>

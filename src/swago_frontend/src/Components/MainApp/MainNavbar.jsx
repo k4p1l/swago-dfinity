@@ -101,7 +101,7 @@ export const MainNavbar = () => {
           </div>
         </div>
         <div className="flex items-center gap-2 sm:gap-8">
-          <div className="text-white">Balance : {tokenBalance}</div>
+          <div className="text-white">Balance : {tokenBalance} SWAG</div>
           {isAuthenticated ? (
             <div className="flex items-center gap-2">
               <ConnectButton />

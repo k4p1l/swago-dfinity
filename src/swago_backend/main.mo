@@ -383,6 +383,15 @@ actor {
     return "Tokens minted successfully";
   };
 
+  public type transaction_history = {
+    t_from : Principal;
+    t_to : Principal;
+    t_amount : Nat;
+    t_time : Time.Time;
+  };
+
+  var trans_history : [transaction_history] = [];
+
   public func transfer(from : Principal, to : Principal, amount : Nat) : async Text {
     let fromAccount = accounts.get(from);
     switch (fromAccount) {
@@ -412,6 +421,15 @@ actor {
               accounts.put(to, newToAccount);
             };
           };
+
+          let trans_data = {
+            t_from = from;
+            t_to = to;
+            t_amount = amount;
+            t_time = Time.now();
+          };
+          trans_history := Array.append<transaction_history>(trans_history, [trans_data]);
+
           return "Transfered successfully";
         };
       };
@@ -871,5 +889,40 @@ actor {
       return ?(filtered[filtered.size() - 1].principal, filtered[filtered.size() - 1].amount);
     };
   };
+
+  public type leader_board = {
+    user_prin : Principal;
+    bet_id : Nat64;
+    wonn_amount : Nat;
+  };
+
+  var leader : [leader_board] = [];
+
+  public func set_winner_det(details : leader_board) : async Text {
+    leader := Array.append<leader_board>(leader, [details]);
+    return "updated";
+  };
+
+  public shared query func get_leader(bet_id : Nat64) : async ?leader_board {
+    let filtered_leader = Array.filter<leader_board>(leader, func x = x.bet_id == bet_id);
+
+    if (filtered_leader.size() == 0) {
+      return null;
+    };
+
+    let highest = Array.foldLeft<leader_board, leader_board>(
+      filtered_leader,
+      filtered_leader[0],
+      func(acc, curr) {
+        if (curr.wonn_amount > acc.wonn_amount) {
+          curr;
+        } else {
+          acc;
+        };
+      },
+    );
+
+    return ?highest;
+  }
 
 };

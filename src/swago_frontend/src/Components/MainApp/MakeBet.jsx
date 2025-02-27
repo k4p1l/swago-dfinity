@@ -536,7 +536,7 @@ export const MakeBet = () => {
                 </h3>
                 <EventResolver
                   singleEventMode={true}
-                  eventId={event.betting_id}
+                  eventId={Number(event.betting_id)}
                   userPrincipal={whoami}
                   onResolutionComplete={() => {
                     fetchEventAndBalance();
