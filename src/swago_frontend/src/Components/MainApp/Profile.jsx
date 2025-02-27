@@ -196,12 +196,14 @@ export const Profile = () => {
               <p>Transaction History</p>
             </div>
           </RouterLink>
-          <div className="w-[250px] h-[250px]  rounded-lg flex justify-center items-center flex-col gap-4 text-white border-2 border-[#ffffff]">
-            <div className="w-[90px] h-[90px] bg-[#ffffff] rounded-full flex justify-center items-center">
-              <img src={eventsIcons} className="w-[32px] h-[32px]" alt="" />
+          <RouterLink to="/participations">
+            <div className="w-[250px] h-[250px]  rounded-lg flex justify-center items-center flex-col gap-4 text-white border-2 border-[#ffffff]">
+              <div className="w-[90px] h-[90px] bg-[#ffffff] rounded-full flex justify-center items-center">
+                <img src={eventsIcons} className="w-[32px] h-[32px]" alt="" />
+              </div>
+              <p>Events Participated</p>
             </div>
-            <p>Events Participated</p>
-          </div>
+          </RouterLink>
           <RouterLink to={`/eventsCreated/${connectPrincipal}`}>
             <div className="w-[250px] h-[250px]  rounded-lg flex justify-center items-center flex-col gap-4 text-white border-2 border-[#ffffff]">
               <div className="w-[90px] h-[90px] bg-[#ffffff] rounded-full flex justify-center items-center">

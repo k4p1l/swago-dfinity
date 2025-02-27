@@ -778,6 +778,50 @@ actor {
     return results;
   };
 
+  public type UserEventParticipation = {
+    event : Create_Betting_data;
+    user_bet : {
+      amount : Nat64;
+      choice : Text;
+      timestamp : Time.Time;
+    };
+  };
+
+  public shared query func getUserParticipatedEventsWithBets(user_principal : Principal) : async [UserEventParticipation] {
+    // Get all bets made by this user
+    let userBets = Array.filter<yes_or_no>(
+      yesNo_Arr,
+      func(bet) = bet.principal == user_principal,
+    );
+
+    // Create a map of event details with user's bet information
+    let participatedEvents = Array.mapFilter<yes_or_no, UserEventParticipation>(
+      userBets,
+      func(bet) {
+        let eventOpt = Array.find<Create_Betting_data>(
+          user_Betting,
+          func(event) = event.betting_id == bet.event_id,
+        );
+
+        switch (eventOpt) {
+          case (null) { null };
+          case (?event) {
+            ?{
+              event = event;
+              user_bet = {
+                amount = bet.amount;
+                choice = bet.yes_or_no;
+                timestamp = Time.now(); // You might want to add timestamp to yes_or_no type
+              };
+            };
+          };
+        };
+      },
+    );
+
+    return participatedEvents;
+  };
+
   // Add a function to get event statistics
   public query func getEventStats(event_id : Nat64) : async {
     total_bets : Nat;

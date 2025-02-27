@@ -13,6 +13,7 @@ import { StoicWallet } from "@connect2ic/core/providers/stoic-wallet";
 import { EditProfile } from "./Components/MainApp/EditProfile";
 import { EventResolver } from "./Components/MainApp/EventResolver";
 import { EventsCreated } from "./Components/MainApp/EventsCreated";
+import { UserParticipations } from "./Components/MainApp/ParticipatedEvents";
 
 import { createClient } from "@connect2ic/core";
 import { Connect2ICProvider } from "@connect2ic/react";
@@ -52,6 +53,7 @@ function App() {
             path="/eventsCreated/:principalId"
             element={<EventsCreated />}
           />
+          <Route path="/participations" element={<UserParticipations />} />
         </Routes>
       </Router>
     </>
