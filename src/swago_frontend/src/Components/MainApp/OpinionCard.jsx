@@ -164,6 +164,8 @@ export const OpinionCard = ({
   const [betStatus, setBetStatus] = useState(null);
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [eventResult, setEventResult] = useState(null);
+  const [isLoadingResult, setIsLoadingResult] = useState(false);
   const HOUSE_WALLET = Principal.fromText(
     "elieq-ev22i-d7yya-vgih3-bdohe-bj5qc-aoc55-rd4or-nuvef-rqhsz-mqe"
   );
@@ -327,6 +329,36 @@ export const OpinionCard = ({
     }
   }, [end_time]);
 
+  useEffect(() => {
+    const fetchEventResult = async () => {
+      if (!isBettingActive && betting_id) {
+        try {
+          setIsLoadingResult(true);
+          // Calculate payout to get winning choice
+          const event = await swago_backend.get_events_by_id(betting_id);
+          if (event) {
+            const payoutInfo = await swago_backend.calculatePayout(
+              betting_id,
+              event[0].coin_market_sol
+            );
+
+            setEventResult({
+              winning_choice: payoutInfo.winning_choice,
+              target_price: event[0].coin_market_sol,
+              final_price: payoutInfo.current_market_cap,
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching result:", error);
+        } finally {
+          setIsLoadingResult(false);
+        }
+      }
+    };
+
+    fetchEventResult();
+  }, [isBettingActive, betting_id]);
+
   const formatPrincipal = (principal) => {
     const text = principal.toString();
     return text.length > 10 ? `${text.slice(0, 5)}...${text.slice(-5)}` : text;
@@ -389,28 +421,43 @@ export const OpinionCard = ({
             </Button>
           </>
         ) : (
-          <div>
-            <div className="text-red-500 w-full text-center py-2">
-              Market has ended. Your rewards will be processed soon.
-            </div>
-            <div className="flex justify-between">
-              <Button variant="yes" disabled>
-                {isProcessing ? "Processing..." : "Buy Yes"}
-                <img
-                  className="w-[28px] ml-2"
-                  src={doubleArrowUp}
-                  alt="double arrow"
-                />
-              </Button>
-              <Button variant="no" disabled>
-                {isProcessing ? "Processing..." : "Buy No"}
-                <img
-                  className="w-[28px] ml-2"
-                  src={doubleArrowDown}
-                  alt="double arrow"
-                />
-              </Button>
-            </div>
+          <div className="w-full">
+            {isLoadingResult ? (
+              <div className="text-center text-gray-400">Loading result...</div>
+            ) : eventResult ? (
+              <div className="bg-[#2a3642] p-4 rounded-lg text-center">
+                <div className="font-semibold mb-2">
+                  Winner:{" "}
+                  <span
+                    className={
+                      eventResult.winning_choice === "yes"
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }
+                  >
+                    {eventResult.winning_choice.toUpperCase()}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div>
+                    <span className="text-gray-400">Target: </span>
+                    <span className="text-white">
+                      {eventResult.target_price} SOL
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Final: </span>
+                    <span className="text-white">
+                      {eventResult.final_price} SOL
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center text-red-500">
+                Failed to load result
+              </div>
+            )}
           </div>
         )}
       </div>

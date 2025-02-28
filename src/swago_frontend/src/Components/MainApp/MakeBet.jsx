@@ -24,7 +24,9 @@ export const MakeBet = () => {
   const [isBettingActive, setIsBettingActive] = useState(true);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [pendingBet, setPendingBet] = useState(null);
-  
+  const [eventResult, setEventResult] = useState(null);
+  const [isLoadingResult, setIsLoadingResult] = useState(false);
+
   const [voteStats, setVoteStats] = useState({
     yesVotes: 0n,
     noVotes: 0n,
@@ -113,40 +115,31 @@ export const MakeBet = () => {
     fetchEventAndBalance();
   }, [id, whoami]);
 
-  // useEffect(() => {
-  //   const fetchEventAndBalance = async () => {
-  //     try {
-  //       console.log("Fetching event with ID:", id);
-  //       const bettingId = BigInt(id);
-  //       const result = await getBetting(bettingId);
-  //       console.log("Raw event data:", result);
-  //       setEvent(result);
+  useEffect(() => {
+    const fetchEventResult = async () => {
+      if (!isBettingActive && event?.betting_id) {
+        try {
+          setIsLoadingResult(true);
+          const payoutInfo = await swago_backend.calculatePayout(
+            event.betting_id,
+            event.coin_market_sol
+          );
 
-  //       // Fetch vote counts
-  //       const votes = await swago_backend.getEventStats(bettingId);
-  //       console.log("Vote stats:", votes); // Add this log
-  //       setVoteStats({
-  //         yesVotes: votes.yesVotes || 0n,
-  //         noVotes: votes.noVotes || 0n,
-  //         yesAmount: Number(votes.yes_amount || 0),
-  //         noAmount: Number(votes.no_amount || 0),
-  //       });
+          setEventResult({
+            winning_choice: payoutInfo.winning_choice,
+            target_price: event.coin_market_sol,
+            final_price: payoutInfo.current_market_cap,
+          });
+        } catch (error) {
+          console.error("Error fetching result:", error);
+        } finally {
+          setIsLoadingResult(false);
+        }
+      }
+    };
 
-  //       // Fetch user balance
-  //       if (whoami) {
-  //         const balance = await swago_backend.balanceOf(whoami);
-  //         setUserBalance(Number(balance));
-  //       }
-  //     } catch (err) {
-  //       console.error("Detailed error:", err);
-  //       setError(err.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchEventAndBalance();
-  // }, [id, whoami]);
+    fetchEventResult();
+  }, [isBettingActive, event]);
 
   useEffect(() => {
     let intervalId;
@@ -206,15 +199,6 @@ export const MakeBet = () => {
     setPendingBet(betType);
     setShowConfirmDialog(true);
   };
-
-  // Ask for confirmation
-  // const confirmed = window.confirm(
-  //   `Are you sure you want to bet ${betAmount} SWAG tokens on ${betType.toUpperCase()}?`
-  // );
-
-  // if (!confirmed) {
-  //   return;
-  // }
 
   const handleConfirmBet = async () => {
     try {
@@ -497,7 +481,7 @@ export const MakeBet = () => {
               </div>
               {!isBettingActive && (
                 <p className="text-red-500 text-center">
-                  Betting period has ended
+                  Betting period has ended <br />
                 </p>
               )}
               <div className="mt-4">
@@ -550,23 +534,7 @@ export const MakeBet = () => {
                   participants.
                 </p>
                 <div className="max-w-2xl mx-auto">
-                  <ResolutionResult
-                    event={event}
-                    resolutionStatus={{
-                      status: "completed",
-                      currentMarketCap:
-                        event.final_market_cap || event.coin_market_sol,
-                      payoutInfo: {
-                        winning_choice:
-                          event.winning_choice ||
-                          (event.direction === "increase" &&
-                            event.final_market_cap >= event.coin_market_sol)
-                            ? "yes"
-                            : "no",
-                      },
-                    }}
-                    userPrincipal={whoami}
-                  />
+                  <ResolutionResult event={event} userPrincipal={whoami} />
                 </div>
               </div>
             ) : null}
@@ -589,28 +557,28 @@ export const MakeBet = () => {
   );
 };
 
-const ResolutionResult = ({ event, resolutionStatus, userPrincipal }) => {
+const ResolutionResult = ({ event, userPrincipal }) => {
   const [userResult, setUserResult] = useState(null);
+  const [payoutInfo, setPayoutInfo] = useState(null);
 
   useEffect(() => {
     const fetchUserResult = async () => {
       if (userPrincipal && event?.betting_id) {
         try {
-          // First try to get user's bet
-          const bets = await swago_backend.getBetsForEvent(event.betting_id);
-          const userBet = bets.find(
-            (bet) => bet.principal.toString() === userPrincipal.toString()
+          const payout = await swago_backend.calculatePayout(
+            event.betting_id,
+            event.coin_market_sol
+          );
+          setPayoutInfo(payout);
+          // Get user bet result
+          const userBetResult = await swago_backend.getUserBetResult(
+            event.betting_id,
+            userPrincipal
           );
 
-          if (userBet) {
-            const won =
-              userBet.choice === resolutionStatus.payoutInfo.winning_choice;
-            setUserResult({
-              choice: userBet.choice,
-              bet_amount: Number(userBet.amount),
-              won: won,
-              payout_amount: won ? Number(userBet.amount) * 2 : 0, // Simplified payout calculation
-            });
+          if (userBetResult) {
+            setUserResult(userBetResult[0]);
+            console.log("User bet result:", userBetResult[0]);
           }
         } catch (error) {
           console.error("Error fetching user result:", error);
@@ -619,7 +587,7 @@ const ResolutionResult = ({ event, resolutionStatus, userPrincipal }) => {
     };
 
     fetchUserResult();
-  }, [userPrincipal, event, resolutionStatus]);
+  }, [userPrincipal, event]);
 
   return (
     <div className="bg-[#2a3642] p-6 rounded-lg mt-4">
@@ -630,12 +598,12 @@ const ResolutionResult = ({ event, resolutionStatus, userPrincipal }) => {
           <span className="text-gray-400">Winning Choice:</span>
           <span
             className={`font-bold ${
-              resolutionStatus.payoutInfo.winning_choice === "yes"
+              payoutInfo?.winning_choice === "yes"
                 ? "text-green-500"
                 : "text-red-500"
             }`}
           >
-            {resolutionStatus.payoutInfo.winning_choice.toUpperCase()}
+            {payoutInfo?.winning_choice.toUpperCase()}
           </span>
         </div>
 
@@ -647,7 +615,7 @@ const ResolutionResult = ({ event, resolutionStatus, userPrincipal }) => {
         <div className="flex justify-between items-center">
           <span className="text-gray-400">Final Price:</span>
           <span className="text-white">
-            {resolutionStatus.currentMarketCap} SOL
+            {payoutInfo?.current_market_cap} SOL
           </span>
         </div>
 
@@ -671,7 +639,9 @@ const ResolutionResult = ({ event, resolutionStatus, userPrincipal }) => {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Bet Amount:</span>
-                <span className="text-white">{userResult.bet_amount} SWAG</span>
+                <span className="text-white">
+                  {Number(userResult.bet_amount)} SWAG
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Outcome:</span>
